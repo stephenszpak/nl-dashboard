@@ -11,7 +11,31 @@ defmodule DashboardGenWeb do
   def html do
     quote do
       use Phoenix.Component
+      unquote(html_helpers())
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {DashboardGenWeb.Layouts, :root}
+
+      unquote(html_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
       import Phoenix.HTML
+      import Phoenix.LiveView.Helpers
       import DashboardGenWeb.Gettext
       alias DashboardGenWeb.Router.Helpers, as: Routes
     end
