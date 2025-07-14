@@ -1,5 +1,6 @@
 defmodule DashboardGenWeb.DashboardLive do
-  use DashboardGenWeb, :live_view, layout: {DashboardGenWeb.Layouts, :dashboard}
+  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
+  use DashboardGenWeb, :html
 
   alias DashboardGen.GPT
   require Logger
