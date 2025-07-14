@@ -1,10 +1,17 @@
-<div class="container mx-auto p-4">
-  <.form let={f} for={:query} phx-submit="submit">
-    <%= text_input f, :query, value: @query, class: "border p-2 w-full" %>
-    <%= submit "Run", class: "mt-2 bg-blue-500 text-white px-4 py-2" %>
-  </.form>
+<% form = to_form(%{"query" => @query}, as: :query) %>
 
-  <%= if @result do %>
-    <pre class="mt-4 bg-gray-100 p-2"><%= Jason.encode!(@result, pretty: true) %></pre>
-  <% end %>
+<.form for={form} phx-submit="submit" class="space-y-4">
+  <.input field={form[:query]} placeholder="Ask for a dashboard" class="w-full" />
+  <.button type="submit" phx-disable-with="Loading..." class="w-full">Run</.button>
+</.form>
+
+<div :if={@loading} class="mt-4">Loading...</div>
+
+<div id="chart" class="mt-4 h-64 bg-gray-200 flex items-center justify-center">
+  Chart will render here
 </div>
+
+<pre :if={@chart_json} class="mt-4 bg-gray-100 p-2 text-xs overflow-auto">
+  <%= Jason.encode!(@chart_json, pretty: true) %>
+</pre>
+
