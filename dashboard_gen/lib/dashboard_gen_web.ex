@@ -8,13 +8,28 @@ defmodule DashboardGenWeb do
     end
   end
 
-  def html do
+  defp html_helpers do
     quote do
       use Phoenix.Component
       use PetalComponents
       import Phoenix.HTML
       import DashboardGenWeb.Gettext
       alias DashboardGenWeb.Router.Helpers, as: Routes
+    end
+  end
+
+  def html do
+    quote do
+      unquote(html_helpers())
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {DashboardGenWeb.Layouts, :root}
+
+      unquote(html_helpers())
     end
   end
 
