@@ -11,6 +11,7 @@ defmodule DashboardGenWeb do
   def html do
     quote do
       use Phoenix.Component
+      use PetalComponents
       import Phoenix.HTML
       import DashboardGenWeb.Gettext
       alias DashboardGenWeb.Router.Helpers, as: Routes

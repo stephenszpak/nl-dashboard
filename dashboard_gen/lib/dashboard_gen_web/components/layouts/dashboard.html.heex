@@ -1,0 +1,20 @@
+<div class="flex min-h-screen">
+  <aside class="w-60 bg-gray-800 text-white p-4 space-y-2">
+    <nav class="flex flex-col space-y-2">
+      <.link navigate={~p"/"} class="hover:underline">Dashboard</.link>
+      <.link navigate={~p"/saved"} class="hover:underline">Saved Views</.link>
+      <.link navigate={~p"/settings"} class="hover:underline">Settings</.link>
+    </nav>
+  </aside>
+
+  <div class="flex-1 flex flex-col">
+    <header class="p-4 bg-gray-100 border-b">
+      <h1 class="text-xl font-semibold">DashboardGen</h1>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4">
+      <%= @inner_content %>
+    </main>
+  </div>
+</div>
+
