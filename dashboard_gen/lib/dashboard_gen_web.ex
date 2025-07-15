@@ -3,7 +3,7 @@ defmodule DashboardGenWeb do
     quote do
       use Phoenix.Controller, namespace: DashboardGenWeb
       import Plug.Conn
-      import DashboardGenWeb.Gettext
+      use Gettext, backend: DashboardGenWeb.Gettext
       alias DashboardGenWeb.Router.Helpers, as: Routes
     end
   end
@@ -13,7 +13,7 @@ defmodule DashboardGenWeb do
       use Phoenix.Component
       use PetalComponents
       import Phoenix.HTML
-      import DashboardGenWeb.Gettext
+      use Gettext, backend: DashboardGenWeb.Gettext
       alias DashboardGenWeb.Router.Helpers, as: Routes
     end
   end
@@ -43,7 +43,7 @@ defmodule DashboardGenWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import DashboardGenWeb.Gettext
+      use Gettext, backend: DashboardGenWeb.Gettext
     end
   end
 
