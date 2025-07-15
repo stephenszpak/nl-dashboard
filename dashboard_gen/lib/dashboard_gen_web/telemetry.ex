@@ -7,12 +7,20 @@ defmodule DashboardGenWeb.Telemetry do
   end
 
   def init(_arg) do
-    children = [
-      {Telemetry.Poller, measurements: periodic_measurements(), period: 10_000},
-      {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
-    ]
+    children =
+      []
+      |> maybe_add_poller()
+      |> List.insert_at(-1, {Telemetry.Metrics.ConsoleReporter, metrics: metrics()})
 
     Supervisor.init(children, strategy: :one_for_one)
+  end
+
+  defp maybe_add_poller(children) do
+    if Code.ensure_loaded?(Telemetry.Poller) do
+      [{Telemetry.Poller, measurements: periodic_measurements(), period: 10_000} | children]
+    else
+      children
+    end
   end
 
   def metrics do
