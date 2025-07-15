@@ -5,6 +5,8 @@ defmodule DashboardGenWeb do
       import Plug.Conn
       use Gettext, backend: DashboardGenWeb.Gettext
       alias DashboardGenWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -12,9 +14,12 @@ defmodule DashboardGenWeb do
     quote do
       use Phoenix.Component
       use PetalComponents
-      import Phoenix.HTML
+      use Phoenix.HTML
       use Gettext, backend: DashboardGenWeb.Gettext
+      alias Phoenix.LiveView.JS
       alias DashboardGenWeb.Router.Helpers, as: Routes
+
+      unquote(verified_routes())
     end
   end
 
@@ -48,6 +53,15 @@ defmodule DashboardGenWeb do
   end
 
   def static_paths, do: ["assets", "favicon.ico", "robots.txt"]
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: DashboardGenWeb.Endpoint,
+        router: DashboardGenWeb.Router,
+        statics: DashboardGenWeb.static_paths()
+    end
+  end
 
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
