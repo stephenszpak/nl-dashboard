@@ -10,7 +10,10 @@ config :dashboard_gen, DashboardGenWeb.Endpoint,
   live_view: [signing_salt: "SA1tSaLt"]
 
 config :esbuild,
-  version: "0.7.0",
+  # Bump the bundled esbuild version to a modern release since 0.7.0 is no
+  # longer distributed via npm. 0.17.11 is compatible with the current
+  # `esbuild` mix dependency and is available for download.
+  version: "0.17.11",
   default: [
     args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets),
     cd: Path.expand("../assets", __DIR__),
