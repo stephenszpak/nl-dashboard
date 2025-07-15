@@ -30,7 +30,7 @@ defmodule DashboardGen.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_live_view, "~> 0.20"},
+      {:phoenix_live_view, "~> 0.20.0"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_dashboard, "~> 0.8"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
@@ -45,7 +45,7 @@ defmodule DashboardGen.MixProject do
       {:vega_lite, "~> 0.1"},
       {:openai, "~> 0.5"},
       {:dotenvy, "~> 0.8"},
-      {:petal_components, "~> 0.17"}
+      {:petal_components, "~> 0.18.0"}
     ]
   end
 
