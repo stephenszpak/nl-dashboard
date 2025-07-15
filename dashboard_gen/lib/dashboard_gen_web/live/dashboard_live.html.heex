@@ -1,7 +1,7 @@
 <% form = to_form(%{"query" => @query}, as: :query) %>
 
 <.form for={form} phx-submit="submit" class="space-y-4">
-  <.input field={form[:query]} placeholder="Ask for a dashboard" class="w-full" />
+  <%= text_input form, :query, placeholder: "Ask for a dashboard", class: "w-full" %>
   <.button type="submit" phx-disable-with="Loading..." class="w-full">Run</.button>
 </.form>
 
