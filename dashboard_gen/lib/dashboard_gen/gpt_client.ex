@@ -31,12 +31,20 @@ defmodule DashboardGen.GPTClient do
 
     with {:ok, %Req.Response{status: 200, body: %{"choices" => choices}}} <-
            Req.post(@openai_url, json: body, headers: headers),
-         %{"message" => %{"content" => content}} <- List.first(choices),
-         _ = IO.inspect(content, label: "GPT RAW RESPONSE"),
-         cleaned <- content |> extract_json_block() |> String.trim(),
-         {:ok, decoded} <- Jason.decode(cleaned),
-         true <- Map.has_key?(decoded, "charts") do
-      {:ok, decoded}
+         %{"message" => %{"content" => content}} <- List.first(choices) do
+      cleaned = content |> extract_json_block() |> String.trim()
+      _ = IO.inspect(cleaned, label: "GPT RAW RESPONSE")
+
+      case Jason.decode(cleaned) do
+        {:ok, decoded} when is_map(decoded) and Map.has_key?(decoded, "charts") ->
+          {:ok, decoded}
+
+        {:ok, decoded} ->
+          {:error, "Missing 'charts' key in response: #{inspect(decoded)}"}
+
+        {:error, reason} ->
+          {:error, "Failed to decode JSON: #{inspect(reason)}"}
+      end
     else
       {:error, %Req.Response{body: body}} ->
         {:error, inspect(body)}
@@ -45,7 +53,7 @@ defmodule DashboardGen.GPTClient do
         {:error, inspect(reason)}
 
       _ ->
-        {:error, "Invalid chart spec"}
+        {:error, "Invalid response from OpenAI"}
     end
   end
 
