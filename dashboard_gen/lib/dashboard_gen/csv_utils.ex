@@ -5,22 +5,30 @@ defmodule DashboardGen.CSVUtils do
     [headers | rows] = path |> File.read!() |> CSV.parse_string()
 
     Enum.flat_map(rows, fn row ->
-      Enum.map(y_fields, fn y_field ->
+      Enum.flat_map(y_fields, fn y_field ->
         month = get_value(headers, row, x_field)
         value = get_value(headers, row, y_field)
 
-        %{
-          x: month,
-          value: parse_number(value),
-          category: y_field
-        }
+        if is_nil(month) or is_nil(value) do
+          []
+        else
+          [
+            %{
+              x: month,
+              value: parse_number(value),
+              category: y_field
+            }
+          ]
+        end
       end)
     end)
   end
 
   defp get_value(headers, row, field) do
-    index = Enum.find_index(headers, &(&1 == field))
-    Enum.at(row, index)
+    case Enum.find_index(headers, &(&1 == field)) do
+      nil -> nil
+      index -> Enum.at(row, index)
+    end
   end
 
   defp parse_number(str) when is_binary(str) do
@@ -29,4 +37,6 @@ defmodule DashboardGen.CSVUtils do
       _ -> 0
     end
   end
+
+  defp parse_number(_), do: 0
 end
