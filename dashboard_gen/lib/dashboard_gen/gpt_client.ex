@@ -18,7 +18,7 @@ defmodule DashboardGen.GPTClient do
            System.get_env("OPENAI_API_KEY") ||
              {:error, "OPENAI_API_KEY environment variable is missing"},
          body <- %{
-           model: "gpt-4",
+           model: "gpt-3.5-turbo",
            messages: [
              %{role: "system", content: default_system_prompt()},
              %{role: "user", content: prompt}
