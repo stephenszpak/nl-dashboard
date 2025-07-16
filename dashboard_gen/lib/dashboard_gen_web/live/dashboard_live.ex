@@ -11,9 +11,15 @@ defmodule DashboardGenWeb.DashboardLive do
   end
 
   @impl true
-  def handle_event("submit", %{"query" => query}, socket) do
+  def handle_event("submit", %{"query" => query}, socket) when is_binary(query) do
     send(self(), {:run_query, query})
     {:noreply, assign(socket, query: query, loading: true)}
+  end
+
+  @impl true
+  def handle_event("submit", params, socket) do
+    Logger.warning("submit event missing query: #{inspect(params)}")
+    {:noreply, socket}
   end
 
   @impl true
