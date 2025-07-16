@@ -8,13 +8,13 @@ defmodule DashboardGenWeb.DashboardLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, prompt: "", chart_svg: nil, loading: false)}
+    {:ok, assign(socket, prompt: "", chart_spec: nil, loading: false)}
   end
 
   @impl true
   def handle_event("generate", %{"prompt" => prompt}, socket) do
     send(self(), {:generate_chart, prompt})
-    {:noreply, assign(socket, prompt: prompt, loading: true, chart_svg: nil)}
+    {:noreply, assign(socket, prompt: prompt, loading: true, chart_spec: nil)}
   end
 
   @impl true
@@ -22,9 +22,9 @@ defmodule DashboardGenWeb.DashboardLive do
     case GPTClient.get_chart_spec(prompt) do
       {:ok, %{"charts" => [chart | _]}} ->
         with {:ok, rows} <- load_csv(chart["data_source"]),
-             {:ok, vl} <- build_vega_spec(rows, chart),
-             {:ok, svg} <- Vl.to_svg(vl) do
-          {:noreply, assign(socket, chart_svg: svg, loading: false)}
+             {:ok, vl} <- build_vega_spec(rows, chart) do
+          spec = Vl.to_spec(vl) |> Jason.encode!()
+          {:noreply, assign(socket, chart_spec: spec, loading: false)}
         else
           {:error, reason} ->
             {:noreply,
