@@ -4,7 +4,7 @@ defmodule DashboardGenWeb.DashboardLive do
 
   alias DashboardGen.GPTClient
   alias NimbleCSV.RFC4180, as: CSV
-  alias Contex.{Dataset, Plot, BarChart}
+  alias VegaLite, as: Vl
 
   @impl true
   def mount(_params, _session, socket) do
@@ -22,8 +22,8 @@ defmodule DashboardGenWeb.DashboardLive do
     case GPTClient.get_chart_spec(prompt) do
       {:ok, %{"charts" => [chart | _]}} ->
         with {:ok, rows} <- load_csv(chart["data_source"]),
-             {:ok, dataset} <- build_dataset(rows, chart["x"], chart["y"]),
-             svg <- render_chart(dataset, chart) do
+             {:ok, vl} <- build_vega_spec(rows, chart),
+             {:ok, svg} <- Vl.to_svg(vl) do
           {:noreply, assign(socket, chart_svg: svg, loading: false)}
         else
           {:error, reason} ->
@@ -72,14 +72,45 @@ defmodule DashboardGenWeb.DashboardLive do
     end
   end
 
-  defp build_dataset(rows, x_field, y_fields) do
-    data =
+  defp build_vega_spec(rows, %{"type" => type, "x" => x_field, "y" => y_fields} = chart) do
+    parsed =
       Enum.map(rows, fn row ->
-        [Map.get(row, x_field) | Enum.map(y_fields, &parse_number(Map.get(row, &1)))]
+        Enum.map([x_field | y_fields], fn field ->
+          {field, parse_number(Map.get(row, field))}
+        end)
+        |> Map.new()
       end)
 
-    headers = [x_field | y_fields]
-    {:ok, Dataset.new(data, headers)}
+    spec =
+      if length(y_fields) > 1 do
+        melted =
+          Enum.flat_map(parsed, fn row ->
+            Enum.map(y_fields, fn field ->
+              %{
+                x_field => Map.get(row, x_field),
+                "value" => Map.get(row, field),
+                "color" => field
+              }
+            end)
+          end)
+
+        Vl.new(title: chart["title"])
+        |> Vl.data_from_values(melted)
+        |> Vl.mark(String.to_atom(type))
+        |> Vl.encode_field(:x, x_field, type: :nominal)
+        |> Vl.encode_field(:y, "value", type: :quantitative)
+        |> Vl.encode_field(:color, "color", type: :nominal)
+      else
+        [y_field] = y_fields
+
+        Vl.new(title: chart["title"])
+        |> Vl.data_from_values(parsed)
+        |> Vl.mark(String.to_atom(type))
+        |> Vl.encode_field(:x, x_field, type: :nominal)
+        |> Vl.encode_field(:y, y_field, type: :quantitative)
+      end
+
+    {:ok, spec}
   end
 
   defp parse_number(nil), do: nil
@@ -92,12 +123,4 @@ defmodule DashboardGenWeb.DashboardLive do
   end
 
   defp parse_number(val), do: val
-
-  defp render_chart(dataset, %{"title" => title, "x" => x, "y" => y_fields}) do
-    mapping = %{category_col: x, value_cols: y_fields}
-
-    Plot.new(dataset, BarChart, mapping: mapping)
-    |> Plot.titles(title, nil)
-    |> Plot.to_svg()
-  end
 end
