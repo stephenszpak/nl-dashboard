@@ -1,15 +1,14 @@
-<form phx-submit="submit" class="space-y-4">
-  <input type="text" name="query[query]" value={@query} placeholder="Ask for a dashboard" class="w-full" />
-  <button type="submit" phx-disable-with="Loading..." class="w-full bg-blue-600 text-white px-4 py-2 rounded">Run</button>
+<form phx-submit="generate" class="flex items-center space-x-2 mb-4">
+  <input type="text" name="prompt" value={@prompt} placeholder="Describe a chart" class="flex-1 border rounded px-2 py-1" />
+  <button type="submit" phx-disable-with="Generating..." class="px-4 py-1 bg-blue-600 text-white rounded">Generate</button>
 </form>
 
-<div :if={@loading} class="mt-4">Loading...</div>
+<%= if live_flash(@flash, :error) do %>
+  <div class="text-red-600 mb-2"><%= live_flash(@flash, :error) %></div>
+<% end %>
 
-<div id="chart" class="mt-4 h-64 bg-gray-200 flex items-center justify-center">
-  Chart will render here
+<div :if={@loading} class="mt-2 text-gray-500">Generating...</div>
+
+<div :if={@chart_svg} class="mt-6" phx-update="ignore">
+  <%= raw @chart_svg %>
 </div>
-
-<pre :if={@chart_json} class="mt-4 bg-gray-100 p-2 text-xs overflow-auto">
-  <%= Jason.encode!(@chart_json, pretty: true) %>
-</pre>
-
