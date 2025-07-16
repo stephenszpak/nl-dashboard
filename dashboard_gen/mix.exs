@@ -44,8 +44,7 @@ defmodule DashboardGen.MixProject do
       {:nimble_csv, "~> 1.2"},
       {:vega_lite, "~> 0.1"},
       {:openai, "~> 0.5"},
-      {:dotenvy, "~> 0.8"},
-      {:petal_components, "~> 0.18.0"}
+      {:dotenvy, "~> 0.8"}
     ]
   end
 
