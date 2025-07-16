@@ -32,8 +32,9 @@ defmodule DashboardGen.GPTClient do
     with {:ok, %Req.Response{status: 200, body: %{"choices" => choices}}} <-
            Req.post(@openai_url, json: body, headers: headers),
          %{"message" => %{"content" => content}} <- List.first(choices),
-          IO.inspect(content, label: "GPT RAW RESPONSE"),
-         {:ok, decoded} <- Jason.decode(content),
+         _ = IO.inspect(content, label: "GPT RAW RESPONSE"),
+         cleaned <- content |> extract_json_block() |> String.trim(),
+         {:ok, decoded} <- Jason.decode(cleaned),
          true <- Map.has_key?(decoded, "charts") do
       {:ok, decoded}
     else
@@ -70,6 +71,15 @@ defmodule DashboardGen.GPTClient do
     }
     """
     |> String.trim()
+  end
+
+  defp extract_json_block(content) when is_binary(content) do
+    regex = ~r/```(?:json)?\s*(?<json>.*?)\s*```/ms
+
+    case Regex.named_captures(regex, content) do
+      %{"json" => json} -> json
+      _ -> content
+    end
   end
 
   defp fetch_api_key! do
