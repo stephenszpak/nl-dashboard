@@ -33,7 +33,7 @@ defmodule DashboardGenWeb.DashboardLive do
           |> VegaLite.encode(:x, field: "x", type: :nominal)
           |> VegaLite.encode(:y, field: "value", type: :quantitative)
           |> VegaLite.encode(:color, field: "category", type: :nominal)
-          |> VegaLite.config(:title, chart_spec["title"])
+          |> VegaLite.set_spec(["title"], chart_spec["title"])
 
         spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
@@ -45,5 +45,36 @@ defmodule DashboardGenWeb.DashboardLive do
          |> put_flash(:error, reason)
          |> assign(loading: false)}
     end
+  end
+
+  @doc """
+  Build a sample VegaLite chart using inline mock data.
+  """
+  def sample_chart do
+    data = [
+      %{"Month" => "Jan", "Ad Spend" => 1000, "Conversions" => 50},
+      %{"Month" => "Feb", "Ad Spend" => 1200, "Conversions" => 65},
+      %{"Month" => "Mar", "Ad Spend" => 1500, "Conversions" => 80}
+    ]
+
+    long_data =
+      Enum.flat_map(data, fn row ->
+        ["Ad Spend", "Conversions"]
+        |> Enum.map(fn category ->
+          %{
+            "x" => row["Month"],
+            "category" => category,
+            "value" => row[category]
+          }
+        end)
+      end)
+
+    VegaLite.new()
+    |> VegaLite.data_from_values(long_data)
+    |> VegaLite.mark(:bar)
+    |> VegaLite.encode(:x, field: "x", type: :nominal)
+    |> VegaLite.encode(:y, field: "value", type: :quantitative)
+    |> VegaLite.encode(:color, field: "category", type: :nominal)
+    |> VegaLite.set_spec(["title"], "Ad Spend and Conversions by Month")
   end
 end
