@@ -16,5 +16,7 @@ defmodule DashboardGenWeb.Router do
     pipe_through(:browser)
 
     live("/", DashboardLive)
+    live("/saved", SavedLive)
+    live("/settings", SettingsLive)
   end
 end
