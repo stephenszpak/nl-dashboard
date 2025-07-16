@@ -36,11 +36,12 @@ defmodule DashboardGen.GPTClient do
       _ = IO.inspect(cleaned, label: "GPT RAW RESPONSE")
 
       case Jason.decode(cleaned) do
-        {:ok, decoded} when is_map(decoded) and Map.has_key?(decoded, "charts") ->
-          {:ok, decoded}
-
         {:ok, decoded} ->
-          {:error, "Missing 'charts' key in response: #{inspect(decoded)}"}
+          if is_map(decoded) and Map.has_key?(decoded, "charts") do
+            {:ok, decoded}
+          else
+            {:error, "Missing 'charts' key in response: #{inspect(decoded)}"}
+          end
 
         {:error, reason} ->
           {:error, "Failed to decode JSON: #{inspect(reason)}"}
