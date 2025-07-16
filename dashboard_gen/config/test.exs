@@ -12,7 +12,7 @@ config :dashboard_gen, DashboardGen.Repo,
 # We don't run a server during test.
 config :dashboard_gen, DashboardGenWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "TEST_SECRET_KEY_BASE",
+  secret_key_base: "CYsdBRv5g0YHCAKdWm3P1fQIK86sE8lX44fu7/UCJ0eWPbC64iCnYxwF5TDajFta",
   server: false
 
 config :logger, level: :warning

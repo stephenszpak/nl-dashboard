@@ -9,7 +9,7 @@ if config_env() == :prod do
   config :dashboard_gen, DashboardGenWeb.Endpoint,
     server: true,
     url: [host: System.get_env("PHX_HOST", "example.com"), port: 443],
-    secret_key_base: System.fetch_env!("SECRET_KEY_BASE")
+    secret_key_base: System.fetch_env!("CYsdBRv5g0YHCAKdWm3P1fQIK86sE8lX44fu7/UCJ0eWPbC64iCnYxwF5TDajFta")
 
   config :openai, api_key: System.fetch_env!("OPENAI_API_KEY")
 else
