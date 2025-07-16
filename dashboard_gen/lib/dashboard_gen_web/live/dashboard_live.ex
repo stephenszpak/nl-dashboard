@@ -33,7 +33,7 @@ defmodule DashboardGenWeb.DashboardLive do
           |> VegaLite.encode(:x, field: "x", type: :nominal)
           |> VegaLite.encode(:y, field: "value", type: :quantitative)
           |> VegaLite.encode(:color, field: "category", type: :nominal)
-          |> VegaLite.title(chart_spec["title"])
+          |> VegaLite.config(:title, chart_spec["title"])
 
         spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
