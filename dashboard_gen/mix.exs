@@ -17,7 +17,7 @@ defmodule DashboardGen.MixProject do
   def application do
     [
       mod: {DashboardGen.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :req]
     ]
   end
 
@@ -44,7 +44,8 @@ defmodule DashboardGen.MixProject do
       {:nimble_csv, "~> 1.2"},
       {:vega_lite, "~> 0.1"},
       {:openai, "~> 0.5"},
-      {:dotenvy, "~> 0.8"}
+      {:dotenvy, "~> 0.8"},
+      {:req, "~> 0.4"}
     ]
   end
 
