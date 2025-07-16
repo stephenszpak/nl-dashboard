@@ -17,7 +17,7 @@ config :dashboard_gen, DashboardGenWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "DEV_SECRET_KEY_BASE",
+  secret_key_base: "CYsdBRv5g0YHCAKdWm3P1fQIK86sE8lX44fu7/UCJ0eWPbC64iCnYxwF5TDajFta",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
