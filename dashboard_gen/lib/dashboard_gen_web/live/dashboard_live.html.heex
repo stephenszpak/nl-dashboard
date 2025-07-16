@@ -9,6 +9,6 @@
 
 <div :if={@loading} class="mt-2 text-gray-500">Generating...</div>
 
-<div :if={@chart_svg} class="mt-6" phx-update="ignore">
+<div :if={@chart_svg} id="chart-container" class="mt-6" phx-update="ignore">
   <%= raw @chart_svg %>
 </div>
