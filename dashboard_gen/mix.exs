@@ -45,7 +45,8 @@ defmodule DashboardGen.MixProject do
       {:vega_lite, "~> 0.1"},
       {:openai, "~> 0.5"},
       {:dotenvy, "~> 0.8"},
-      {:req, "~> 0.4"}
+      {:req, "~> 0.4"},
+      {:contex, "~> 0.4.0"}
     ]
   end
 
