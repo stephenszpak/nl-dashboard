@@ -55,21 +55,23 @@ defmodule DashboardGen.GPTClient do
   """
   @spec default_system_prompt() :: String.t()
   def default_system_prompt do
-    """
-    You are ChartGPT. Respond only with valid JSON following this schema:
+     """
+      You are a strict JSON-only API. When given a prompt, respond ONLY with valid JSON in this schema:
 
-    {
-      "charts": [
-        {
-          "type": "bar",
-          "title": "title text",
-          "x": "x field",
-          "y": ["y field"],
-          "data_source": "file.csv"
-        }
-      ]
-    }
-    """
+      {
+        "charts": [
+          {
+            "type": "bar",
+            "title": "title string",
+            "x": "x axis field name",
+            "y": ["list", "of", "y", "fields"],
+            "data_source": "mock_marketing_data.csv"
+          }
+        ]
+      }
+
+      DO NOT explain anything. DO NOT wrap the response in markdown. DO NOT include code fences. DO NOT add extra text.
+      """
     |> String.trim()
   end
 
