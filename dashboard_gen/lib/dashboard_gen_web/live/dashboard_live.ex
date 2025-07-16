@@ -4,7 +4,7 @@ defmodule DashboardGenWeb.DashboardLive do
 
   alias DashboardGen.GPTClient
   alias DashboardGen.CSVUtils
-  alias VegaLite, as: Vl
+  alias VegaLite
 
   @impl true
   def mount(_params, _session, socket) do
@@ -27,15 +27,15 @@ defmodule DashboardGenWeb.DashboardLive do
         data = CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"])
 
         vl =
-          Vl.new()
-          |> Vl.data_from_values(data)
-          |> Vl.mark(String.to_atom(chart_spec["type"]))
-          |> Vl.encode(:x, "x", type: :nominal)
-          |> Vl.encode(:y, "value", type: :quantitative)
-          |> Vl.encode(:color, "category", type: :nominal)
-          |> Vl.title(chart_spec["title"])
+          VegaLite.new()
+          |> VegaLite.data_from_values(data)
+          |> VegaLite.mark(String.to_atom(chart_spec["type"]))
+          |> VegaLite.encode(:x, "x", type: :nominal)
+          |> VegaLite.encode(:y, "value", type: :quantitative)
+          |> VegaLite.encode(:color, "category", type: :nominal)
+          |> VegaLite.title(chart_spec["title"])
 
-        spec = Vl.to_spec(vl) |> Jason.encode!()
+        spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
         {:noreply, assign(socket, chart_spec: spec, loading: false)}
 
@@ -46,5 +46,4 @@ defmodule DashboardGenWeb.DashboardLive do
          |> assign(loading: false)}
     end
   end
-
 end
