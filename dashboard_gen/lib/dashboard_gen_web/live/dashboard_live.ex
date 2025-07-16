@@ -26,14 +26,18 @@ defmodule DashboardGenWeb.DashboardLive do
 
         data = CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"])
 
+        long_data =
+          Enum.map(data, fn %{x: x, value: value, category: category} ->
+            %{"x" => x, "value" => value, "category" => category}
+          end)
+
         vl =
-          VegaLite.new()
-          |> VegaLite.data_from_values(data)
+          VegaLite.new(%{"title" => chart_spec["title"]})
+          |> VegaLite.data_from_values(long_data)
           |> VegaLite.mark(String.to_atom(chart_spec["type"]))
           |> VegaLite.encode(:x, field: "x", type: :nominal)
           |> VegaLite.encode(:y, field: "value", type: :quantitative)
           |> VegaLite.encode(:color, field: "category", type: :nominal)
-          |> VegaLite.set_spec(["title"], chart_spec["title"])
 
         spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
@@ -69,12 +73,11 @@ defmodule DashboardGenWeb.DashboardLive do
         end)
       end)
 
-    VegaLite.new()
+    VegaLite.new(%{"title" => "Ad Spend and Conversions by Month"})
     |> VegaLite.data_from_values(long_data)
     |> VegaLite.mark(:bar)
     |> VegaLite.encode(:x, field: "x", type: :nominal)
     |> VegaLite.encode(:y, field: "value", type: :quantitative)
     |> VegaLite.encode(:color, field: "category", type: :nominal)
-    |> VegaLite.set_spec(["title"], "Ad Spend and Conversions by Month")
   end
 end
