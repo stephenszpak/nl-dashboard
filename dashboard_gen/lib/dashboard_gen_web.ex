@@ -13,7 +13,6 @@ defmodule DashboardGenWeb do
   defp html_helpers do
     quote do
       use Phoenix.Component
-      use PetalComponents
       use Phoenix.HTML
       use Gettext, backend: DashboardGenWeb.Gettext
       alias Phoenix.LiveView.JS
