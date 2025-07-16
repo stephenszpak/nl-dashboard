@@ -32,6 +32,7 @@ defmodule DashboardGen.GPTClient do
     with {:ok, %Req.Response{status: 200, body: %{"choices" => choices}}} <-
            Req.post(@openai_url, json: body, headers: headers),
          %{"message" => %{"content" => content}} <- List.first(choices),
+          IO.inspect(content, label: "GPT RAW RESPONSE"),
          {:ok, decoded} <- Jason.decode(content),
          true <- Map.has_key?(decoded, "charts") do
       {:ok, decoded}
