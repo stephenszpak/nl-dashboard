@@ -42,11 +42,10 @@ defmodule DashboardGen.MixProject do
       {:jason, "~> 1.4"},
       {:plug_cowboy, "~> 2.6"},
       {:nimble_csv, "~> 1.2"},
-      {:vega_lite, "~> 0.1"},
+      {:vega_lite, "~> 0.1.8"},
       {:openai, "~> 0.5"},
       {:dotenvy, "~> 0.8"},
-      {:req, "~> 0.4"},
-      {:contex, "~> 0.4.0"}
+      {:req, "~> 0.4"}
     ]
   end
 
