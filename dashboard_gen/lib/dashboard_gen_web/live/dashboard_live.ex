@@ -4,6 +4,7 @@ defmodule DashboardGenWeb.DashboardLive do
 
   alias DashboardGen.GPTClient
   alias DashboardGen.CSVUtils
+  alias DashboardGen.CSVHeaderMapper
   alias VegaLite
 
   @impl true
@@ -24,7 +25,10 @@ defmodule DashboardGenWeb.DashboardLive do
         csv_path =
           Path.join(:code.priv_dir(:dashboard_gen), "static/data/" <> chart_spec["data_source"])
 
-        data = CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"])
+        raw_data =
+          CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"])
+
+        data = CSVHeaderMapper.remap_headers(raw_data)
 
         long_data =
           Enum.map(data, fn %{x: x, value: value, category: category} ->
