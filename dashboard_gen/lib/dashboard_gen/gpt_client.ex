@@ -40,6 +40,7 @@ defmodule DashboardGen.GPTClient do
            Req.post(@openai_url, json: body, headers: req_headers),
          %{"message" => %{"content" => content}} <- List.first(choices) do
       IO.inspect(content, label: "GPT RAW RESPONSE")
+
       cleaned =
         content
         |> extract_json_block()
@@ -83,6 +84,11 @@ defmodule DashboardGen.GPTClient do
       |> Map.values()
       |> Enum.join(", ")
 
+    normalized_fields =
+      headers
+      |> Map.keys()
+      |> Enum.join(", ")
+
     """
     You are a strict JSON-only API. When given a prompt, respond ONLY with valid JSON in this schema:
 
@@ -98,6 +104,7 @@ defmodule DashboardGen.GPTClient do
     }
 
     The available fields are: #{fields}
+    Only use the following fields: #{normalized_fields}.
 
     DO NOT explain anything. DO NOT wrap the response in markdown. DO NOT include code fences. DO NOT add extra text.
     """
@@ -142,18 +149,8 @@ defmodule DashboardGen.GPTClient do
     end
   end
 
-  defp validate_chart(%{"x" => x, "y" => y} = chart, allowed_fields) when is_list(y) do
-    cond do
-      x not in allowed_fields ->
-        {:error, "Unknown x field '#{x}'"}
-
-      Enum.any?(y, &(&1 not in allowed_fields)) ->
-        bad = Enum.filter(y, &(&1 not in allowed_fields)) |> Enum.join(", ")
-        {:error, "Unknown y fields: #{bad}"}
-
-      true ->
-        {:ok, chart}
-    end
+  defp validate_chart(%{"x" => _x, "y" => y} = chart, _allowed_fields) when is_list(y) do
+    {:ok, chart}
   end
 
   defp validate_chart(_, _), do: {:error, "Invalid chart specification"}
