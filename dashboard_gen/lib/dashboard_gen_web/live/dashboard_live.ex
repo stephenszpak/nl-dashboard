@@ -8,13 +8,17 @@ defmodule DashboardGenWeb.DashboardLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, prompt: "", chart_spec: nil, loading: false)}
+    {:ok, assign(socket, prompt: "", chart_spec: nil, loading: false, collapsed: false)}
   end
 
   @impl true
   def handle_event("generate", %{"prompt" => prompt}, socket) do
     send(self(), {:generate_chart, prompt})
-    {:noreply, assign(socket, prompt: prompt, loading: true, chart_spec: nil)}
+    {:noreply, assign(socket, prompt: prompt, loading: true, chart_spec: nil, collapsed: true)}
+  end
+
+  def handle_event("expand_input", _params, socket) do
+    {:noreply, assign(socket, collapsed: false)}
   end
 
   @impl true

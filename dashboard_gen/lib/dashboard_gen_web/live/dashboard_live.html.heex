@@ -10,21 +10,27 @@
     </div>
   </div>
 
-  <form phx-submit="generate" class="border-t bg-white p-4 fixed bottom-0 inset-x-0">
-    <div class="flex items-end gap-3 max-w-3xl mx-auto">
-      <div class="flex items-center gap-2">
-        <button type="button" class="p-2 hover:bg-gray-100 rounded">
-          <.icon name="hero-plus" class="w-5 h-5" />
-        </button>
-        <button type="button" class="px-2 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200">Tools</button>
+  <%= if @collapsed do %>
+    <div class="border-t bg-white p-4 fixed bottom-0 inset-x-0">
+      <div class="max-w-4xl mx-auto flex items-center justify-between rounded-xl border border-gray-300 bg-white shadow-sm px-4 py-2">
+        <div class="flex-1 text-sm text-gray-700 truncate" aria-label="Collapsed prompt"><%= @prompt %></div>
+        <button type="button" phx-click="expand_input" aria-label="Expand input" class="ml-2 rounded-full bg-black text-white text-xs px-3 py-1">+</button>
       </div>
-      <textarea name="prompt" id="prompt" rows="1" phx-hook="AutoGrow"
-        placeholder="Type your request..."
-        class="flex-1 resize-none border rounded-lg p-2 min-h-[40px] max-h-40 overflow-y-auto"><%= @prompt %></textarea>
-      <button type="submit" class="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition">
-        <.icon name="hero-paper-airplane" class="w-4 h-4 rotate-90" />
-      </button>
     </div>
-  </form>
+  <% else %>
+    <form phx-submit="generate" class="border-t bg-white p-4 fixed bottom-0 inset-x-0">
+      <div class="max-w-4xl mx-auto rounded-xl border border-gray-300 shadow-sm bg-white px-4 py-2 transition-all">
+        <div class="flex items-center justify-between">
+          <textarea name="prompt" id="prompt" rows="1" phx-hook="AutoGrow" placeholder="Describe a task" aria-label="Task description" class="flex-1 resize-none bg-transparent focus:outline-none placeholder-gray-400 overflow-hidden"></textarea>
+          <button type="submit" aria-label="Submit task" class="ml-2 rounded-full bg-black text-white text-sm px-3 py-1">Go</button>
+        </div>
+        <div class="flex space-x-2 border-t border-gray-200 pt-1 mt-2 text-xs text-gray-500">
+          <button type="button" class="px-2 py-1 hover:text-black">[📁] stephenszpak/nl-dash...</button>
+          <button type="button" class="px-2 py-1 hover:text-black">[🔀] main</button>
+          <button type="button" class="px-2 py-1 hover:text-black">[📦] 1x</button>
+        </div>
+      </div>
+    </form>
+  <% end %>
 </div>
 
