@@ -9,6 +9,17 @@ defmodule DashboardGen.Uploads do
   alias DashboardGen.Uploads.Upload
   alias NimbleCSV.RFC4180, as: CSV
 
+  @canonical_headers [
+    "date",
+    "campaign_id",
+    "campaign_name",
+    "cost_per_click",
+    "impressions",
+    "clicks",
+    "conversions",
+    "source"
+  ]
+
   @doc "List all uploads ordered by inserted_at descending"
   def list_uploads do
     Repo.all(from(u in Upload, order_by: [desc: u.inserted_at]))
@@ -40,19 +51,40 @@ defmodule DashboardGen.Uploads do
           {:error, "CSV is empty"}
 
         [header_row | data_rows] ->
-          normalized = Enum.map(header_row, &normalize_header/1)
-          headers = Enum.zip(normalized, header_row) |> Map.new()
+          canonical = Enum.map(header_row, &canonical_header/1)
 
-          if Enum.all?(data_rows, &(length(&1) == length(header_row))) do
-            maps =
-              Enum.map(data_rows, fn row ->
-                Enum.zip(normalized, row)
-                |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, convert_value(v)) end)
-              end)
+          headers =
+            Enum.zip(canonical, header_row)
+            |> Enum.reduce(%{}, fn {canon, raw}, acc ->
+              if canon in @canonical_headers, do: Map.put_new(acc, canon, raw), else: acc
+            end)
 
-            {:ok, %{headers: headers, rows: maps}}
-          else
-            {:error, "CSV rows have inconsistent number of fields"}
+          missing =
+            Enum.filter(@canonical_headers, fn key ->
+              not Map.has_key?(headers, key)
+            end)
+
+          cond do
+            missing != [] ->
+              {:error, "Invalid CSV: missing required column '#{List.first(missing)}'"}
+
+            Enum.all?(data_rows, &(length(&1) == length(header_row))) ->
+              maps =
+                Enum.map(data_rows, fn row ->
+                  Enum.zip(canonical, row)
+                  |> Enum.reduce(%{}, fn {k, v}, acc ->
+                    if k in @canonical_headers do
+                      Map.put(acc, k, convert_value(v))
+                    else
+                      acc
+                    end
+                  end)
+                end)
+
+              {:ok, %{headers: headers, rows: maps}}
+
+            true ->
+              {:error, "CSV rows have inconsistent number of fields"}
           end
       end
     end
@@ -77,6 +109,27 @@ defmodule DashboardGen.Uploads do
   end
 
   defp convert_value(value), do: value
+
+  defp canonical_header(header) do
+    normalized = normalize_header(header)
+
+    cond do
+      normalized in @canonical_headers -> normalized
+      Regex.match?(~r/^cmp\d+$/, normalized) -> "campaign_id"
+      Regex.match?(~r/^campaign_\d+$/, normalized) -> "campaign_id"
+      String.contains?(normalized, "campaign") and String.contains?(normalized, "id") ->
+        "campaign_id"
+      String.contains?(normalized, "campaign") and String.contains?(normalized, "name") ->
+        "campaign_name"
+      normalized == "cpc" or (String.contains?(normalized, "cost") and String.contains?(normalized, "click")) ->
+        "cost_per_click"
+      String.contains?(normalized, "impression") -> "impressions"
+      String.contains?(normalized, "click") -> "clicks"
+      String.contains?(normalized, "conversion") -> "conversions"
+      normalized == "google_ads" or String.contains?(normalized, "source") -> "source"
+      true -> normalized
+    end
+  end
 
   def normalize_header(header) do
     header
