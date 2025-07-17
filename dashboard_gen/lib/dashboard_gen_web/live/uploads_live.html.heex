@@ -1,19 +1,23 @@
 <h2 class="text-lg font-semibold mb-4">Upload CSV Dataset</h2>
 
-<form phx-submit="upload" class="space-y-2" id="upload-form">
+<.form id="upload-form" phx-submit="upload" class="space-y-2">
   <input type="text" name="label" placeholder="Optional label" class="border rounded px-2 py-1" />
+
   <div phx-drop-target={@uploads.csv.ref}>
-    <%= live_file_input @uploads.csv, class: "mt-2" %>
+    <.live_file_input upload={@uploads.csv} class="mt-2" />
   </div>
+
   <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded">Upload</button>
-</form>
+</.form>
 
 <div class="mt-6">
   <h3 class="font-medium mb-2">Uploaded Datasets</h3>
   <%= for upload <- @uploads_list do %>
     <div class="mb-4 border p-2 rounded">
       <div class="font-semibold"><%= upload.name %></div>
-      <div class="text-sm text-gray-500">Headers: <%= Enum.join(Map.keys(upload.headers), ", ") %></div>
+      <div class="text-sm text-gray-500">
+        Headers: <%= Enum.join(Map.keys(upload.headers), ", ") %>
+      </div>
       <table class="mt-2 text-sm min-w-full">
         <thead>
           <tr>
