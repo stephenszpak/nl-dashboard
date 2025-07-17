@@ -3,8 +3,7 @@ defmodule DashboardGenWeb.DashboardLive do
   use DashboardGenWeb, :html
 
   alias DashboardGen.GPTClient
-  alias DashboardGen.CSVUtils
-  alias DashboardGen.CSVHeaderMapper
+  alias DashboardGen.Uploads
   alias VegaLite
 
   @impl true
@@ -22,18 +21,8 @@ defmodule DashboardGenWeb.DashboardLive do
   def handle_info({:generate_chart, prompt}, socket) do
     case GPTClient.get_chart_spec(prompt) do
       {:ok, %{"charts" => [chart_spec | _]}} ->
-        csv_path =
-          Path.join(:code.priv_dir(:dashboard_gen), "static/data/mock_marketing_data.csv")
-
-        x_field = CSVHeaderMapper.normalize_field(chart_spec["x"])
-        y_fields = Enum.map(chart_spec["y"], &CSVHeaderMapper.normalize_field/1)
-
-        with {:ok, raw_data} <- CSVUtils.melt_wide_to_long(csv_path, x_field, y_fields) do
-          IO.inspect(raw_data, label: "Raw Data from CSV")
-          long_data =
-            Enum.map(raw_data, fn %{x: x, value: value, category: category} ->
-              %{"x" => x, "value" => value, "category" => category}
-            end)
+        with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
+             {:ok, long_data} <- prepare_long_data(upload, chart_spec) do
 
           vl =
             VegaLite.new(%{"title" => chart_spec["title"]})
@@ -58,7 +47,29 @@ defmodule DashboardGenWeb.DashboardLive do
         {:noreply,
          socket
          |> put_flash(:error, reason)
-         |> assign(loading: false)}
+        |> assign(loading: false)}
+    end
+  end
+
+  defp prepare_long_data(upload, %{"x" => x, "y" => y_fields}) do
+    x_field = Uploads.normalize_header(x)
+    y_fields = Enum.map(y_fields, &Uploads.normalize_header/1)
+
+    if Enum.empty?(upload.data) do
+      {:error, "No data available"}
+    else
+      long_data =
+        Enum.flat_map(upload.data, fn row ->
+          Enum.map(y_fields, fn y_field ->
+            %{
+              "x" => Map.get(row, x_field),
+              "value" => Map.get(row, y_field),
+              "category" => upload.headers[y_field] || y_field
+            }
+          end)
+        end)
+
+      {:ok, long_data}
     end
   end
 
