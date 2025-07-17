@@ -4,7 +4,6 @@ defmodule DashboardGenWeb.DashboardLive do
 
   alias DashboardGen.GPTClient
   alias DashboardGen.CSVUtils
-  alias DashboardGen.CSVHeaderMapper
   alias VegaLite
 
   @impl true
@@ -23,29 +22,33 @@ defmodule DashboardGenWeb.DashboardLive do
     case GPTClient.get_chart_spec(prompt) do
       {:ok, %{"charts" => [chart_spec | _]}} ->
         csv_path =
-          Path.join(:code.priv_dir(:dashboard_gen), "static/data/" <> chart_spec["data_source"])
+          Path.join(:code.priv_dir(:dashboard_gen), "static/data/mock_marketing_data.csv")
 
-        raw_data =
-          CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"])
+        with {:ok, raw_data} <-
+               CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"]) do
+          long_data =
+            Enum.map(raw_data, fn %{x: x, value: value, category: category} ->
+              %{"x" => x, "value" => value, "category" => category}
+            end)
 
-        data = CSVHeaderMapper.remap_headers(raw_data)
+          vl =
+            VegaLite.new(%{"title" => chart_spec["title"]})
+            |> VegaLite.data_from_values(long_data)
+            |> VegaLite.mark(String.to_atom(chart_spec["type"]))
+            |> VegaLite.encode(:x, field: "x", type: :nominal)
+            |> VegaLite.encode(:y, field: "value", type: :quantitative)
+            |> VegaLite.encode(:color, field: "category", type: :nominal)
 
-        long_data =
-          Enum.map(data, fn %{x: x, value: value, category: category} ->
-            %{"x" => x, "value" => value, "category" => category}
-          end)
+          spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
-        vl =
-          VegaLite.new(%{"title" => chart_spec["title"]})
-          |> VegaLite.data_from_values(long_data)
-          |> VegaLite.mark(String.to_atom(chart_spec["type"]))
-          |> VegaLite.encode(:x, field: "x", type: :nominal)
-          |> VegaLite.encode(:y, field: "value", type: :quantitative)
-          |> VegaLite.encode(:color, field: "category", type: :nominal)
-
-        spec = VegaLite.to_spec(vl) |> Jason.encode!()
-
-        {:noreply, assign(socket, chart_spec: spec, loading: false)}
+          {:noreply, assign(socket, chart_spec: spec, loading: false)}
+        else
+          {:error, reason} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, reason)
+             |> assign(loading: false)}
+        end
 
       {:error, reason} ->
         {:noreply,
