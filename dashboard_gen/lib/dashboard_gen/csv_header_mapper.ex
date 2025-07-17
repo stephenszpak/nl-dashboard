@@ -5,9 +5,13 @@ defmodule DashboardGen.CSVHeaderMapper do
   """
 
   @mapping %{
-    "Month" => "campaign_name",
-    "Ad Spend" => "spend",
-    "Conversions" => "conversions"
+    "Month" => "Month",
+    "Ad Spend" => "Ad Spend",
+    "Conversions" => "Conversions",
+    "CTR" => "CTR",
+    "Impressions" => "Impressions",
+    "Cost Per Click" => "Cost Per Click",
+    "Campaign" => "Campaign"
   }
 
   @doc """
@@ -29,4 +33,3 @@ defmodule DashboardGen.CSVHeaderMapper do
     end)
   end
 end
-
