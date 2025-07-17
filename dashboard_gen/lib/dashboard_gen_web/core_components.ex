@@ -6,7 +6,9 @@ defmodule DashboardGenWeb.CoreComponents do
   """
   use Phoenix.Component
 
-  @doc """Render an SVG icon from the assets/icons directory."""
+  @doc """
+  Render an SVG icon from the assets/icons directory.
+  """
   attr :name, :string, required: true
   attr :class, :string, default: nil
   attr :rest, :global, default: %{}
