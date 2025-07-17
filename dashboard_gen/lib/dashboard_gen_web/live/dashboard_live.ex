@@ -1,7 +1,6 @@
 defmodule DashboardGenWeb.DashboardLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
-
   alias DashboardGen.GPTClient
   alias DashboardGen.Uploads
   alias VegaLite
