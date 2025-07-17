@@ -19,5 +19,6 @@ defmodule DashboardGenWeb.Router do
     live("/dashboard", DashboardLive)
     live("/saved", SavedLive)
     live("/settings", SettingsLive)
+    live("/uploads", UploadsLive)
   end
 end
