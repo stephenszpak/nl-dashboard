@@ -35,6 +35,19 @@ defmodule DashboardGen.UploadsTest do
            }
   end
 
+  test "parse_csv handles BOM in headers" do
+    bom = <<239, 187, 191>>
+    csv = [
+      bom <> "date,campaign_id,campaign_name,cost_per_click,impressions,clicks,conversions,source",
+      "2023-01-01,1,Campaign,0.5,100,10,1,google"
+    ] |> Enum.join("\n")
+    path = Path.join(System.tmp_dir!(), "upload_bom.csv")
+    File.write!(path, csv)
+
+    assert {:ok, %{headers: headers, rows: [_]}} = Uploads.parse_csv(path)
+    assert Map.has_key?(headers, "date")
+  end
+
   test "parse_csv errors when required header missing" do
     csv = [
       "date,campaign name,cpc,impressions,conversions,google_ads",
