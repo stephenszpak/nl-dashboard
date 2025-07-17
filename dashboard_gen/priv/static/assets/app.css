@@ -552,6 +552,10 @@ video {
   width: 15rem;
 }
 
+.w-full {
+  width: 100%;
+}
+
 .min-w-full {
   min-width: 100%;
 }
@@ -679,9 +683,5 @@ video {
 
 .hover\:underline:hover {
   text-decoration-line: underline;
-}
-
-.disabled\:opacity-50:disabled {
-  opacity: 0.5;
 }
 

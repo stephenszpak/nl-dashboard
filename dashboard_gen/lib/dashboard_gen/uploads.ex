@@ -22,8 +22,10 @@ defmodule DashboardGen.Uploads do
   @doc "Create an upload record from a CSV file path"
   def create_upload(path, name \\ nil) do
     with {:ok, %{headers: headers, rows: rows}} <- parse_csv(path) do
+      name = if is_nil(name) or name == "", do: "Untitled Upload", else: name
+
       %Upload{}
-      |> Upload.changeset(%{name: name || Path.basename(path), headers: headers, data: rows})
+      |> Upload.changeset(%{name: name, headers: headers, data: rows})
       |> Repo.insert()
     end
   end
