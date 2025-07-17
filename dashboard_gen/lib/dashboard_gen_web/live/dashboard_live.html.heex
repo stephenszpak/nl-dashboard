@@ -1,13 +1,30 @@
-<form phx-submit="generate" class="flex items-center space-x-2 mb-4">
-  <input type="text" name="prompt" value={@prompt} placeholder="Describe a chart" class="flex-1 border rounded px-2 py-1" />
-  <button type="submit" phx-disable-with="Generating..." class="px-4 py-1 bg-blue-600 text-white rounded">Generate</button>
-</form>
+<div class="flex flex-col h-full">
+  <div class="flex-1 overflow-y-auto">
+    <%= if live_flash(@flash, :error) do %>
+      <div class="text-red-600 mb-2"><%= live_flash(@flash, :error) %></div>
+    <% end %>
 
-<%= if live_flash(@flash, :error) do %>
-  <div class="text-red-600 mb-2"><%= live_flash(@flash, :error) %></div>
-<% end %>
+    <div :if={@loading} class="mt-2 text-gray-500">Generating...</div>
 
-<div :if={@loading} class="mt-2 text-gray-500">Generating...</div>
+    <div :if={@chart_spec} id="chart-container" class="mt-6" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec}>
+    </div>
+  </div>
 
-<div :if={@chart_spec} id="chart-container" class="mt-6" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec}>
+  <form phx-submit="generate" class="border-t bg-white p-4 fixed bottom-0 inset-x-0">
+    <div class="flex items-end gap-3 max-w-3xl mx-auto">
+      <div class="flex items-center gap-2">
+        <button type="button" class="p-2 hover:bg-gray-100 rounded">
+          <.icon name="hero-plus" class="w-5 h-5" />
+        </button>
+        <button type="button" class="px-2 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200">Tools</button>
+      </div>
+      <textarea name="prompt" rows="1" phx-hook="AutoGrow"
+        placeholder="Type your request..."
+        class="flex-1 resize-none border rounded-lg p-2 min-h-[40px] max-h-40 overflow-y-auto"><%= @prompt %></textarea>
+      <button type="submit" class="p-2 rounded-full bg-black text-white hover:bg-gray-800 transition">
+        <.icon name="hero-paper-airplane" class="w-4 h-4 rotate-90" />
+      </button>
+    </div>
+  </form>
 </div>
+
