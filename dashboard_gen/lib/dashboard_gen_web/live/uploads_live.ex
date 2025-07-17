@@ -2,6 +2,7 @@ defmodule DashboardGenWeb.UploadsLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
 
+  require Logger
   alias DashboardGen.Uploads
 
   @impl true
@@ -16,35 +17,37 @@ defmodule DashboardGenWeb.UploadsLive do
 
   @impl true
   def handle_event("upload", params, socket) do
-    label = Map.get(params, "label", nil)
+    label = Map.get(params, "label")
 
-    case uploaded_entries(socket, :csv) do
-      [] ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "No file selected")
-         |> assign(:uploads_list, Uploads.list_uploads())}
+    Logger.debug("upload params: #{inspect(params)}")
+    entries = uploaded_entries(socket, :csv)
+    Logger.debug("upload entries: #{inspect(entries)}")
 
-      _entries ->
-        {results, socket} =
-          consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
-            Uploads.create_upload(path, label)
-          end)
+    if entries == [] do
+      {:noreply,
+       socket
+       |> put_flash(:error, "No file selected")
+       |> assign(:uploads_list, Uploads.list_uploads())}
+    else
+      {results, socket} =
+        consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
+          Uploads.create_upload(path, label)
+        end)
 
-        socket =
-          case results do
-            [{:ok, _}] ->
-              put_flash(socket, :info, "Upload saved")
+      socket =
+        case results do
+          [{:ok, _}] ->
+            put_flash(socket, :info, "Upload saved")
 
-            [{:error, reason}] ->
-              put_flash(socket, :error, "Failed: #{inspect(reason)}")
+          [{:error, reason}] ->
+            put_flash(socket, :error, "Failed: #{inspect(reason)}")
 
-            _ ->
-              put_flash(socket, :error, "Upload failed")
-          end
-          |> assign(:uploads_list, Uploads.list_uploads())
+          _ ->
+            put_flash(socket, :error, "Upload failed")
+        end
+        |> assign(:uploads_list, Uploads.list_uploads())
 
-        {:noreply, socket}
+      {:noreply, socket}
     end
   end
 end
