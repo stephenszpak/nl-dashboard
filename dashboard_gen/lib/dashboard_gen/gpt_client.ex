@@ -14,6 +14,12 @@ defmodule DashboardGen.GPTClient do
   Sends the given prompt to the OpenAI API and returns the decoded chart
   specification on success.
   """
+  defp clean_gpt_json(json) do
+    json
+    |> String.replace(~r/,\s*\n\s*}/, "\n}")
+    |> String.replace(~r/,\s*\n\s*]/, "\n]")
+  end
+
   @spec get_chart_spec(String.t(), map()) :: {:ok, map()} | {:error, String.t()}
   def get_chart_spec(prompt, headers) when is_binary(prompt) and is_map(headers) do
     with api_key when is_binary(api_key) <-
@@ -34,7 +40,11 @@ defmodule DashboardGen.GPTClient do
            Req.post(@openai_url, json: body, headers: req_headers),
          %{"message" => %{"content" => content}} <- List.first(choices) do
       IO.inspect(content, label: "GPT RAW RESPONSE")
-      cleaned = content |> extract_json_block() |> String.trim()
+      cleaned =
+        content
+        |> extract_json_block()
+        |> String.trim()
+        |> clean_gpt_json()
 
       case Jason.decode(cleaned) do
         {:ok, decoded} ->
