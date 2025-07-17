@@ -133,6 +133,7 @@ defmodule DashboardGen.Uploads do
 
   def normalize_header(header) do
     header
+    |> String.trim_leading("\uFEFF")
     |> String.trim()
     |> String.downcase()
     |> String.replace(~r/[\s-]+/, "_")
