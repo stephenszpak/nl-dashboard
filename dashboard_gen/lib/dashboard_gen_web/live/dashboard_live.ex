@@ -4,6 +4,7 @@ defmodule DashboardGenWeb.DashboardLive do
 
   alias DashboardGen.GPTClient
   alias DashboardGen.CSVUtils
+  alias DashboardGen.CSVHeaderMapper
   alias VegaLite
 
   @impl true
@@ -24,9 +25,6 @@ defmodule DashboardGenWeb.DashboardLive do
         csv_path =
           Path.join(:code.priv_dir(:dashboard_gen), "static/data/mock_marketing_data.csv")
 
-        # 🔧 Normalize field names before reading CSV
-        # x_field = DashboardGen.CSVHeaderMapper.normalize_field(chart_spec["x"])
-        # y_fields = Enum.map(chart_spec["y"], &DashboardGen.CSVHeaderMapper.normalize_field/1)
         x_field = CSVHeaderMapper.normalize_field(chart_spec["x"])
         y_fields = Enum.map(chart_spec["y"], &CSVHeaderMapper.normalize_field/1)
 
