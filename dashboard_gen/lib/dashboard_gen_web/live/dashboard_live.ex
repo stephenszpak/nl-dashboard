@@ -24,8 +24,14 @@ defmodule DashboardGenWeb.DashboardLive do
         csv_path =
           Path.join(:code.priv_dir(:dashboard_gen), "static/data/mock_marketing_data.csv")
 
-        with {:ok, raw_data} <-
-               CSVUtils.melt_wide_to_long(csv_path, chart_spec["x"], chart_spec["y"]) do
+        # 🔧 Normalize field names before reading CSV
+        # x_field = DashboardGen.CSVHeaderMapper.normalize_field(chart_spec["x"])
+        # y_fields = Enum.map(chart_spec["y"], &DashboardGen.CSVHeaderMapper.normalize_field/1)
+        x_field = CSVHeaderMapper.normalize_field(chart_spec["x"])
+        y_fields = Enum.map(chart_spec["y"], &CSVHeaderMapper.normalize_field/1)
+
+        with {:ok, raw_data} <- CSVUtils.melt_wide_to_long(csv_path, x_field, y_fields) do
+          IO.inspect(raw_data, label: "Raw Data from CSV")
           long_data =
             Enum.map(raw_data, fn %{x: x, value: value, category: category} ->
               %{"x" => x, "value" => value, "category" => category}
