@@ -4,6 +4,17 @@ import {LiveSocket} from "phoenix_live_view";
 
 let Hooks = {};
 
+Hooks.AutoGrow = {
+  mounted() {
+    this.resize();
+    this.el.addEventListener("input", () => this.resize());
+  },
+  resize() {
+    this.el.style.height = "auto";
+    this.el.style.height = this.el.scrollHeight + "px";
+  }
+};
+
 Hooks.VegaLiteChart = {
   mounted() { this.renderChart(); },
   updated() { this.renderChart(); },
