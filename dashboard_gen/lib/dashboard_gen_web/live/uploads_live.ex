@@ -2,7 +2,6 @@ defmodule DashboardGenWeb.UploadsLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
 
-  require Logger
   alias DashboardGen.Uploads
 
   @impl true
@@ -10,44 +9,46 @@ defmodule DashboardGenWeb.UploadsLive do
     socket =
       socket
       |> assign(:uploads_list, Uploads.list_uploads())
-      |> allow_upload(:csv, accept: ~w(.csv), max_entries: 1, auto_upload: false)
+      |> allow_upload(:csv,
+        accept: ~w(.csv),
+        max_entries: 1,
+        auto_upload: true,
+        progress: &handle_progress/3
+      )
 
     {:ok, socket}
   end
 
+  # Optional: If you're still keeping a manual "Upload" button
   @impl true
-  def handle_event("upload", params, socket) do
-    label = Map.get(params, "label")
-
-    Logger.debug("upload params: #{inspect(params)}")
-    entries = uploaded_entries(socket, :csv)
-    Logger.debug("upload entries: #{inspect(entries)}")
-
-    if entries == [] do
-      {:noreply,
-       socket
-       |> put_flash(:error, "No file selected")
-       |> assign(:uploads_list, Uploads.list_uploads())}
-    else
-      {results, socket} =
-        consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
-          Uploads.create_upload(path, label)
-        end)
-
-      socket =
-        case results do
-          [{:ok, _}] ->
-            put_flash(socket, :info, "Upload saved")
-
-          [{:error, reason}] ->
-            put_flash(socket, :error, "Failed: #{inspect(reason)}")
-
-          _ ->
-            put_flash(socket, :error, "Upload failed")
-        end
-        |> assign(:uploads_list, Uploads.list_uploads())
-
-      {:noreply, socket}
-    end
+  def handle_event("upload", _params, socket) do
+    {:noreply, assign(socket, :uploads_list, Uploads.list_uploads())}
   end
+
+  @impl true
+  def handle_progress(:csv, entry, socket) when entry.done? do
+    label = socket.assigns[:label] || "Untitled Upload"
+
+    {results, socket} =
+      consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
+        Uploads.create_upload(path, label)
+      end)
+
+    socket =
+      case results do
+        [{:ok, _upload}] ->
+          put_flash(socket, :info, "Upload successful!")
+
+        [{:error, reason}] ->
+          put_flash(socket, :error, "Upload failed: #{inspect(reason)}")
+
+        _ ->
+          put_flash(socket, :error, "Unknown upload failure.")
+      end
+      |> assign(:uploads_list, Uploads.list_uploads())
+
+    {:noreply, socket}
+  end
+
+  def handle_progress(:csv, _entry, socket), do: {:noreply, socket}
 end
