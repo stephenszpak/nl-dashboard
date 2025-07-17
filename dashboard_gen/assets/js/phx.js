@@ -15,6 +15,18 @@ Hooks.VegaLiteChart = {
   }
 };
 
+Hooks.EnableSubmitOnFileSelect = {
+  mounted() {
+    this.el.addEventListener("change", () => {
+      const buttonId = this.el.dataset.submitButton;
+      if (buttonId) {
+        const btn = document.getElementById(buttonId);
+        if (btn) btn.disabled = this.el.files.length === 0;
+      }
+    });
+  }
+};
+
 // Initialize LiveView socket with CSRF token from meta tag
 const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {

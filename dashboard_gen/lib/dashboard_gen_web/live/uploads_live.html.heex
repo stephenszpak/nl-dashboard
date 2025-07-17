@@ -1,14 +1,21 @@
 <h2 class="text-lg font-semibold mb-4">Upload CSV Dataset</h2>
 
-<.form id="upload-form" phx-submit="upload" class="space-y-2">
+<.form id="upload-form" phx-submit="upload" multipart={true} class="space-y-2">
   <input type="text" name="label" placeholder="Optional label" class="border rounded px-2 py-1" />
 
   <div phx-drop-target={@uploads.csv.ref}>
-    <.live_file_input upload={@uploads.csv} class="mt-2" />
+    <.live_file_input
+      upload={@uploads.csv}
+      class="mt-2"
+      phx-hook="EnableSubmitOnFileSelect"
+      data-submit-button="upload-submit"
+    />
   </div>
 
   <button
     type="submit"
+    id="upload-submit"
+    disabled={@uploads.csv.entries == []}
     class="px-4 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
   >
     Upload
