@@ -17,30 +17,34 @@ defmodule DashboardGenWeb.UploadsLive do
   @impl true
   def handle_event("upload", params, socket) do
     label = Map.get(params, "label", nil)
-    entries = uploaded_entries(socket, :csv)
 
-    socket =
-      if entries == [] do
-        put_flash(socket, :error, "No file selected")
-      else
+    case uploaded_entries(socket, :csv) do
+      [] ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "No file selected")
+         |> assign(:uploads_list, Uploads.list_uploads())}
+
+      _entries ->
         {results, socket} =
           consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
             Uploads.create_upload(path, label)
           end)
 
-        case results do
-          [{:ok, _}] ->
-            put_flash(socket, :info, "Upload saved")
+        socket =
+          case results do
+            [{:ok, _}] ->
+              put_flash(socket, :info, "Upload saved")
 
-          [{:error, reason}] ->
-            put_flash(socket, :error, "Failed: #{inspect(reason)}")
+            [{:error, reason}] ->
+              put_flash(socket, :error, "Failed: #{inspect(reason)}")
 
-          _ ->
-            put_flash(socket, :error, "Upload failed")
-        end
-      end
-      |> assign(:uploads_list, Uploads.list_uploads())
+            _ ->
+              put_flash(socket, :error, "Upload failed")
+          end
+          |> assign(:uploads_list, Uploads.list_uploads())
 
-    {:noreply, socket}
+        {:noreply, socket}
+    end
   end
 end
