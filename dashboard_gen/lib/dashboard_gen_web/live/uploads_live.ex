@@ -9,13 +9,14 @@ defmodule DashboardGenWeb.UploadsLive do
     socket =
       socket
       |> assign(:uploads_list, Uploads.list_uploads())
-      |> allow_upload(:csv, accept: ~w(.csv), max_entries: 1, auto_upload: true)
+      |> allow_upload(:csv, accept: ~w(.csv), max_entries: 1, auto_upload: false)
 
     {:ok, socket}
   end
 
   @impl true
-  def handle_event("upload", %{"label" => label}, socket) do
+  def handle_event("upload", params, socket) do
+    label = Map.get(params, "label", nil)
     entries = uploaded_entries(socket, :csv)
 
     socket =
