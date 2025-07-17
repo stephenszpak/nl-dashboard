@@ -43,26 +43,60 @@ defmodule DashboardGenWeb.DashboardLive do
     end
   end
 
-  defp prepare_long_data(upload, %{"x" => x, "y" => y_fields}) do
-    x_field = Uploads.normalize_header(x)
-    y_fields = Enum.map(y_fields, &Uploads.normalize_header/1)
+  defp prepare_long_data(upload, chart_spec) do
+    x_field = Uploads.resolve_field(chart_spec["x"], upload.headers)
+    y_fields = Enum.map(chart_spec["y"] || [], &Uploads.resolve_field(&1, upload.headers))
 
-    if Enum.empty?(upload.data) do
-      {:error, "No data available"}
-    else
-      long_data =
-        Enum.flat_map(upload.data, fn row ->
-          Enum.map(y_fields, fn y_field ->
-            %{
-              "x" => Map.get(row, x_field),
-              "value" => Map.get(row, y_field),
-              "category" => upload.headers[y_field] || y_field
-            }
+    color_field =
+      chart_spec["color"] ||
+        chart_spec["group_by"]
+        |> Uploads.resolve_field(upload.headers)
+
+    unresolved =
+      []
+      |> maybe_add_unresolved(x_field, chart_spec["x"])
+      |> maybe_add_unresolved_list(y_fields, chart_spec["y"] || [])
+      |> maybe_add_unresolved(color_field, chart_spec["color"] || chart_spec["group_by"])
+
+    cond do
+      unresolved != [] ->
+        {:error, "Could not resolve fields: #{Enum.join(unresolved, ", ")}"}
+
+      Enum.empty?(upload.data) ->
+        {:error, "No data available"}
+
+      true ->
+        long_data =
+          Enum.flat_map(upload.data, fn row ->
+            Enum.map(y_fields, fn y_field ->
+              category =
+                cond do
+                  color_field -> Map.get(row, color_field)
+                  true -> upload.headers[y_field] || y_field
+                end
+
+              %{
+                "x" => Map.get(row, x_field),
+                "value" => Map.get(row, y_field),
+                "category" => category
+              }
+            end)
           end)
-        end)
 
-      {:ok, long_data}
+        {:ok, long_data}
     end
+  end
+
+  defp maybe_add_unresolved(list, nil, original) when is_binary(original), do: [original | list]
+  defp maybe_add_unresolved(list, _resolved, _original), do: list
+
+  defp maybe_add_unresolved_list(list, resolved_list, originals) do
+    originals
+    |> Enum.zip(resolved_list)
+    |> Enum.reduce(list, fn
+      {orig, nil}, acc -> [orig | acc]
+      {_, _}, acc -> acc
+    end)
   end
 
   @doc """
