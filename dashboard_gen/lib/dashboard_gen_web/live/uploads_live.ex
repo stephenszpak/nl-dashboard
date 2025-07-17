@@ -3,12 +3,15 @@ defmodule DashboardGenWeb.UploadsLive do
   use DashboardGenWeb, :html
 
   alias DashboardGen.Uploads
+  require Logger
 
   @impl true
   def mount(_params, _session, socket) do
     socket =
       socket
       |> assign(:uploads_list, Uploads.list_uploads())
+      |> assign(:label, "")
+      |> assign(:uploading?, false)
       |> allow_upload(:csv,
         accept: ~w(.csv),
         max_entries: 1,
@@ -19,14 +22,17 @@ defmodule DashboardGenWeb.UploadsLive do
     {:ok, socket}
   end
 
-  # Optional: If you're still keeping a manual "Upload" button
   @impl true
-  def handle_event("upload", _params, socket) do
-    {:noreply, assign(socket, :uploads_list, Uploads.list_uploads())}
+  def handle_event("validate", %{"label" => label}, socket) do
+    {:noreply, assign(socket, :label, label)}
   end
 
   @impl true
+  def handle_event("noop", _params, socket), do: {:noreply, socket}
+
+  @impl true
   def handle_progress(:csv, entry, socket) when entry.done? do
+    Logger.info("Finished uploading #{entry.client_name}")
     label = socket.assigns[:label] || "Untitled Upload"
 
     {results, socket} =
@@ -46,9 +52,13 @@ defmodule DashboardGenWeb.UploadsLive do
           put_flash(socket, :error, "Unknown upload failure.")
       end
       |> assign(:uploads_list, Uploads.list_uploads())
+      |> assign(:uploading?, false)
 
     {:noreply, socket}
   end
 
-  def handle_progress(:csv, _entry, socket), do: {:noreply, socket}
+  def handle_progress(:csv, entry, socket) do
+    Logger.debug("Upload progress #{entry.progress}% for #{entry.client_name}")
+    {:noreply, assign(socket, :uploading?, true)}
+  end
 end
