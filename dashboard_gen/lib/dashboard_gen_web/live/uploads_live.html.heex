@@ -7,9 +7,12 @@
     <.live_file_input upload={@uploads.csv} class="mt-2" />
   </div>
 
-  <button type="submit" class="px-4 py-1 bg-blue-600 text-white rounded"
-          disabled={@uploads.csv.entries == []}
-          phx-disable-with="Uploading...">Upload</button>
+  <button
+    type="submit"
+    class="px-4 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
+  >
+    Upload
+  </button>
 </.form>
 
 <div class="mt-6">

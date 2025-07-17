@@ -681,3 +681,7 @@ video {
   text-decoration-line: underline;
 }
 
+.disabled\:opacity-50:disabled {
+  opacity: 0.5;
+}
+
