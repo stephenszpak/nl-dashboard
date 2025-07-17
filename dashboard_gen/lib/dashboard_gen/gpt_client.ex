@@ -2,44 +2,36 @@ defmodule DashboardGen.GPTClient do
   @moduledoc """
   Client for communicating with the OpenAI chat completions API.
 
-  Provides a single `get_chart_spec/1` function which sends a prompt to
-  OpenAI and expects a JSON response describing charts.
+  Provides a `get_chart_spec/2` function which sends a prompt to
+  OpenAI and expects a JSON response describing charts. The function
+  requires the list of available headers so the returned chart
+  specification can be validated against the uploaded dataset.
   """
 
   @openai_url "https://api.openai.com/v1/chat/completions"
-
-  @csv_headers [
-    "Month",
-    "Ad Spend",
-    "Conversions",
-    "CTR",
-    "Impressions",
-    "Cost Per Click",
-    "Campaign"
-  ]
 
   @doc """
   Sends the given prompt to the OpenAI API and returns the decoded chart
   specification on success.
   """
-  @spec get_chart_spec(String.t()) :: {:ok, map()} | {:error, String.t()}
-  def get_chart_spec(prompt) when is_binary(prompt) do
+  @spec get_chart_spec(String.t(), map()) :: {:ok, map()} | {:error, String.t()}
+  def get_chart_spec(prompt, headers) when is_binary(prompt) and is_map(headers) do
     with api_key when is_binary(api_key) <-
            System.get_env("OPENAI_API_KEY") ||
              {:error, "OPENAI_API_KEY environment variable is missing"},
          body <- %{
            model: "gpt-3.5-turbo",
            messages: [
-             %{role: "system", content: default_system_prompt()},
+             %{role: "system", content: default_system_prompt(headers)},
              %{role: "user", content: prompt}
            ]
          },
-         headers <- [
+         req_headers <- [
            {"authorization", "Bearer #{api_key}"},
            {"content-type", "application/json"}
          ],
          {:ok, %Req.Response{status: 200, body: %{"choices" => choices}}} <-
-           Req.post(@openai_url, json: body, headers: headers),
+           Req.post(@openai_url, json: body, headers: req_headers),
          %{"message" => %{"content" => content}} <- List.first(choices) do
       IO.inspect(content, label: "GPT RAW RESPONSE")
       cleaned = content |> extract_json_block() |> String.trim()
@@ -47,7 +39,7 @@ defmodule DashboardGen.GPTClient do
       case Jason.decode(cleaned) do
         {:ok, decoded} ->
           if is_map(decoded) and Map.has_key?(decoded, "charts") do
-            validate_and_normalize(decoded)
+            validate_and_normalize(decoded, Map.keys(headers))
           else
             {:error, "Missing 'charts' key in response: #{inspect(decoded)}"}
           end
@@ -74,8 +66,13 @@ defmodule DashboardGen.GPTClient do
   Returns the default system prompt instructing the model to reply with a
   strict JSON schema.
   """
-  @spec default_system_prompt() :: String.t()
-  def default_system_prompt do
+  @spec default_system_prompt(map()) :: String.t()
+  def default_system_prompt(headers) when is_map(headers) do
+    fields =
+      headers
+      |> Map.values()
+      |> Enum.join(", ")
+
     """
     You are a strict JSON-only API. When given a prompt, respond ONLY with valid JSON in this schema:
 
@@ -85,11 +82,12 @@ defmodule DashboardGen.GPTClient do
           "type": "bar",
           "title": "title string",
           "x": "x axis field name",
-          "y": ["list", "of", "y", "fields"],
-          "data_source": "mock_marketing_data.csv"
+          "y": ["list", "of", "y", "fields"]
         }
       ]
     }
+
+    The available fields are: #{fields}
 
     DO NOT explain anything. DO NOT wrap the response in markdown. DO NOT include code fences. DO NOT add extra text.
     """
@@ -114,16 +112,16 @@ defmodule DashboardGen.GPTClient do
     end
   end
 
-  defp validate_and_normalize(%{"charts" => charts}) do
-    with {:ok, valid_charts} <- validate_charts(charts) do
+  defp validate_and_normalize(%{"charts" => charts}, allowed_fields) do
+    with {:ok, valid_charts} <- validate_charts(charts, allowed_fields) do
       {:ok, %{"charts" => valid_charts}}
     end
   end
 
-  defp validate_charts(charts) when is_list(charts) do
+  defp validate_charts(charts, allowed_fields) when is_list(charts) do
     charts
     |> Enum.reduce_while({:ok, []}, fn chart, {:ok, acc} ->
-      case validate_chart(chart) do
+      case validate_chart(chart, allowed_fields) do
         {:ok, cleaned} -> {:cont, {:ok, [cleaned | acc]}}
         {:error, reason} -> {:halt, {:error, reason}}
       end
@@ -134,23 +132,19 @@ defmodule DashboardGen.GPTClient do
     end
   end
 
-  defp validate_chart(%{"x" => x, "y" => y} = chart) when is_list(y) do
+  defp validate_chart(%{"x" => x, "y" => y} = chart, allowed_fields) when is_list(y) do
     cond do
-      x not in @csv_headers ->
+      x not in allowed_fields ->
         {:error, "Unknown x field '#{x}'"}
 
-      Enum.any?(y, &(&1 not in @csv_headers)) ->
-        bad = Enum.filter(y, &(&1 not in @csv_headers)) |> Enum.join(", ")
+      Enum.any?(y, &(&1 not in allowed_fields)) ->
+        bad = Enum.filter(y, &(&1 not in allowed_fields)) |> Enum.join(", ")
         {:error, "Unknown y fields: #{bad}"}
 
       true ->
-        chart =
-          chart
-          |> Map.put("data_source", "mock_marketing_data.csv")
-
         {:ok, chart}
     end
   end
 
-  defp validate_chart(_), do: {:error, "Invalid chart specification"}
+  defp validate_chart(_, _), do: {:error, "Invalid chart specification"}
 end

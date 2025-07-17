@@ -19,35 +19,27 @@ defmodule DashboardGenWeb.DashboardLive do
 
   @impl true
   def handle_info({:generate_chart, prompt}, socket) do
-    case GPTClient.get_chart_spec(prompt) do
-      {:ok, %{"charts" => [chart_spec | _]}} ->
-        with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
-             {:ok, long_data} <- prepare_long_data(upload, chart_spec) do
+    with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
+         {:ok, spec} <- GPTClient.get_chart_spec(prompt, upload.headers),
+         %{"charts" => [chart_spec | _]} <- spec,
+         {:ok, long_data} <- prepare_long_data(upload, chart_spec) do
+      vl =
+        VegaLite.new(%{"title" => chart_spec["title"]})
+        |> VegaLite.data_from_values(long_data)
+        |> VegaLite.mark(String.to_atom(chart_spec["type"]))
+        |> VegaLite.encode(:x, field: "x", type: :nominal)
+        |> VegaLite.encode(:y, field: "value", type: :quantitative)
+        |> VegaLite.encode(:color, field: "category", type: :nominal)
 
-          vl =
-            VegaLite.new(%{"title" => chart_spec["title"]})
-            |> VegaLite.data_from_values(long_data)
-            |> VegaLite.mark(String.to_atom(chart_spec["type"]))
-            |> VegaLite.encode(:x, field: "x", type: :nominal)
-            |> VegaLite.encode(:y, field: "value", type: :quantitative)
-            |> VegaLite.encode(:color, field: "category", type: :nominal)
+      spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
-          spec = VegaLite.to_spec(vl) |> Jason.encode!()
-
-          {:noreply, assign(socket, chart_spec: spec, loading: false)}
-        else
-          {:error, reason} ->
-            {:noreply,
-             socket
-             |> put_flash(:error, reason)
-             |> assign(loading: false)}
-        end
-
+      {:noreply, assign(socket, chart_spec: spec, loading: false)}
+    else
       {:error, reason} ->
         {:noreply,
          socket
          |> put_flash(:error, reason)
-        |> assign(loading: false)}
+         |> assign(loading: false)}
     end
   end
 
