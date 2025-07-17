@@ -48,6 +48,19 @@ defmodule DashboardGen.UploadsTest do
     assert Map.has_key?(headers, "date")
   end
 
+  test "parse_csv errors when headers are missing and first row is data" do
+    csv = [
+      "2023-01-01,1,Campaign,0.5,100,10,1,google",
+      "2023-01-02,2,Another,0.4,200,20,3,bing"
+    ] |> Enum.join("\n")
+
+    path = Path.join(System.tmp_dir!(), "upload_no_header.csv")
+    File.write!(path, csv)
+
+    assert {:error, msg} = Uploads.parse_csv(path)
+    assert msg =~ "missing header row"
+  end
+
   test "parse_csv errors when required header missing" do
     csv = [
       "date,campaign name,cpc,impressions,conversions,google_ads",
