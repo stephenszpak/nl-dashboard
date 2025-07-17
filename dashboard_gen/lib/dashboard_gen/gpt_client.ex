@@ -8,6 +8,16 @@ defmodule DashboardGen.GPTClient do
 
   @openai_url "https://api.openai.com/v1/chat/completions"
 
+  @csv_headers [
+    "Month",
+    "Ad Spend",
+    "Conversions",
+    "CTR",
+    "Impressions",
+    "Cost Per Click",
+    "Campaign"
+  ]
+
   @doc """
   Sends the given prompt to the OpenAI API and returns the decoded chart
   specification on success.
@@ -37,7 +47,7 @@ defmodule DashboardGen.GPTClient do
       case Jason.decode(cleaned) do
         {:ok, decoded} ->
           if is_map(decoded) and Map.has_key?(decoded, "charts") do
-            {:ok, decoded}
+            validate_and_normalize(decoded)
           else
             {:error, "Missing 'charts' key in response: #{inspect(decoded)}"}
           end
@@ -103,4 +113,44 @@ defmodule DashboardGen.GPTClient do
         content
     end
   end
+
+  defp validate_and_normalize(%{"charts" => charts}) do
+    with {:ok, valid_charts} <- validate_charts(charts) do
+      {:ok, %{"charts" => valid_charts}}
+    end
+  end
+
+  defp validate_charts(charts) when is_list(charts) do
+    charts
+    |> Enum.reduce_while({:ok, []}, fn chart, {:ok, acc} ->
+      case validate_chart(chart) do
+        {:ok, cleaned} -> {:cont, {:ok, [cleaned | acc]}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+    |> case do
+      {:ok, charts_rev} -> {:ok, Enum.reverse(charts_rev)}
+      error -> error
+    end
+  end
+
+  defp validate_chart(%{"x" => x, "y" => y} = chart) when is_list(y) do
+    cond do
+      x not in @csv_headers ->
+        {:error, "Unknown x field '#{x}'"}
+
+      Enum.any?(y, &(&1 not in @csv_headers)) ->
+        bad = Enum.filter(y, &(&1 not in @csv_headers)) |> Enum.join(", ")
+        {:error, "Unknown y fields: #{bad}"}
+
+      true ->
+        chart =
+          chart
+          |> Map.put("data_source", "mock_marketing_data.csv")
+
+        {:ok, chart}
+    end
+  end
+
+  defp validate_chart(_), do: {:error, "Invalid chart specification"}
 end
