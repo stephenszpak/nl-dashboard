@@ -35,7 +35,7 @@ defmodule DashboardGenWeb.UploadsLive do
     Logger.info("Finished uploading #{entry.client_name}")
     label = socket.assigns[:label] || "Untitled Upload"
 
-    {results, socket} =
+    results =
       consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
         Uploads.create_upload(path, label)
       end)
