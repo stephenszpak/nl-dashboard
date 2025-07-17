@@ -53,55 +53,57 @@ defmodule DashboardGen.Uploads do
 
       rows =
         content
+        |> String.replace("\r\n", "\n")
+        |> String.replace("\r", "\n")
+        |> String.split("\n")
+        |> Enum.drop_while(&(&1 |> String.trim() == ""))
+        |> Enum.join("\n")
         |> CSV.parse_string()
-        |> Enum.drop_while(&blank_row?/1)
+
+      Logger.debug("Parsed rows: #{inspect(rows)}")
 
       case rows do
         [] ->
           {:error, "CSV is empty"}
 
         [header_row | data_rows] ->
-          Logger.debug("raw first row: #{inspect(header_row)}")
+          Logger.debug("raw header row: #{inspect(header_row)}")
 
-          if header_looks_like_data?(header_row) do
-            {:error, "CSV is missing header row — it starts with data"}
-          else
-            canonical = Enum.map(header_row, &canonical_header/1)
-            Logger.debug("inferred headers: #{inspect(canonical)}")
+          canonical = Enum.map(header_row, &canonical_header/1)
+          Logger.debug("inferred headers: #{inspect(canonical)}")
 
-            headers =
-              Enum.zip(canonical, header_row)
-              |> Enum.reduce(%{}, fn {canon, raw}, acc ->
-                if canon in @canonical_headers, do: Map.put_new(acc, canon, raw), else: acc
-              end)
+          headers =
+            Enum.zip(canonical, header_row)
+            |> Enum.reduce(%{}, fn {canon, raw}, acc ->
+              if canon in @canonical_headers, do: Map.put_new(acc, canon, raw), else: acc
+            end)
 
-            missing =
-              Enum.filter(@canonical_headers, fn key ->
-                not Map.has_key?(headers, key)
-              end)
+          missing =
+            Enum.filter(@canonical_headers, fn key ->
+              not Map.has_key?(headers, key)
+            end)
 
-            cond do
-              missing != [] ->
-                {:error, "Invalid CSV: missing required column '#{List.first(missing)}'"}
+          cond do
+            missing != [] ->
+              {:error, "Invalid CSV: missing required column '#{List.first(missing)}'"}
 
-              Enum.all?(data_rows, &(length(&1) == length(header_row))) ->
-                maps =
-                  Enum.map(data_rows, fn row ->
-                    Enum.zip(canonical, row)
-                    |> Enum.reduce(%{}, fn {k, v}, acc ->
-                      if k in @canonical_headers do
-                        Map.put(acc, k, convert_value(v))
-                      else
-                        acc
-                      end
-                    end)
+            Enum.all?(data_rows, &(length(&1) == length(header_row))) ->
+              maps =
+                Enum.map(data_rows, fn row ->
+                  Enum.zip(canonical, row)
+                  |> Enum.reduce(%{}, fn {k, v}, acc ->
+                    if k in @canonical_headers do
+                      Map.put(acc, k, convert_value(v))
+                    else
+                      acc
+                    end
                   end)
+                end)
 
-                {:ok, %{headers: headers, rows: maps}}
+              {:ok, %{headers: headers, rows: maps}}
 
-              true ->
-                {:error, "CSV rows have inconsistent number of fields"}
-            end
+            true ->
+              {:error, "CSV rows have inconsistent number of fields"}
           end
       end
     end
