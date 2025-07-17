@@ -5,7 +5,6 @@ defmodule DashboardGen.Uploads do
 
   import Ecto.Query, warn: false
   alias DashboardGen.Repo
-
   alias DashboardGen.Uploads.Upload
   alias NimbleCSV.RFC4180, as: CSV
   require Logger
@@ -21,17 +20,14 @@ defmodule DashboardGen.Uploads do
     "source"
   ]
 
-  @doc "List all uploads ordered by inserted_at descending"
   def list_uploads do
     Repo.all(from(u in Upload, order_by: [desc: u.inserted_at]))
   end
 
-  @doc "Get the most recent upload"
   def latest_upload do
     Repo.one(from(u in Upload, order_by: [desc: u.inserted_at], limit: 1))
   end
 
-  @doc "Create an upload record from a CSV file path"
   def create_upload(path, name \\ nil) do
     with {:ok, %{headers: headers, rows: rows}} <- parse_csv(path) do
       name = if is_nil(name) or name == "", do: "Untitled Upload", else: name
@@ -42,102 +38,103 @@ defmodule DashboardGen.Uploads do
     end
   end
 
-  @doc "Parse a CSV file returning headers map and rows"
   def parse_csv(path) do
     with {:ok, content} <- File.read(path) do
+      # 1. Normalize
       content =
-        case content do
-          <<239, 187, 191, rest::binary>> -> rest
-          _ -> content
-        end
-
-      rows =
         content
+        |> String.trim_leading("\uFEFF")
         |> String.replace("\r\n", "\n")
         |> String.replace("\r", "\n")
+
+      # 2. Split & drop blanks
+      lines =
+        content
         |> String.split("\n")
-        |> Enum.drop_while(&(&1 |> String.trim() == ""))
-        |> Enum.join("\n")
-        |> CSV.parse_string()
+        |> Enum.reject(&(&1 |> String.trim() == ""))
 
-      Logger.debug("Parsed rows: #{inspect(rows)}")
+      if lines == [] do
+        {:error, "CSV is empty"}
+      else
+        Logger.debug("Lines after clean: #{inspect(lines)}")
 
-      case rows do
-        [] ->
-          {:error, "CSV is empty"}
+        # 3. Extract header & data lines
+        [header_line | data_lines] = lines
 
-        [header_row | data_rows] ->
-          Logger.debug("raw header row: #{inspect(header_row)}")
-
-          canonical = Enum.map(header_row, &canonical_header/1)
-          Logger.debug("inferred headers: #{inspect(canonical)}")
-
-          headers =
-            Enum.zip(canonical, header_row)
-            |> Enum.reduce(%{}, fn {canon, raw}, acc ->
-              if canon in @canonical_headers, do: Map.put_new(acc, canon, raw), else: acc
-            end)
-
-          missing =
-            Enum.filter(@canonical_headers, fn key ->
-              not Map.has_key?(headers, key)
-            end)
-
-          cond do
-            missing != [] ->
-              {:error, "Invalid CSV: missing required column '#{List.first(missing)}'"}
-
-            Enum.all?(data_rows, &(length(&1) == length(header_row))) ->
-              maps =
-                Enum.map(data_rows, fn row ->
-                  Enum.zip(canonical, row)
-                  |> Enum.reduce(%{}, fn {k, v}, acc ->
-                    if k in @canonical_headers do
-                      Map.put(acc, k, convert_value(v))
-                    else
-                      acc
-                    end
-                  end)
-                end)
-
-              {:ok, %{headers: headers, rows: maps}}
-
-            true ->
-              {:error, "CSV rows have inconsistent number of fields"}
+        # Parse header *only*
+        header_row =
+          header_line
+          |> CSV.parse_string()
+          |> case do
+            [[_ | _] = hdr] -> hdr
+            _ -> String.split(header_line, ",", trim: true) # fallback
           end
+
+        Logger.debug("raw header row: #{inspect(header_row)}")
+
+        # 4. Parse data rows
+        rows =
+          data_lines
+          |> Enum.join("\n")
+          |> CSV.parse_string()
+
+        Logger.debug("Parsed data rows: #{inspect(rows)}")
+
+        # 5. Canonicalize + validate
+        canonical = Enum.map(header_row, &canonical_header/1)
+        Logger.debug("inferred headers: #{inspect(canonical)}")
+
+        headers =
+          Enum.zip(canonical, header_row)
+          |> Enum.reduce(%{}, fn {canon, raw}, acc ->
+            if canon in @canonical_headers, do: Map.put_new(acc, canon, raw), else: acc
+          end)
+
+        missing =
+          Enum.filter(@canonical_headers, fn key ->
+            not Map.has_key?(headers, key)
+          end)
+
+        cond do
+          missing != [] ->
+            {:error, "Invalid CSV: missing required column '#{List.first(missing)}'"}
+
+          Enum.all?(rows, &(length(&1) == length(header_row))) ->
+            maps =
+              Enum.map(rows, fn row ->
+                Enum.zip(canonical, row)
+                |> Enum.reduce(%{}, fn {k, v}, acc ->
+                  if k in @canonical_headers do
+                    Map.put(acc, k, convert_value(v))
+                  else
+                    acc
+                  end
+                end)
+              end)
+
+            {:ok, %{headers: headers, rows: maps}}
+
+          true ->
+            {:error, "CSV rows have inconsistent number of fields"}
+        end
       end
     end
   end
 
   defp convert_value(value) when is_binary(value) do
     cond do
-      value == "" ->
-        nil
-
+      value == "" -> nil
       Integer.parse(value) != :error and match?({_, ""}, Integer.parse(value)) ->
         {int, _} = Integer.parse(value)
         int
-
       Float.parse(value) != :error and match?({_, ""}, Float.parse(value)) ->
         {float, _} = Float.parse(value)
         float
-
-      true ->
-        value
+      true -> value
     end
   end
 
   defp convert_value(value), do: value
-
-  defp blank_row?(row) do
-    Enum.all?(row, fn cell -> String.trim(cell) == "" end)
-  end
-
-  defp header_looks_like_data?([first | _]) do
-    Regex.match?(~r/^\d{4}-\d{2}-\d{2}$/, String.trim_leading(first, "\uFEFF") |> String.trim())
-  end
-
-  defp header_looks_like_data?(_), do: false
 
   defp canonical_header(header) do
     normalized = normalize_header(header)
@@ -168,25 +165,15 @@ defmodule DashboardGen.Uploads do
     |> String.replace(~r/[\s-]+/, "_")
   end
 
-  @doc """
-  Resolve a loosely matching field name to one of the dataset headers. Matching
-  is case-insensitive and works on substrings. If multiple headers match, an
-  exact match is preferred, otherwise the longest matching header is returned.
-  Returns `nil` when no match can be found.
-  """
   @spec resolve_field(String.t() | nil, map()) :: String.t() | nil
-  def resolve_field(field, headers)
-
-  def resolve_field(nil, _headers), do: nil
+  def resolve_field(nil, _), do: nil
 
   def resolve_field(field, headers) when is_binary(field) and is_map(headers) do
     normalized = normalize_header(field)
     keys = Map.keys(headers)
 
     cond do
-      normalized in keys ->
-        normalized
-
+      normalized in keys -> normalized
       true ->
         keys
         |> Enum.filter(fn key ->
