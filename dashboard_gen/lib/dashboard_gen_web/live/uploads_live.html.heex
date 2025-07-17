@@ -1,25 +1,25 @@
 <h2 class="text-lg font-semibold mb-4">Upload CSV Dataset</h2>
 
-<.form id="upload-form" phx-submit="upload" multipart={true} class="space-y-2">
-  <input type="text" name="label" placeholder="Optional label" class="border rounded px-2 py-1" />
+<.form id="upload-form" phx-change="validate" phx-submit="noop" multipart={true} class="space-y-2">
+  <input
+    type="text"
+    name="label"
+    value={@label}
+    placeholder="Optional label"
+    class="border rounded px-2 py-1"
+  />
 
   <div phx-drop-target={@uploads.csv.ref}>
     <.live_file_input
       upload={@uploads.csv}
       class="mt-2"
-      phx-hook="EnableSubmitOnFileSelect"
-      data-submit-button="upload-submit"
+      disabled={@uploading?}
     />
   </div>
 
-  <button
-    type="submit"
-    id="upload-submit"
-    disabled={@uploads.csv.entries == []}
-    class="px-4 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
-  >
-    Upload
-  </button>
+  <%= for entry <- @uploads.csv.entries do %>
+    <progress value={entry.progress} max="100" class="w-full mt-2"></progress>
+  <% end %>
 </.form>
 
 <div class="mt-6">
