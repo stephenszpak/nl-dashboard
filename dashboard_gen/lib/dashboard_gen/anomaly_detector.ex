@@ -41,7 +41,13 @@ defmodule DashboardGen.AnomalyDetector do
         value = Map.get(row, metric)
 
         if is_number(value) do
-          update_in(acc2, [source, date, metric], fn cur -> (cur || 0) + value end)
+          acc2
+          |> Map.update(source, %{}, & &1)
+          |> Map.update!(source, fn date_map ->
+            Map.update(date_map, date, %{metric => value}, fn metric_map ->
+              Map.update(metric_map, metric, value, &(&1 + value))
+            end)
+          end)
         else
           acc2
         end
@@ -100,11 +106,21 @@ defmodule DashboardGen.AnomalyDetector do
   @spec summarize_anomalies(list()) :: {:ok, String.t()} | {:error, any()}
   def summarize_anomalies(anomalies) when is_list(anomalies) do
     prompt = """
-    You are a data analyst. Write a summary of the following marketing anomalies:
+      You're a senior marketing analyst. Summarize these anomalies in plain language.
 
-    #{Jason.encode!(anomalies)}
+      Each item has a `metric`, `date`, `source`, `percent_change`, and `direction`.
 
-    Keep it brief and actionable.
+      Focus on exactly what happened, where, and when — no general advice.
+
+      Example:
+      - Facebook CPC spiked 42% on Jan 12 
+      - LinkedIn conversions dropped 30% on Jan 15
+
+      Now generate a summary from this JSON:
+
+      #{Jason.encode!(anomalies)}
+
+      Return a short list of bullet points (2–5 total).
     """
 
     CodexClient.ask(prompt)
