@@ -1,12 +1,12 @@
 <h1 class="text-xl font-semibold mb-4"><%= @page_title %></h1>
-<div class="rounded-md border p-4 bg-white shadow-sm mb-4">
+<div class="bg-white rounded-md shadow-sm p-4 mb-6 border">
   <.form id="upload-form" phx-change="validate" phx-submit="noop" multipart={true} class="space-y-2">
     <input
       type="text"
       name="label"
       value={@label}
       placeholder="Optional label"
-      class="border rounded px-2 py-1"
+      class="text-sm border rounded px-2 py-1"
     />
 
     <div phx-drop-target={@uploads.csv.ref}>
@@ -20,15 +20,16 @@
     <%= for entry <- @uploads.csv.entries do %>
       <progress value={entry.progress} max="100" class="w-full mt-2"></progress>
     <% end %>
+    <button type="submit" class="rounded-full bg-green-600 text-white text-sm px-4 py-1 hover:bg-green-500" disabled={@uploading?}>Upload</button>
   </.form>
 </div>
 
 <div class="mt-6 space-y-4">
   <h3 class="font-medium">Uploaded Datasets</h3>
   <%= for upload <- @uploads_list do %>
-    <div class="rounded-md border p-4 bg-white shadow-sm">
-      <div class="font-semibold"><%= upload.name %></div>
-      <div class="text-sm text-gray-500">
+    <div class="bg-white rounded-md shadow-sm p-4 mb-4 border">
+      <div class="text-sm font-medium"><%= upload.name %></div>
+      <div class="text-xs text-gray-500">
         Headers: <%= Enum.join(Map.keys(upload.headers), ", ") %>
       </div>
       <table class="mt-2 text-sm min-w-full">
