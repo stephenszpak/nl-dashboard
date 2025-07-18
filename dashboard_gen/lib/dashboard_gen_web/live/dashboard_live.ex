@@ -2,6 +2,7 @@ defmodule DashboardGenWeb.DashboardLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
+  import DashboardGenWeb.LayoutComponents
   alias DashboardGen.GPTClient
   alias DashboardGen.Codex.Summarizer
   alias DashboardGen.Codex.Explainer
