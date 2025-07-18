@@ -1,5 +1,5 @@
 defmodule DashboardGenWeb.DashboardLive do
-  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
+  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :root}
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
   alias DashboardGen.GPTClient
@@ -28,13 +28,12 @@ defmodule DashboardGenWeb.DashboardLive do
        prompt: prompt,
        loading: true,
        chart_spec: nil,
-       collapsed: true,
        summary: nil
      )}
   end
 
-  def handle_event("expand_input", _params, socket) do
-    {:noreply, assign(socket, collapsed: false)}
+  def handle_event("toggle_sidebar", _params, socket) do
+    {:noreply, update(socket, :collapsed, &(!&1))}
   end
 
   def handle_event("generate_summary", _params, socket) do
@@ -166,4 +165,7 @@ defmodule DashboardGenWeb.DashboardLive do
     |> VegaLite.encode(:y, field: "value", type: :quantitative)
     |> VegaLite.encode(:color, field: "category", type: :nominal)
   end
+
+  def sidebar_classes(true), do: "w-16 bg-gray-800 text-white transition-all"
+  def sidebar_classes(false), do: "w-64 bg-gray-800 text-white transition-all"
 end
