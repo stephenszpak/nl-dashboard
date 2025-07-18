@@ -4,7 +4,7 @@ defmodule DashboardGenWeb.LoginLive do
   alias DashboardGen.Accounts
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, error: nil, collapsed: false)}
+    {:ok, assign(socket, error: nil, collapsed: false, page_title: "Login")}
   end
 
   def handle_event("login", %{"user" => %{"email" => email, "password" => password}}, socket) do
