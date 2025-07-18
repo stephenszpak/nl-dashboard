@@ -35,6 +35,13 @@
 
     <%= if @chart_spec do %>
       <div id="chart-container" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} />
+      <div class="mt-4 space-x-2">
+        <%= if !@summary && !@loading do %>
+          <button phx-click="generate_summary" class="btn">Generate Insight</button>
+        <% end %>
+        <button phx-click="explain_this" class="btn-secondary">Explain This</button>
+        <button phx-click="why_this" class="btn-secondary">Why Did This Happen?</button>
+      </div>
     <% end %>
 
     <%= if @summary do %>
@@ -42,10 +49,11 @@
         <strong>Insight:</strong> <%= @summary %>
       </div>
     <% end %>
-
-      <%= if @chart_spec && !@summary && !@loading do %>
-        <button phx-click="generate_summary" class="btn">Generate Insight</button>
-      <% end %>
+    <%= if @explanation do %>
+      <div class="bg-yellow-50 p-4 rounded mt-4 text-sm text-yellow-900">
+        <strong>Explanation:</strong> <%= @explanation %>
+      </div>
+    <% end %>
     </div>
 
     <form phx-submit="generate" class="p-6 bg-white border-t">
