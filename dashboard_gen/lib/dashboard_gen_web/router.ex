@@ -23,6 +23,7 @@ defmodule DashboardGenWeb.Router do
     get("/", PageController, :home)
     live("/register", RegisterLive)
     live("/login", LoginLive)
+    post("/login", AuthController, :create)
     delete("/logout", AuthController, :delete)
   end
 
