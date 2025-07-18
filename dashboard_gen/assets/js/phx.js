@@ -4,23 +4,6 @@ import {LiveSocket} from "phoenix_live_view";
 
 let Hooks = {};
 
-Hooks.PromptInput = {
-  mounted() {
-    this.resize();
-    this.el.addEventListener("input", () => this.resize());
-    this.el.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        this.el.form.requestSubmit();
-      }
-    });
-  },
-  resize() {
-    this.el.style.height = "auto";
-    this.el.style.height = this.el.scrollHeight + "px";
-  }
-};
-
 Hooks.AutoGrow = {
   mounted() {
     this.resize();
