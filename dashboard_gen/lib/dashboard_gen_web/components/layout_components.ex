@@ -8,12 +8,24 @@ defmodule DashboardGenWeb.LayoutComponents do
 
   def sidebar(assigns) do
     ~H"""
-    <aside class={[if(@collapsed, do: "w-16", else: "w-60"), "bg-white border-r min-h-screen transition-all"]}>
-      <div class="px-4 py-3 font-semibold">
+    <aside class={[if(@collapsed, do: "w-16", else: "w-60"), "bg-white border-r min-h-screen transition-all flex flex-col"]}>
+      <div class="flex items-center justify-between px-4 py-3 font-semibold border-b">
         <span :if={!@collapsed}>DashboardGen</span>
+        <button phx-click="toggle_sidebar" aria-label="Toggle sidebar" class="text-gray-600 hover:text-gray-800 p-2">
+          <%= if @collapsed, do: "➡️", else: "⬅️" %>
+        </button>
       </div>
-      <nav class="p-2 space-y-1">
-        <.link navigate="/uploads" class="flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-md">
+      <nav class="flex-1 p-2 space-y-1">
+        <.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+          📊 <%= unless @collapsed, do: "Dashboard" %>
+        </.link>
+        <.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+          💾 <%= unless @collapsed, do: "Saved Views" %>
+        </.link>
+        <.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+          ⚙️ <%= unless @collapsed, do: "Settings" %>
+        </.link>
+        <.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
           📁 <%= unless @collapsed, do: "Uploads" %>
         </.link>
       </nav>
