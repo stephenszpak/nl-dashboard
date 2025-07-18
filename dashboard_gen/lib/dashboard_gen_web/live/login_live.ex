@@ -10,12 +10,10 @@ defmodule DashboardGenWeb.LoginLive do
   def handle_event("login", %{"user" => %{"email" => email, "password" => password}}, socket) do
     case Accounts.authenticate_user(email, password) do
       {:ok, user} ->
-        dest = if is_nil(user.onboarded_at), do: "/onboarding", else: "/dashboard"
-
         {:noreply,
          socket
          |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
-         |> Phoenix.LiveView.push_navigate(to: dest)}
+         |> Phoenix.LiveView.push_navigate(to: "/dashboard")}
 
       :error ->
         {:noreply, assign(socket, error: "Invalid email or password")}
