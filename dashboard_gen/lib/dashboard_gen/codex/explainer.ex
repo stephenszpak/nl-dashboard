@@ -6,19 +6,19 @@ defmodule DashboardGen.Codex.Explainer do
   alias DashboardGen.CodexClient
 
   @doc """
-  Explain the provided query and data with a short summary.
+  Explain the provided query results.
   """
   @spec explain(String.t(), list(), list()) :: {:ok, String.t()} | {:error, any()}
   def explain(query_text, headers, rows)
       when is_binary(query_text) and is_list(headers) and is_list(rows) do
     prompt = """
-    You're a senior marketing analyst. Explain the following query and data in 2–4 sentences.
+    You're a senior marketing analyst. What does this data show?
 
     Query: #{query_text}
     Headers: #{inspect(headers)}
-    First few rows: #{Jason.encode!(Enum.take(rows, 5))}
+    Data: #{Jason.encode!(Enum.take(rows, 5))}
 
-    Explain what the data shows — trends, notable values, and high-level takeaways.
+    Provide 2–3 sentences summarizing the result.
     """
 
     CodexClient.ask(prompt)
@@ -27,19 +27,19 @@ defmodule DashboardGen.Codex.Explainer do
   def explain(_, _, _), do: {:error, :invalid_arguments}
 
   @doc """
-  Suggest reasons why the results might have occurred based on the data.
+  Suggest reasons why the results might have occurred.
   """
   @spec why(String.t(), list(), list()) :: {:ok, String.t()} | {:error, any()}
   def why(query_text, headers, rows)
       when is_binary(query_text) and is_list(headers) and is_list(rows) do
     prompt = """
-    You're a marketing performance analyst. Based on this data, why might these results have occurred?
+    You're a marketing performance analyst. Based on this data and query, why might these results have occurred?
 
     Query: #{query_text}
     Headers: #{inspect(headers)}
-    First few rows: #{Jason.encode!(Enum.take(rows, 5))}
+    Data: #{Jason.encode!(Enum.take(rows, 5))}
 
-    Suggest plausible causes related to campaign timing, channels, or audience behavior. Be concise (2–3 sentences).
+    Give possible causes like timing, platform behavior, or user engagement shifts. Be concise.
     """
 
     CodexClient.ask(prompt)
