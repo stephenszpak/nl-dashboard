@@ -1,0 +1,21 @@
+<div class="max-w-md mx-auto mt-10">
+  <h2 class="text-xl font-semibold mb-4">Register</h2>
+  <.form let={f} for={@changeset} phx-submit="save">
+    <div class="mb-2">
+      <%= label f, :email, class: "block" %>
+      <%= email_input f, :email, class: "border px-2" %>
+      <%= error_tag f, :email %>
+    </div>
+    <div class="mb-2">
+      <%= label f, :password, class: "block" %>
+      <%= password_input f, :password, class: "border px-2" %>
+      <%= error_tag f, :password %>
+    </div>
+    <div class="mb-4">
+      <%= label f, :password_confirmation, class: "block" %>
+      <%= password_input f, :password_confirmation, class: "border px-2" %>
+      <%= error_tag f, :password_confirmation %>
+    </div>
+    <%= submit "Register", class: "bg-blue-500 text-white px-4 py-2" %>
+  </.form>
+</div>
