@@ -41,7 +41,7 @@ defmodule DashboardGenWeb.DashboardLive do
     {:noreply,
      socket
      |> assign(:collapsed?, collapsed?)
-     |> put_session("sidebar_collapsed", collapsed?)}
+     |> Phoenix.LiveView.put_session("sidebar_collapsed", collapsed?)}
   end
 
   def handle_event("generate_summary", _params, socket) do
