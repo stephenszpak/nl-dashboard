@@ -10,25 +10,12 @@
     <% end %>
 
     <%= if @alerts do %>
-      <div class="rounded-md border p-4 bg-white shadow-sm bg-yellow-50 border-yellow-400 text-yellow-900">
-        <strong>⚠️ Alert:</strong>
-        <ul class="list-disc pl-6 space-y-1 text-sm text-yellow-900">
-          <%= for line <- String.split(@alerts, "\n", trim: true) do %>
-            <li><%= line %></li>
-          <% end %>
-        </ul>
-      </div>
+      <.alert_banner alerts={@alerts} />
     <% end %>
 
     <%= if @chart_spec do %>
       <div id="chart-container" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} />
-      <div class="mt-4 space-x-2">
-        <%= if !@summary && !@loading do %>
-          <button phx-click="generate_summary" class="btn">Generate Insight</button>
-        <% end %>
-        <button phx-click="explain_this" class="btn-secondary">Explain This</button>
-        <button phx-click="why_this" class="btn-secondary">Why Did This Happen?</button>
-      </div>
+      <.insight_buttons summary={@summary} loading={@loading} />
     <% end %>
 
     <%= if @summary do %>
