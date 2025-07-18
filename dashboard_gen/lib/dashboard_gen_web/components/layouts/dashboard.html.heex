@@ -2,7 +2,7 @@
   <.sidebar collapsed={@collapsed} />
   <div class="flex-1 flex flex-col">
     <.topbar collapsed={@collapsed} />
-    <main class="flex-1 px-6 py-4">
+    <main class="flex-1 px-6 py-4 overflow-y-auto">
       <%= @inner_content %>
     </main>
   </div>

@@ -7,7 +7,7 @@ defmodule DashboardGenWeb.RegisterLive do
 
   def mount(_params, _session, socket) do
     changeset = User.registration_changeset(%User{}, %{})
-    {:ok, assign(socket, changeset: changeset, collapsed: false)}
+    {:ok, assign(socket, changeset: changeset, collapsed: false, page_title: "Register")}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do

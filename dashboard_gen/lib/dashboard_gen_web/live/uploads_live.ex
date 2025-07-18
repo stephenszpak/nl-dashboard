@@ -9,6 +9,7 @@ defmodule DashboardGenWeb.UploadsLive do
   def mount(_params, _session, socket) do
     socket =
       socket
+      |> assign(:page_title, "Uploads")
       |> assign(:uploads_list, Uploads.list_uploads())
       |> assign(:label, "")
       |> assign(:uploading?, false)

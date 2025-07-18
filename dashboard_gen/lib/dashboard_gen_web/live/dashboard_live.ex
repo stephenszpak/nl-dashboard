@@ -13,6 +13,7 @@ defmodule DashboardGenWeb.DashboardLive do
   def mount(_params, _session, socket) do
     {:ok,
      assign(socket,
+       page_title: "Dashboard",
        prompt: "",
        chart_spec: nil,
        loading: false,
@@ -224,7 +225,4 @@ defmodule DashboardGenWeb.DashboardLive do
     |> VegaLite.encode(:y, field: "value", type: :quantitative)
     |> VegaLite.encode(:color, field: "category", type: :nominal)
   end
-
-  def sidebar_classes(true), do: "w-16 bg-gray-800 text-white transition-all"
-  def sidebar_classes(false), do: "w-64 bg-gray-800 text-white transition-all"
 end
