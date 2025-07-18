@@ -14,7 +14,7 @@ defmodule DashboardGenWeb.LoginLive do
 
         {:noreply,
          socket
-         |> Phoenix.LiveView.put_session(:user_id, user.id)
+         |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
          |> Phoenix.LiveView.push_navigate(to: dest)}
 
       :error ->
