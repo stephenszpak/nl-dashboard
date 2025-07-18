@@ -1,0 +1,17 @@
+<div class="max-w-md mx-auto mt-10">
+  <h2 class="text-xl font-semibold mb-4">Log In</h2>
+  <%= if @error do %>
+    <div class="text-red-600 mb-2"><%= @error %></div>
+  <% end %>
+  <form phx-submit="login">
+    <div class="mb-2">
+      <label class="block">Email</label>
+      <input type="email" name="user[email]" class="border px-2" />
+    </div>
+    <div class="mb-4">
+      <label class="block">Password</label>
+      <input type="password" name="user[password]" class="border px-2" />
+    </div>
+    <button class="bg-blue-500 text-white px-4 py-2">Log In</button>
+  </form>
+</div>
