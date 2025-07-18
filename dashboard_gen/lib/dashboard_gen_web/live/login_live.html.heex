@@ -7,7 +7,7 @@
     <div class="text-green-600 mb-2"><%= live_flash(@flash, :info) %></div>
   <% end %>
   <form action={~p"/login"} method="post">
-    <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+    <input type="hidden" name="_csrf_token" value={@csrf_token} />
     <div class="mb-2">
       <label class="block">Email</label>
       <input type="email" name="user[email]" class="border px-2" />

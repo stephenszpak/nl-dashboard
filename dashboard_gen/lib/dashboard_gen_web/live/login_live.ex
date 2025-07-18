@@ -3,6 +3,7 @@ defmodule DashboardGenWeb.LoginLive do
   use DashboardGenWeb, :html
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    csrf_token = Plug.CSRFProtection.get_csrf_token()
+    {:ok, assign(socket, csrf_token: csrf_token)}
   end
 end
