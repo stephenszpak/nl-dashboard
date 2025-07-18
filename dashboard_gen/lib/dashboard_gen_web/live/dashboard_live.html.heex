@@ -8,7 +8,7 @@
     </div>
 
     <nav class="space-y-2 p-3">
-      <Phoenix.Component.link navigate={~p"/"} class="nav-item flex items-center gap-2 text-sm hover:underline">
+      <Phoenix.Component.link navigate={~p"/dashboard"} class="nav-item flex items-center gap-2 text-sm hover:underline">
         📊 <%= unless @collapsed, do: "Dashboard" %>
       </Phoenix.Component.link>
       <Phoenix.Component.link navigate={~p"/saved"} class="nav-item flex items-center gap-2 text-sm hover:underline">
