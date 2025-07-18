@@ -14,6 +14,6 @@ defmodule DashboardGenWeb.OnboardingLive do
 
   def handle_event("run_query", _params, socket) do
     Accounts.mark_onboarded(socket.assigns.user)
-    {:noreply, Phoenix.LiveView.push_navigate(socket, to: "/dashboard")}
+    {:noreply, Phoenix.LiveView.redirect(socket, to: "/")}
   end
 end
