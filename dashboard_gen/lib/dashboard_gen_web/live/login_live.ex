@@ -1,10 +1,10 @@
 defmodule DashboardGenWeb.LoginLive do
-  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :root}
+  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
   alias DashboardGen.Accounts
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, error: nil)}
+    {:ok, assign(socket, error: nil, collapsed: false)}
   end
 
   def handle_event("login", %{"user" => %{"email" => email, "password" => password}}, socket) do
@@ -18,5 +18,9 @@ defmodule DashboardGenWeb.LoginLive do
       :error ->
         {:noreply, assign(socket, error: "Invalid email or password")}
     end
+  end
+
+  def handle_event("toggle_sidebar", _params, socket) do
+    {:noreply, update(socket, :collapsed, &(!&1))}
   end
 end
