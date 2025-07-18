@@ -19,8 +19,9 @@ defmodule DashboardGenWeb.DashboardLive do
        collapsed: false,
        summary: nil,
        explanation: nil,
-       alerts: nil
-     )}
+       alerts: nil,
+       show_user_menu: false
+      )}
   end
 
   @impl true
@@ -40,6 +41,14 @@ defmodule DashboardGenWeb.DashboardLive do
 
   def handle_event("toggle_sidebar", _params, socket) do
     {:noreply, update(socket, :collapsed, &(!&1))}
+  end
+
+  def handle_event("toggle_user_menu", _params, socket) do
+    {:noreply, update(socket, :show_user_menu, &(!&1))}
+  end
+
+  def handle_event("hide_user_menu", _params, socket) do
+    {:noreply, assign(socket, show_user_menu: false)}
   end
 
   def handle_event("generate_summary", _params, socket) do
@@ -225,6 +234,15 @@ defmodule DashboardGenWeb.DashboardLive do
     |> VegaLite.encode(:color, field: "category", type: :nominal)
   end
 
-  def sidebar_classes(true), do: "w-16 bg-gray-800 text-white transition-all"
-  def sidebar_classes(false), do: "w-64 bg-gray-800 text-white transition-all"
+  def sidebar_classes(true), do: "relative w-16 bg-gray-800 text-white transition-all"
+  def sidebar_classes(false), do: "relative w-64 bg-gray-800 text-white transition-all"
+
+  defp initials(nil), do: "?"
+  defp initials(email) when is_binary(email) do
+    email
+    |> String.split("@")
+    |> List.first()
+    |> String.slice(0, 2)
+    |> String.upcase()
+  end
 end
