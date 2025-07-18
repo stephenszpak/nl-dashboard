@@ -1,42 +1,43 @@
-<div class="flex flex-col h-full">
-  <div class="flex-1 overflow-y-auto">
-    <%= if live_flash(@flash, :error) do %>
-      <div class="text-red-600 mb-2"><%= live_flash(@flash, :error) %></div>
-    <% end %>
-
-    <div :if={@loading} class="mt-2 text-gray-500">Generating...</div>
-
-    <div :if={@chart_spec} id="chart-container" class="mt-6" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec}>
+<div class="flex h-screen">
+  <aside class={"#{if @collapsed?, do: "w-16", else: "w-64"} bg-gray-800 text-white flex flex-col transition-all sticky top-0 h-screen"}>
+    <div class="flex items-center p-4 space-x-2">
+      <button phx-click="toggle_sidebar" class="text-xl">☰</button>
+      <span :if={!@collapsed?} class="font-semibold">Logo</span>
     </div>
-    <div :if={@summary} class="mt-4 bg-gray-50 p-4 rounded text-sm text-gray-700">
-      <strong>Insight:</strong> <%= @summary %>
+    <nav class="flex-1 overflow-y-auto px-2 space-y-1">
+      <%= for query <- @queries do %>
+        <button phx-click="load_query" phx-value-id={query.id} class="block w-full text-left px-2 py-1 hover:bg-gray-700 truncate text-sm">
+          <%= query.title || query.prompt %>
+        </button>
+      <% end %>
+    </nav>
+    <div class="p-4 mt-auto">
+      <button phx-click="new_query" class="w-full bg-gray-700 hover:bg-gray-600 text-sm py-2 rounded">+ New Query</button>
     </div>
-    <%= if @chart_spec && !@summary && !@loading do %>
-      <button phx-click="generate_summary" class="btn mt-4">Generate Insight</button>
-    <% end %>
-  </div>
+  </aside>
 
-  <%= if @collapsed do %>
-    <div class="border-t bg-white p-4 fixed bottom-0 inset-x-0">
-      <div class="max-w-4xl mx-auto flex items-center justify-between rounded-xl border border-gray-300 bg-white shadow-sm px-4 py-2">
-        <div class="flex-1 text-sm text-gray-700 truncate" aria-label="Collapsed prompt"><%= @prompt %></div>
-        <button type="button" phx-click="expand_input" aria-label="Expand input" class="ml-2 rounded-full bg-black text-white text-xs px-3 py-1">+</button>
+  <div class="flex-1 flex flex-col">
+    <div class="flex-1 overflow-y-auto p-6 space-y-6">
+      <%= if live_flash(@flash, :error) do %>
+        <div class="text-red-500"><%= live_flash(@flash, :error) %></div>
+      <% end %>
+      <div :if={@loading} class="text-gray-500">Generating...</div>
+      <div :if={@chart_spec} id="chart" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} class="min-h-[300px]"></div>
+      <div :if={@gpt_summary} class="bg-gray-50 dark:bg-gray-800 p-4 rounded text-sm">
+        <%= @gpt_summary %>
       </div>
+      <%= if @chart_spec && !@gpt_summary && !@loading do %>
+        <div class="space-x-2">
+          <button phx-click="generate_summary" class="btn">Explain This</button>
+          <button phx-click="generate_summary" class="btn">Why Did This Happen?</button>
+        </div>
+      <% end %>
     </div>
-  <% else %>
-    <form phx-submit="generate" class="border-t bg-white p-4 fixed bottom-0 inset-x-0">
-      <div class="max-w-4xl mx-auto rounded-xl border border-gray-300 shadow-sm bg-white px-4 py-2 transition-all">
-        <div class="flex items-center justify-between">
-          <textarea name="prompt" id="prompt" rows="1" phx-hook="AutoGrow" placeholder="Describe a task" aria-label="Task description" class="flex-1 resize-none bg-transparent focus:outline-none placeholder-gray-400 overflow-hidden"></textarea>
-          <button type="submit" aria-label="Submit task" class="ml-2 rounded-full bg-black text-white text-sm px-3 py-1">Go</button>
-        </div>
-        <div class="flex space-x-2 border-t border-gray-200 pt-1 mt-2 text-xs text-gray-500">
-          <button type="button" class="px-2 py-1 hover:text-black">[📁] stephenszpak/nl-dash...</button>
-          <button type="button" class="px-2 py-1 hover:text-black">[🔀] main</button>
-          <button type="button" class="px-2 py-1 hover:text-black">[📦] 1x</button>
-        </div>
+    <form phx-submit="generate" class="fixed bottom-0 inset-x-0 p-4 bg-white dark:bg-gray-900 border-t">
+      <div class="max-w-3xl mx-auto flex items-end space-x-2">
+        <textarea name="prompt" rows="1" phx-hook="PromptInput" placeholder="Send a prompt..." class="flex-1 resize-none p-2 rounded border bg-transparent focus:outline-none"></textarea>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Generate</button>
       </div>
     </form>
-  <% end %>
+  </div>
 </div>
-
