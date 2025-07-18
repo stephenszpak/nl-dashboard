@@ -6,6 +6,7 @@ defmodule DashboardGenWeb.DashboardLive do
   alias DashboardGen.Codex.Summarizer
   alias DashboardGen.Codex.Explainer
   alias DashboardGen.Uploads
+  alias DashboardGen.AnomalyDetector
   alias VegaLite
 
   @impl true
@@ -17,7 +18,8 @@ defmodule DashboardGenWeb.DashboardLive do
        loading: false,
        collapsed: false,
        summary: nil,
-       explanation: nil
+       explanation: nil,
+       alerts: nil
      )}
   end
 
@@ -31,7 +33,8 @@ defmodule DashboardGenWeb.DashboardLive do
        loading: true,
        chart_spec: nil,
        summary: nil,
-       explanation: nil
+       explanation: nil,
+       alerts: nil
      )}
   end
 
@@ -109,19 +112,30 @@ defmodule DashboardGenWeb.DashboardLive do
 
       spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
+      alerts =
+        with {:ok, anomalies} <- AnomalyDetector.detect_anomalies(upload.headers, upload.data),
+             true <- anomalies != [],
+             {:ok, summary} <- AnomalyDetector.summarize_anomalies(anomalies) do
+          summary
+        else
+          {:ok, []} -> nil
+          _ -> nil
+        end
+
       {:noreply,
        assign(socket,
          chart_spec: spec,
          loading: false,
          summary: nil,
-         explanation: nil
+         explanation: nil,
+         alerts: alerts
        )}
     else
       {:error, reason} ->
         {:noreply,
          socket
          |> put_flash(:error, reason)
-         |> assign(loading: false)}
+         |> assign(loading: false, alerts: nil)}
     end
   end
 
