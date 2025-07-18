@@ -1,5 +1,6 @@
 defmodule DashboardGenWeb.LoginLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :root}
+  use DashboardGenWeb, :html
   alias DashboardGen.Accounts
 
   def mount(_params, _session, socket) do
