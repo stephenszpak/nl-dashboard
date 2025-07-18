@@ -33,6 +33,12 @@
       <div class="text-gray-500">Generating...</div>
     <% end %>
 
+    <%= if @alerts do %>
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded text-sm">
+        <strong>⚠️ Alert:</strong> <%= @alerts %>
+      </div>
+    <% end %>
+
     <%= if @chart_spec do %>
       <div id="chart-container" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} />
       <div class="mt-4 space-x-2">
