@@ -1,9 +1,9 @@
-<div class="max-w-md mx-auto mt-10">
-  <h2 class="text-xl font-semibold mb-4">Log In</h2>
+<div class="max-w-md mx-auto mt-10 space-y-4">
+  <h1 class="text-xl font-semibold mb-4"><%= @page_title %></h1>
   <%= if @error do %>
-    <div class="text-red-600 mb-2"><%= @error %></div>
+    <div class="rounded-md border p-4 bg-white shadow-sm text-red-600"><%= @error %></div>
   <% end %>
-  <form phx-submit="login">
+  <form phx-submit="login" class="space-y-2">
     <div class="mb-2">
       <label class="block">Email</label>
       <input type="email" name="user[email]" class="border px-2" />

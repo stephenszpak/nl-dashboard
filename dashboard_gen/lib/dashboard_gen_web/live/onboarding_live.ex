@@ -6,7 +6,7 @@ defmodule DashboardGenWeb.OnboardingLive do
     user = session["user_id"] && Accounts.get_user(session["user_id"])
 
     if user do
-      {:ok, assign(socket, user: user, collapsed: false)}
+      {:ok, assign(socket, user: user, collapsed: false, page_title: "Onboarding")}
     else
       {:ok, Phoenix.LiveView.redirect(socket, to: "/login")}
     end
