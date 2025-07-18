@@ -10,9 +10,12 @@ defmodule DashboardGenWeb.DashboardLive do
   alias VegaLite
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"user_id" => user_id} = _session, socket) do
+    user = DashboardGen.Accounts.get_user!(user_id)
+
     {:ok,
      assign(socket,
+       current_user: user,
        prompt: "",
        chart_spec: nil,
        loading: false,
@@ -21,10 +24,14 @@ defmodule DashboardGenWeb.DashboardLive do
        explanation: nil,
        alerts: nil,
        show_user_menu: false
-      )}
+     )}
   end
 
-  @impl true
+  def mount(_params, _session, socket) do
+    # Not logged in
+    {:ok, socket |> Phoenix.LiveView.redirect(to: "/login")}
+  end
+
   def handle_event("generate", %{"prompt" => prompt}, socket) do
     send(self(), {:generate_chart, prompt})
 
