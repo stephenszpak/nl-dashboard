@@ -10,35 +10,39 @@
     <% end %>
 
     <%= if @alerts do %>
-      <.alert_banner alerts={@alerts} />
+      <div class="mb-4">
+        <.alert_banner alerts={@alerts} />
+      </div>
     <% end %>
 
     <%= if @chart_spec do %>
-      <div id="chart-container" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} />
+      <div class="bg-white rounded-md shadow-sm p-4">
+        <h2 class="text-sm font-semibold mb-4">Top 5 Performing Campaigns</h2>
+        <div id="chart-container" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} />
+      </div>
       <.insight_buttons summary={@summary} loading={@loading} />
     <% end %>
 
     <%= if @summary do %>
-      <div class="rounded-md border p-4 bg-white shadow-sm text-gray-700">
+      <div class="bg-white rounded-md shadow-sm p-4 mb-4 text-gray-800 text-sm leading-relaxed">
         <strong>Insight:</strong> <%= @summary %>
       </div>
     <% end %>
     <%= if @explanation do %>
-      <div class="rounded-md border p-4 bg-white shadow-sm mt-4 text-yellow-900">
+      <div class="bg-white rounded-md shadow-sm p-4 mb-4 text-gray-800 text-sm leading-relaxed">
         <strong>Explanation:</strong> <%= @explanation %>
       </div>
     <% end %>
   </div>
 
-  <form phx-submit="generate" class="p-6 bg-white border-t">
-    <div class="flex items-end gap-2 border border-gray-300 rounded-xl shadow-sm p-3 bg-white">
-      <textarea
-        name="prompt"
-        rows="1"
-        placeholder="Describe your query..."
-        class="flex-1 resize-none rounded-md border-none outline-none focus:ring-0 text-sm"
-      ></textarea>
-      <button type="submit" class="bg-black text-white rounded-full px-3 py-1 text-sm">➤</button>
-    </div>
+  <form phx-submit="generate" class="bg-white border rounded-md flex items-center px-4 py-2 shadow-sm mt-6">
+    <input
+      type="text"
+      name="prompt"
+      value={@prompt}
+      placeholder="Describe your query..."
+      class="flex-1 bg-transparent outline-none text-sm"
+    />
+    <button type="submit" class="text-gray-600 hover:text-gray-800 p-2">➤</button>
   </form>
 </div>
