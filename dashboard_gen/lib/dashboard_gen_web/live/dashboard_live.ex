@@ -4,6 +4,7 @@ defmodule DashboardGenWeb.DashboardLive do
   import DashboardGenWeb.CoreComponents
   alias DashboardGen.GPTClient
   alias DashboardGen.Codex.Summarizer
+  alias DashboardGen.Codex.Explainer
   alias DashboardGen.Uploads
   alias VegaLite
 
@@ -15,7 +16,8 @@ defmodule DashboardGenWeb.DashboardLive do
        chart_spec: nil,
        loading: false,
        collapsed: false,
-       summary: nil
+       summary: nil,
+       explanation: nil
      )}
   end
 
@@ -28,7 +30,8 @@ defmodule DashboardGenWeb.DashboardLive do
        prompt: prompt,
        loading: true,
        chart_spec: nil,
-       summary: nil
+       summary: nil,
+       explanation: nil
      )}
   end
 
@@ -54,6 +57,42 @@ defmodule DashboardGenWeb.DashboardLive do
     end
   end
 
+  def handle_event("explain_this", _params, socket) do
+    with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
+         {:ok, explanation} <-
+           Explainer.explain(
+             socket.assigns.prompt,
+             Map.values(upload.headers),
+             upload.data
+           ) do
+      {:noreply, assign(socket, explanation: explanation)}
+    else
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, inspect(reason))}
+
+      nil ->
+        {:noreply, put_flash(socket, :error, "No upload found")}
+    end
+  end
+
+  def handle_event("why_this", _params, socket) do
+    with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
+         {:ok, explanation} <-
+           Explainer.why(
+             socket.assigns.prompt,
+             Map.values(upload.headers),
+             upload.data
+           ) do
+      {:noreply, assign(socket, explanation: explanation)}
+    else
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, inspect(reason))}
+
+      nil ->
+        {:noreply, put_flash(socket, :error, "No upload found")}
+    end
+  end
+
   @impl true
   def handle_info({:generate_chart, prompt}, socket) do
     with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
@@ -70,7 +109,13 @@ defmodule DashboardGenWeb.DashboardLive do
 
       spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
-      {:noreply, assign(socket, chart_spec: spec, loading: false, summary: nil)}
+      {:noreply,
+       assign(socket,
+         chart_spec: spec,
+         loading: false,
+         summary: nil,
+         explanation: nil
+       )}
     else
       {:error, reason} ->
         {:noreply,
