@@ -6,6 +6,8 @@ defmodule DashboardGen.Accounts.User do
     field(:email, :string)
     field(:hashed_password, :string)
     field(:onboarded_at, :utc_datetime)
+    field(:password, :string, virtual: true)
+    field(:password_confirmation, :string, virtual: true)
 
     timestamps()
   end
