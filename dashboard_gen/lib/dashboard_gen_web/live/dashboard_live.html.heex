@@ -21,6 +21,27 @@
         📁 <%= unless @collapsed, do: "Uploads" %>
       </Phoenix.Component.link>
     </nav>
+
+    <div class="absolute bottom-4 left-4" phx-click-away="hide_user_menu">
+      <div phx-click="toggle_user_menu" class="flex items-center space-x-2 cursor-pointer">
+        <div class="bg-gray-300 rounded-full h-8 w-8 flex items-center justify-center text-sm font-bold">
+          <%= initials(@current_user.name || @current_user.email) %>
+        </div>
+        <div :if={!@collapsed} class="text-sm">
+          <div class="font-medium"><%= @current_user.name || @current_user.email %></div>
+          <div class="text-gray-400 text-xs">Signed in</div>
+        </div>
+      </div>
+
+      <%= if @show_user_menu do %>
+        <div class="mt-2 w-48 bg-white shadow-lg border rounded text-sm">
+          <a href="/settings" class="block px-4 py-2 hover:bg-gray-100">⚙️ Settings</a>
+          <form method="post" action="/logout">
+            <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100">🚪 Log out</button>
+          </form>
+        </div>
+      <% end %>
+    </div>
   </aside>
 
   <main class="flex-1 flex flex-col justify-between overflow-y-auto">
