@@ -12,11 +12,11 @@ defmodule DashboardGenWeb.RegisterLive do
 
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.create_user(user_params) do
-      {:ok, user} ->
+      {:ok, _user} ->
         {:noreply,
          socket
-         |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
-         |> Phoenix.LiveView.push_navigate(to: "/onboarding")}
+         |> put_flash(:info, "Account created, please log in.")
+         |> Phoenix.LiveView.push_navigate(to: "/login")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
