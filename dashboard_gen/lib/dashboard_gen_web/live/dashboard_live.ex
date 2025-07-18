@@ -8,17 +8,14 @@ defmodule DashboardGenWeb.DashboardLive do
   alias VegaLite
 
   @impl true
-  def mount(_params, session, socket) do
-    collapsed? = Map.get(session, "sidebar_collapsed", false)
-
+  def mount(_params, _session, socket) do
     {:ok,
      assign(socket,
        prompt: "",
        chart_spec: nil,
        loading: false,
-       collapsed?: collapsed?,
-       gpt_summary: nil,
-       queries: []
+       collapsed: false,
+       summary: nil
      )}
   end
 
@@ -31,17 +28,13 @@ defmodule DashboardGenWeb.DashboardLive do
        prompt: prompt,
        loading: true,
        chart_spec: nil,
-       gpt_summary: nil
+       collapsed: true,
+       summary: nil
      )}
   end
 
-  def handle_event("toggle_sidebar", _params, socket) do
-    collapsed? = !socket.assigns.collapsed?
-
-    {:noreply,
-     socket
-     |> assign(:collapsed?, collapsed?)
-     |> Phoenix.LiveView.put_session("sidebar_collapsed", collapsed?)}
+  def handle_event("expand_input", _params, socket) do
+    {:noreply, assign(socket, collapsed: false)}
   end
 
   def handle_event("generate_summary", _params, socket) do
@@ -52,7 +45,7 @@ defmodule DashboardGenWeb.DashboardLive do
              Map.values(upload.headers),
              upload.data
            ) do
-      {:noreply, assign(socket, gpt_summary: summary)}
+      {:noreply, assign(socket, summary: summary)}
     else
       {:error, reason} ->
         {:noreply, put_flash(socket, :error, inspect(reason))}
@@ -78,7 +71,7 @@ defmodule DashboardGenWeb.DashboardLive do
 
       spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
-      {:noreply, assign(socket, chart_spec: spec, loading: false, gpt_summary: nil)}
+      {:noreply, assign(socket, chart_spec: spec, loading: false, summary: nil)}
     else
       {:error, reason} ->
         {:noreply,
