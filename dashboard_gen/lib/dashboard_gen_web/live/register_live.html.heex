@@ -1,6 +1,6 @@
 <div class="max-w-md mx-auto mt-10">
   <h2 class="text-xl font-semibold mb-4">Register</h2>
-  <.form let={f} for={@changeset} phx-submit="save">
+  <.form :let={f} for={@changeset} phx-submit="save">
     <div class="mb-2">
       <%= label f, :email, class: "block" %>
       <%= email_input f, :email, class: "border px-2" %>
