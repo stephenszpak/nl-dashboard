@@ -1,21 +1,9 @@
-<div class="flex min-h-screen">
-  <aside class="w-60 bg-gray-800 text-white p-4 space-y-2">
-    <nav class="flex flex-col space-y-2">
-      <Phoenix.Component.link navigate={~p"/"} class="hover:underline">Dashboard</Phoenix.Component.link>
-      <Phoenix.Component.link navigate={~p"/saved"} class="hover:underline">Saved Views</Phoenix.Component.link>
-      <Phoenix.Component.link navigate={~p"/settings"} class="hover:underline">Settings</Phoenix.Component.link>
-      <Phoenix.Component.link navigate={~p"/uploads"} class="hover:underline">Uploads</Phoenix.Component.link>
-    </nav>
-  </aside>
-
+<div class="flex min-h-screen bg-gray-50 text-gray-800 font-sans text-sm">
+  <.sidebar collapsed={@collapsed} />
   <div class="flex-1 flex flex-col">
-    <header class="p-4 bg-gray-100 border-b">
-      <h1 class="text-xl font-semibold">DashboardGen</h1>
-    </header>
-
-    <main class="flex-1 overflow-y-auto p-4 pb-24">
+    <.topbar collapsed={@collapsed} />
+    <main class="flex-1 px-6 py-4">
       <%= @inner_content %>
     </main>
   </div>
 </div>
-

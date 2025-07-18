@@ -1,5 +1,5 @@
 defmodule DashboardGenWeb.DashboardLive do
-  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :root}
+  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
   alias DashboardGen.GPTClient
