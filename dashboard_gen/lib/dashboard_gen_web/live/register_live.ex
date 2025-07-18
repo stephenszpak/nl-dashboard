@@ -1,5 +1,7 @@
 defmodule DashboardGenWeb.RegisterLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :root}
+  use DashboardGenWeb, :html
+
   alias DashboardGen.Accounts
   alias DashboardGen.Accounts.User
 
@@ -19,5 +21,11 @@ defmodule DashboardGenWeb.RegisterLive do
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  defp error_tag(form, field) do
+    Enum.map(Keyword.get_values(form.errors, field), fn {message, _opts} ->
+      Phoenix.HTML.Tag.content_tag(:span, message, class: "text-red-600")
+    end)
   end
 end
