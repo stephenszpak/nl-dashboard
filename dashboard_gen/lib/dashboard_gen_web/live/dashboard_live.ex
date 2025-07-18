@@ -3,22 +3,56 @@ defmodule DashboardGenWeb.DashboardLive do
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
   alias DashboardGen.GPTClient
+  alias DashboardGen.Codex.Summarizer
   alias DashboardGen.Uploads
   alias VegaLite
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, prompt: "", chart_spec: nil, loading: false, collapsed: false)}
+    {:ok,
+     assign(socket,
+       prompt: "",
+       chart_spec: nil,
+       loading: false,
+       collapsed: false,
+       summary: nil
+     )}
   end
 
   @impl true
   def handle_event("generate", %{"prompt" => prompt}, socket) do
     send(self(), {:generate_chart, prompt})
-    {:noreply, assign(socket, prompt: prompt, loading: true, chart_spec: nil, collapsed: true)}
+
+    {:noreply,
+     assign(socket,
+       prompt: prompt,
+       loading: true,
+       chart_spec: nil,
+       collapsed: true,
+       summary: nil
+     )}
   end
 
   def handle_event("expand_input", _params, socket) do
     {:noreply, assign(socket, collapsed: false)}
+  end
+
+  def handle_event("generate_summary", _params, socket) do
+    with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
+         {:ok, summary} <-
+           Summarizer.summarize(
+             socket.assigns.prompt,
+             Map.values(upload.headers),
+             upload.data
+           ) do
+      {:noreply, assign(socket, summary: summary)}
+    else
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, inspect(reason))}
+
+      nil ->
+        {:noreply, put_flash(socket, :error, "No upload found")}
+    end
   end
 
   @impl true
@@ -37,7 +71,7 @@ defmodule DashboardGenWeb.DashboardLive do
 
       spec = VegaLite.to_spec(vl) |> Jason.encode!()
 
-      {:noreply, assign(socket, chart_spec: spec, loading: false)}
+      {:noreply, assign(socket, chart_spec: spec, loading: false, summary: nil)}
     else
       {:error, reason} ->
         {:noreply,
