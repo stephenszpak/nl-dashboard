@@ -20,7 +20,6 @@ defmodule DashboardGenWeb.Router do
   scope "/", DashboardGenWeb do
     pipe_through(:browser)
 
-    live("/", DashboardLive)
     live("/register", RegisterLive)
     live("/login", LoginLive)
     delete("/logout", AuthController, :delete)
@@ -29,13 +28,9 @@ defmodule DashboardGenWeb.Router do
   scope "/", DashboardGenWeb do
     pipe_through([:browser, :require_auth])
 
+    live("/", DashboardLive)
     live("/dashboard", DashboardLive)
     live("/onboarding", OnboardingLive)
-  end
-
-  scope "/", DashboardGenWeb do
-    pipe_through(:browser)
-
     live("/saved", SavedLive)
     live("/settings", SettingsLive)
     live("/uploads", UploadsLive)
