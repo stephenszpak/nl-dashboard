@@ -8,6 +8,12 @@
 
     <div :if={@chart_spec} id="chart-container" class="mt-6" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec}>
     </div>
+    <div :if={@summary} class="mt-4 bg-gray-50 p-4 rounded text-sm text-gray-700">
+      <strong>Insight:</strong> <%= @summary %>
+    </div>
+    <%= if @chart_spec && !@summary && !@loading do %>
+      <button phx-click="generate_summary" class="btn mt-4">Generate Insight</button>
+    <% end %>
   </div>
 
   <%= if @collapsed do %>
