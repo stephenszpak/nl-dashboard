@@ -10,10 +10,6 @@ defmodule DashboardGen.GPTClient do
 
   @openai_url "https://api.openai.com/v1/chat/completions"
 
-  @doc """
-  Sends the given prompt to the OpenAI API and returns the decoded chart
-  specification on success.
-  """
   defp clean_gpt_json(json) do
     json
     |> String.replace(~r/,\s*\n\s*}/, "\n}")
