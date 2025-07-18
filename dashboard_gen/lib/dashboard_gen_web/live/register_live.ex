@@ -1,5 +1,5 @@
 defmodule DashboardGenWeb.RegisterLive do
-  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :root}
+  use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
 
   alias DashboardGen.Accounts
@@ -7,7 +7,7 @@ defmodule DashboardGenWeb.RegisterLive do
 
   def mount(_params, _session, socket) do
     changeset = User.registration_changeset(%User{}, %{})
-    {:ok, assign(socket, changeset: changeset)}
+    {:ok, assign(socket, changeset: changeset, collapsed: false)}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
@@ -21,6 +21,10 @@ defmodule DashboardGenWeb.RegisterLive do
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+  end
+
+  def handle_event("toggle_sidebar", _params, socket) do
+    {:noreply, update(socket, :collapsed, &(!&1))}
   end
 
   defp error_tag(form, field) do

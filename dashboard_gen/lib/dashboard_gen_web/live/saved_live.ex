@@ -4,6 +4,10 @@ defmodule DashboardGenWeb.SavedLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :page_title, "Saved Views")}
+    {:ok, assign(socket, page_title: "Saved Views", collapsed: false)}
+  end
+
+  def handle_event("toggle_sidebar", _params, socket) do
+    {:noreply, update(socket, :collapsed, &(!&1))}
   end
 end
