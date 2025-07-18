@@ -1,33 +1,8 @@
-<div class="flex h-screen">
-  <aside class={sidebar_classes(@collapsed)}>
-    <div class="flex justify-between items-center p-3 border-b">
-      <span :if={!@collapsed} class="text-lg font-semibold">DashboardGen</span>
-      <button phx-click="toggle_sidebar" aria-label="Toggle sidebar">
-        <%= if @collapsed, do: "▶", else: "◀" %>
-      </button>
-    </div>
-
-    <nav class="space-y-2 p-3">
-      <Phoenix.Component.link navigate={~p"/"} class="nav-item flex items-center gap-2 text-sm hover:underline">
-        📊 <%= unless @collapsed, do: "Dashboard" %>
-      </Phoenix.Component.link>
-      <Phoenix.Component.link navigate={~p"/saved"} class="nav-item flex items-center gap-2 text-sm hover:underline">
-        💾 <%= unless @collapsed, do: "Saved Views" %>
-      </Phoenix.Component.link>
-      <Phoenix.Component.link navigate={~p"/settings"} class="nav-item flex items-center gap-2 text-sm hover:underline">
-        ⚙️ <%= unless @collapsed, do: "Settings" %>
-      </Phoenix.Component.link>
-      <Phoenix.Component.link navigate={~p"/uploads"} class="nav-item flex items-center gap-2 text-sm hover:underline">
-        📁 <%= unless @collapsed, do: "Uploads" %>
-      </Phoenix.Component.link>
-    </nav>
-  </aside>
-
-  <main class="flex-1 flex flex-col justify-between overflow-y-auto">
-    <div class="p-6 space-y-6 overflow-y-auto">
-      <%= if live_flash(@flash, :error) do %>
-        <div class="text-red-600"><%= live_flash(@flash, :error) %></div>
-      <% end %>
+<div class="flex flex-col h-full justify-between">
+  <div class="space-y-6 overflow-y-auto">
+    <%= if live_flash(@flash, :error) do %>
+      <div class="text-red-600"><%= live_flash(@flash, :error) %></div>
+    <% end %>
 
     <%= if @loading do %>
       <div class="text-gray-500">Generating...</div>
@@ -65,19 +40,17 @@
         <strong>Explanation:</strong> <%= @explanation %>
       </div>
     <% end %>
+  </div>
+
+  <form phx-submit="generate" class="p-6 bg-white border-t">
+    <div class="flex items-end gap-2 border border-gray-300 rounded-xl shadow-sm p-3 bg-white">
+      <textarea
+        name="prompt"
+        rows="1"
+        placeholder="Describe your query..."
+        class="flex-1 resize-none rounded-md border-none outline-none focus:ring-0 text-sm"
+      ></textarea>
+      <button type="submit" class="bg-black text-white rounded-full px-3 py-1 text-sm">➤</button>
     </div>
-
-    <form phx-submit="generate" class="p-6 bg-white border-t">
-      <div class="flex items-end gap-2 border border-gray-300 rounded-xl shadow-sm p-3 bg-white">
-        <textarea
-          name="prompt"
-          rows="1"
-          placeholder="Describe your query..."
-          class="flex-1 resize-none rounded-md border-none outline-none focus:ring-0 text-sm"
-        ></textarea>
-        <button type="submit" class="bg-black text-white rounded-full px-3 py-1 text-sm">➤</button>
-      </div>
-    </form>
-  </main>
+  </form>
 </div>
-

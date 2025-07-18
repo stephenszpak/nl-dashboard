@@ -12,6 +12,7 @@ defmodule DashboardGenWeb.UploadsLive do
       |> assign(:uploads_list, Uploads.list_uploads())
       |> assign(:label, "")
       |> assign(:uploading?, false)
+      |> assign(:collapsed, false)
       |> allow_upload(:csv,
         accept: ~w(.csv),
         max_entries: 1,
@@ -29,6 +30,10 @@ defmodule DashboardGenWeb.UploadsLive do
 
   @impl true
   def handle_event("noop", _params, socket), do: {:noreply, socket}
+
+  def handle_event("toggle_sidebar", _params, socket) do
+    {:noreply, update(socket, :collapsed, &(!&1))}
+  end
 
   @impl true
   def handle_progress(:csv, entry, socket) when entry.done? do
