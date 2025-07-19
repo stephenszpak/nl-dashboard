@@ -22,6 +22,9 @@ defmodule DashboardGenWeb.LayoutComponents do
         <.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
           💾 <%= unless @collapsed, do: "Saved Views" %>
         </.link>
+        <.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+          📰 <%= unless @collapsed, do: "Insights" %>
+        </.link>
         <.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
           ⚙️ <%= unless @collapsed, do: "Settings" %>
         </.link>
