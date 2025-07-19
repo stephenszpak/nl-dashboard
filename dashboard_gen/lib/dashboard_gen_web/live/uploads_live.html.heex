@@ -1,6 +1,6 @@
 <h1 class="text-xl font-semibold mb-4"><%= @page_title %></h1>
 <div class="bg-white rounded-md shadow-sm p-4 mb-6 border">
-  <.form id="upload-form" phx-change="validate" phx-submit="noop" multipart={true} class="space-y-2">
+  <form id="upload-form" phx-change="validate" phx-submit="noop" multipart={true} class="space-y-2">
     <.text_input type="text" name="label" value={@label} placeholder="Optional label" class="text-sm" />
 
     <div phx-drop-target={@uploads.csv.ref}>
@@ -15,7 +15,7 @@
       <progress value={entry.progress} max="100" class="w-full mt-2"></progress>
     <% end %>
     <.button type="submit" class="rounded-full text-sm" disabled={@uploading?}>Upload</.button>
-  </.form>
+  </form>
 </div>
 
 <div class="mt-6 space-y-4">
