@@ -10,9 +10,10 @@ defmodule DashboardGen.Insights do
   alias DashboardGen.CodexClient
 
   @doc """
-  Returns insights grouped by company. Each company will include the
-  most recent `limit` press releases based on the `inserted_at` timestamp
-  of the Insight record.
+  Returns insights grouped by company and source. Each company map
+  includes two lists under the `:press_releases` and `:social_media`
+  keys. Items are sorted by `inserted_at` and truncated to the given
+  `limit` per source.
   """
   def list_recent_insights_by_company(limit \\ 10) do
     Insight
@@ -23,17 +24,30 @@ defmodule DashboardGen.Insights do
         %{
           company: item["company"] || insight.source,
           title: item["title"],
+          content: item["content"],
           url: item["url"],
           date: item["date"],
           summary: item["summary"],
+          source: item["source"] || insight.source,
           inserted_at: insight.inserted_at
         }
       end)
     end)
     |> Enum.group_by(& &1.company)
     |> Enum.map(fn {company, items} ->
-      sorted = Enum.sort_by(items, &(&1.inserted_at || ~N[1970-01-01 00:00:00]), {:desc, NaiveDateTime})
-      {company, Enum.take(sorted, limit)}
+      press_releases =
+        items
+        |> Enum.filter(&(&1.source == "press_release"))
+        |> Enum.sort_by(&(&1.inserted_at || ~N[1970-01-01 00:00:00]), {:desc, NaiveDateTime})
+        |> Enum.take(limit)
+
+      social_media =
+        items
+        |> Enum.filter(&(&1.source == "social_media"))
+        |> Enum.sort_by(&(&1.inserted_at || ~N[1970-01-01 00:00:00]), {:desc, NaiveDateTime})
+        |> Enum.take(limit)
+
+      {company, %{press_releases: press_releases, social_media: social_media}}
     end)
   end
 

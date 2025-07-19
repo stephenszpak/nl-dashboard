@@ -9,7 +9,7 @@
 </form>
 
 <div class="grid gap-6 md:grid-cols-2">
-  <%= for {company, items} <- @insights_by_company do %>
+  <%= for {company, data} <- @insights_by_company do %>
     <%= if @company_filter == company do %>
       <div class="bg-white rounded-md shadow-sm p-4 border">
         <h2 class="text-sm font-semibold mb-2"><%= company %></h2>
@@ -23,17 +23,41 @@
             </span>
           <% end %>
         </div>
-        <ul class="space-y-2">
-          <%= for item <- items do %>
-            <li>
-              <a href={item.url} class="text-blue-600 hover:underline" target="_blank"><%= item.title %></a>
-              <div class="text-xs text-gray-500"><%= item.date %></div>
-              <div :if={item.summary} class="text-xs text-gray-700 mt-1">
-                <%= item.summary %>
-              </div>
-            </li>
-          <% end %>
-        </ul>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-xs font-medium mb-2">Press Releases</h3>
+            <ul class="space-y-2">
+              <%= for item <- data.press_releases do %>
+                <li>
+                  <a href={item.url} class="text-blue-600 hover:underline" target="_blank"><%= item.title %></a>
+                  <div class="text-xs text-gray-500"><%= item.date %></div>
+                  <div :if={item.summary} class="text-xs text-gray-700 mt-1">
+                    <%= item.summary %>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-medium mb-2">Social Media</h3>
+            <ul class="space-y-2">
+              <%= for post <- data.social_media do %>
+                <li class="flex items-start gap-2">
+                  <.icon name={platform_icon(post.url)} class="h-4 w-4 mt-0.5" />
+                  <div>
+                    <div class="text-sm"><%= snippet(post.content) %></div>
+                    <div class="text-xs text-gray-500">
+                      <%= post.date %>
+                      <a :if={post.url} href={post.url} target="_blank" class="ml-1 text-blue-600 hover:underline">Link</a>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
       </div>
     <% end %>
   <% end %>
