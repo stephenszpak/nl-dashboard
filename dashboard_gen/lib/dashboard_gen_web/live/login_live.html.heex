@@ -6,13 +6,13 @@
   <form phx-submit="login" class="space-y-2">
     <div class="mb-2">
       <label class="block">Email</label>
-      <input type="email" name="user[email]" class="border px-2" />
+      <.text_input type="email" name="user[email]" />
     </div>
     <div class="mb-4">
       <label class="block">Password</label>
-      <input type="password" name="user[password]" class="border px-2" />
+      <.text_input type="password" name="user[password]" />
     </div>
-    <button class="bg-blue-500 text-white px-4 py-2">Log In</button>
-    <Phoenix.Component.link navigate={~p"/register"} class="ml-4 bg-gray-500 text-white px-4 py-2">Register</Phoenix.Component.link>
+    <.button>Log In</.button>
+    <Phoenix.Component.link navigate={~p"/register"} class="ml-4 px-4 py-2 rounded-md border border-brandBlue text-brandBlue hover:bg-[#e6f7fd]">Register</Phoenix.Component.link>
   </form>
 </div>
