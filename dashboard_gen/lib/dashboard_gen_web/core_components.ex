@@ -26,12 +26,13 @@ defmodule DashboardGenWeb.CoreComponents do
   """
   attr(:variant, :string, default: "primary")
   attr(:class, :string, default: nil)
+  attr(:disabled, :boolean, default: false)
   attr(:rest, :global, default: %{})
   slot(:inner_block, required: true)
 
   def button(assigns) do
     ~H"""
-    <button class={[button_classes(@variant), @class]} {@rest}>
+    <button class={[button_classes(@variant), @class]} disabled={@disabled} {@rest}>
       <%= render_slot(@inner_block) %>
     </button>
     """
@@ -46,11 +47,25 @@ defmodule DashboardGenWeb.CoreComponents do
   @doc """
   Text input component with AB styles
   """
+  attr(:type, :string, default: "text")
+  attr(:name, :string, default: nil)
+  attr(:value, :any, default: nil)
+  attr(:placeholder, :string, default: nil)
+  attr(:disabled, :boolean, default: false)
+  attr(:class, :string, default: nil)
   attr(:rest, :global, default: %{})
 
   def text_input(assigns) do
     ~H"""
-    <input class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-brandBlue focus:ring-1 focus:ring-brandBlue" {@rest} />
+    <input
+      type={@type}
+      name={@name}
+      value={@value}
+      placeholder={@placeholder}
+      disabled={@disabled}
+      class={["border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-brandBlue focus:ring-1 focus:ring-brandBlue", @class]}
+      {@rest}
+    />
     """
   end
 end
