@@ -67,7 +67,7 @@ defmodule DashboardGen.Scrapers do
 
     case File.exists?(path) do
       true ->
-        {_, status} = System.cmd("python3", [path, "--company", company], stderr_to_stdout: true)
+        {_, _status} = System.cmd("python3", [path, "--company", company], stderr_to_stdout: true)
 
         output_path = Path.join(File.cwd!(), "scrape_output.json")
 

@@ -8,7 +8,7 @@ defmodule DashboardGenWeb.LiveHelpers do
   """
   def maybe_put_session(socket, key, value) do
     if function_exported?(Phoenix.LiveView, :put_session, 3) do
-      Phoenix.LiveView.put_session(socket, key, value)
+      apply(Phoenix.LiveView, :put_session, [socket, key, value])
     else
       socket
     end

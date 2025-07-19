@@ -37,7 +37,6 @@ defmodule DashboardGenWeb.UploadsLive do
     {:noreply, update(socket, :collapsed, &(!&1))}
   end
 
-  @impl true
   def handle_progress(:csv, entry, socket) when entry.done? do
     Logger.info("Finished uploading #{entry.client_name}")
     label = socket.assigns[:label] || "Untitled Upload"
