@@ -7,17 +7,24 @@ defmodule DashboardGen.Scrapers do
   alias DashboardGen.Scrapers.Insight
 
   @scripts ["competitor_sites.py", "press_releases.py", "social_media.py"]
-
-  @scripts_path Path.join(:code.priv_dir(:dashboard_gen), ["python", "scrapers"])
+  priv_dir = :code.priv_dir(:dashboard_gen) |> to_string()
+  @scripts_path Path.join([priv_dir, "python", "scrapers"])
 
   @doc "Run all configured scraper scripts"
   def scrape_all do
-    Enum.each(@scripts, &scrape_source/1)
+    IO.puts("🚀 Starting scraper pipeline...")
+    Enum.each(@scripts, fn script ->
+      case scrape_source(script) do
+        {:ok, _result} -> IO.puts("✅ #{script} succeeded")
+        {:error, reason} -> IO.inspect(reason, label: "❌ #{script} failed")
+      end
+    end)
   end
 
   @doc "Run a single scraper script by filename"
   def scrape_source(script) when is_binary(script) do
     path = Path.join(@scripts_path, script)
+    IO.puts("🚀 #{path}")
 
     case File.exists?(path) do
       true -> run_script(path, Path.rootname(script))
@@ -26,14 +33,22 @@ defmodule DashboardGen.Scrapers do
   end
 
   defp run_script(path, source) do
-    {output, _} = System.cmd("python3", [path], stderr_to_stdout: true)
+    IO.inspect("Running: #{path}")
+    {output, status} = System.cmd("python3", [path], stderr_to_stdout: true)
+    IO.inspect({status, output}, label: "Script result")
 
-    with {:ok, data} <- Jason.decode(output) do
-      %Insight{}
-      |> Insight.changeset(%{source: source, data: data})
-      |> Repo.insert()
-    else
-      {:error, reason} -> {:error, {reason, output}}
+    case Jason.decode(output) do
+      {:ok, data} ->
+        IO.inspect(data, label: "Parsed data")
+
+        %Insight{}
+        |> Insight.changeset(%{source: source, data: data})
+        |> Repo.insert()
+
+      {:error, reason} ->
+        IO.inspect(reason, label: "JSON parse error")
+        IO.inspect(output, label: "Raw scraper output")
+        {:error, {reason, output}}
     end
   end
 end
