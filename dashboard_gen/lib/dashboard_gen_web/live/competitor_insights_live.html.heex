@@ -14,8 +14,15 @@
     <%= if @company_filter in ["", company] do %>
       <div class="bg-white rounded-md shadow-sm p-4 border">
         <h2 class="text-sm font-semibold mb-2"><%= company %></h2>
-        <div class="text-xs text-gray-600 mb-3">
-          Most frequent topics: real estate, private equity, fundraising
+        <div class="text-xs text-gray-600 mb-3 italic">
+          <%= if summary = @summaries[company] do %>
+            <%= summary %>
+          <% else %>
+            <span :if={company in @loading_summaries} class="flex items-center gap-1">
+              <span class="h-3 w-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+              Generating summary...
+            </span>
+          <% end %>
         </div>
         <ul class="space-y-2">
           <%= for item <- items do %>
