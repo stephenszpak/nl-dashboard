@@ -30,7 +30,7 @@ defmodule DashboardGen.Insights do
     end)
     |> Enum.group_by(& &1.company)
     |> Enum.map(fn {company, items} ->
-      sorted = Enum.sort_by(items, & &1.inserted_at, {:desc, DateTime})
+      sorted = Enum.sort_by(items, &(&1.inserted_at || ~N[1970-01-01 00:00:00]), {:desc, NaiveDateTime})
       {company, Enum.take(sorted, limit)}
     end)
   end
