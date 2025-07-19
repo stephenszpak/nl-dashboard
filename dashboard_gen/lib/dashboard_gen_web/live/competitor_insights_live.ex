@@ -1,6 +1,7 @@
 defmodule DashboardGenWeb.CompetitorInsightsLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
+  import DashboardGenWeb.CoreComponents
 
   alias DashboardGen.Insights
 
@@ -59,6 +60,25 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
 
       _ ->
         {:noreply, update(socket, :loading_summaries, &MapSet.delete(&1, company))}
+    end
+  end
+
+  defp snippet(text, len \\ 140)
+  defp snippet(nil, _len), do: ""
+
+  defp snippet(text, len) do
+    text
+    |> String.replace("\n", " ")
+    |> String.slice(0, len)
+    |> String.trim()
+  end
+
+  defp platform_icon(url) do
+    cond do
+      is_nil(url) -> "chat-bubble-left-right"
+      String.contains?(url, "twitter") -> "twitter"
+      String.contains?(url, "linkedin") -> "linkedin"
+      true -> "chat-bubble-left-right"
     end
   end
 end
