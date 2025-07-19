@@ -2,7 +2,6 @@
 
 <form phx-change="filter_company" class="mb-4">
   <select name="company" class="border rounded px-2 py-1 text-sm">
-    <option value="" selected={@company_filter == ""}>All Companies</option>
     <%= for comp <- @companies do %>
       <option value={comp} selected={@company_filter == comp}><%= comp %></option>
     <% end %>
@@ -11,7 +10,7 @@
 
 <div class="grid gap-6 md:grid-cols-2">
   <%= for {company, items} <- @insights_by_company do %>
-    <%= if @company_filter in ["", company] do %>
+    <%= if @company_filter == company do %>
       <div class="bg-white rounded-md shadow-sm p-4 border">
         <h2 class="text-sm font-semibold mb-2"><%= company %></h2>
         <div class="text-xs text-gray-600 mb-3 italic">
