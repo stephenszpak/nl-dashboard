@@ -4,7 +4,14 @@ module.exports = {
     '../lib/*_web/**/*.*ex'
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brandBlue: '#1E9BD7',
+      },
+      fontFamily: {
+        sans: ['"Helvetica Neue"', 'Arial', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }

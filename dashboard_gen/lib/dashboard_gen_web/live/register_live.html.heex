@@ -3,19 +3,19 @@
   <.form :let={f} for={@changeset} phx-submit="save" class="space-y-2">
     <div class="mb-2">
       <%= label f, :email, class: "block" %>
-      <%= email_input f, :email, class: "border px-2" %>
+      <.text_input type="email" name="user[email]" value={Phoenix.HTML.Form.input_value(f, :email)} />
       <%= error_tag f, :email %>
     </div>
     <div class="mb-2">
       <%= label f, :password, class: "block" %>
-      <%= password_input f, :password, class: "border px-2" %>
+      <.text_input type="password" name="user[password]" value={Phoenix.HTML.Form.input_value(f, :password)} />
       <%= error_tag f, :password %>
     </div>
     <div class="mb-4">
       <%= label f, :password_confirmation, class: "block" %>
-      <%= password_input f, :password_confirmation, class: "border px-2" %>
+      <.text_input type="password" name="user[password_confirmation]" value={Phoenix.HTML.Form.input_value(f, :password_confirmation)} />
       <%= error_tag f, :password_confirmation %>
     </div>
-    <%= submit "Register", class: "bg-blue-500 text-white px-4 py-2" %>
+    <.button>Register</.button>
   </.form>
 </div>
