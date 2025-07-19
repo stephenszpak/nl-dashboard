@@ -34,4 +34,9 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
+config :dashboard_gen, DashboardGen.Scheduler,
+  jobs: [
+    {"@daily", {DashboardGen.Scrapers, :scrape_all, []}}
+  ]
+
 import_config "#{config_env()}.exs"
