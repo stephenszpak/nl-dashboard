@@ -7,7 +7,7 @@ defmodule DashboardGen.Scrapers do
   alias DashboardGen.Scrapers.Insight
 
   @scripts ["competitor_sites.py", "social_media.py"]
-  @press_release_companies ~w(blackstone jpmorgan)
+  @press_release_companies ~w(blackrock jp-morgan-am)
 
   priv_dir = :code.priv_dir(:dashboard_gen) |> to_string()
   @scripts_path Path.join([priv_dir, "python", "scrapers"])
@@ -40,7 +40,7 @@ defmodule DashboardGen.Scrapers do
       true ->
         case script do
           "social_media.py" ->
-            ["blackstone", "jpmorgan"]
+            ["blackrock", "jp-morgan-am"]
             |> Enum.map(&run_script(path, Path.rootname(script), ["--company", &1]))
             |> Enum.find(fn result -> match?({:error, _}, result) end)
             |> case do
