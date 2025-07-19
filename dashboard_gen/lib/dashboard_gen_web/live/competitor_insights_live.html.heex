@@ -1,0 +1,34 @@
+<h1 class="text-xl font-semibold mb-4"><%= @page_title %></h1>
+
+<form phx-change="filter_company" class="mb-4">
+  <select name="company" class="border rounded px-2 py-1 text-sm">
+    <option value="" selected={@company_filter == ""}>All Companies</option>
+    <%= for comp <- @companies do %>
+      <option value={comp} selected={@company_filter == comp}><%= comp %></option>
+    <% end %>
+  </select>
+</form>
+
+<div class="grid gap-6 md:grid-cols-2">
+  <%= for {company, items} <- @insights_by_company do %>
+    <%= if @company_filter in ["", company] do %>
+      <div class="bg-white rounded-md shadow-sm p-4 border">
+        <h2 class="text-sm font-semibold mb-2"><%= company %></h2>
+        <div class="text-xs text-gray-600 mb-3">
+          Most frequent topics: real estate, private equity, fundraising
+        </div>
+        <ul class="space-y-2">
+          <%= for item <- items do %>
+            <li>
+              <a href={item.url} class="text-blue-600 hover:underline" target="_blank"><%= item.title %></a>
+              <div class="text-xs text-gray-500"><%= item.date %></div>
+              <div :if={item.summary} class="text-xs text-gray-700 mt-1">
+                <%= item.summary %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  <% end %>
+</div>
