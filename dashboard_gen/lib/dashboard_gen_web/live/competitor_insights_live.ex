@@ -33,7 +33,7 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
        companies: companies,
        summaries: summaries,
        loading_summaries: loading,
-       company_filter: ""
+       company_filter: List.first(companies) || ""
      )}
   end
 
