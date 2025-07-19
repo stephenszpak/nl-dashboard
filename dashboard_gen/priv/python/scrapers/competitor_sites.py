@@ -22,7 +22,7 @@ def scrape(company: str):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--company", default="blackstone")
+    parser.add_argument("--company", default="blackrock")
     args = parser.parse_args()
     data = scrape(args.company)
     json.dump(data, sys.stdout)

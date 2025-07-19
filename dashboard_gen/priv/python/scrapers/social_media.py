@@ -13,19 +13,24 @@ from bs4 import BeautifulSoup
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
+COMPANY_NAMES = {
+    "blackrock": "BlackRock",
+    "jp-morgan-am": "J.P. Morgan Asset Management",
+}
+
 # Static social handles used for scraping. The Elixir application passes
-# the company key (e.g. "blackstone") which we use to look up the
+# the company key (e.g. "blackrock") which we use to look up the
 # appropriate handle per platform. Any platform without a handle will be
 # skipped when scraping.
 COMPANY_HANDLES = {
-    "blackstone": {
-        "x": "blackstone",
-        "linkedin": "blackstone-group",
-        "youtube": "UC1q4bW9z9u6H_JvCQWrOXZw",  # channel_id
+    "blackrock": {
+        "x": "blackrock",
+        "linkedin": "blackrock",
+        "youtube": "UC1hV9Fb-Lw5ome1D9fQhs6A",
     },
-    "jpmorgan": {
-        "x": "jpmorgan",
-        "linkedin": "jpmorganchase",
+    "jp-morgan-am": {
+        "x": "JPMAM",
+        "linkedin": "jpmam",
         "youtube": "UCq3gDLkoL0YmCwqHi9nZxtA",
     },
 }
@@ -67,7 +72,7 @@ def scrape_x(company: str) -> List[Dict]:
         date = date_el.get("title") or date_el.text
         posts.append(
             {
-                "company": company.title(),
+                "company": COMPANY_NAMES.get(company, company.title()),
                 "platform": "X",
                 "content": content_el.get_text(" ", strip=True),
                 "date": date.split(" ")[0],
@@ -99,7 +104,7 @@ def scrape_linkedin(company: str) -> List[Dict]:
         date = date_el.get_text(strip=True) if date_el else ""
         posts.append(
             {
-                "company": company.title(),
+                "company": COMPANY_NAMES.get(company, company.title()),
                 "platform": "LinkedIn",
                 "content": text,
                 "date": date,
@@ -140,7 +145,7 @@ def scrape_youtube(company: str) -> List[Dict]:
 
         posts.append(
             {
-                "company": company.title(),
+                "company": COMPANY_NAMES.get(company, company.title()),
                 "platform": "YouTube",
                 "content": title_el.text,
                 "date": date.date().isoformat(),
