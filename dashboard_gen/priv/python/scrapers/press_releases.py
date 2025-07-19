@@ -2,7 +2,9 @@ import argparse
 import json
 import sys
 import requests
+import time
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 
 def scrape_blackstone():
@@ -31,15 +33,40 @@ def scrape_blackstone():
 
     return results
 
-
 def scrape_jpmorgan():
-    # TODO: implement
-    return []
+    url = (
+        "https://www.jpmorgan.com/services/json/v1/dynamic-grid.service/"
+        "parent=jpmorgan/global/US/en/about-us/corporate-news&"
+        "comp=root/content-parsys/multi_tab_copy_copy/tab-par-2/dynamic_grid_copy&"
+        "page=p1.json"
+    )
+
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+
+    res = requests.get(url, headers=headers)
+    res.raise_for_status()
+    data = res.json()
+
+    results = []
+
+    for item in data.get("items", []):
+        results.append({
+            "company": "JP Morgan",
+            "title": item.get("title", "").strip(),
+            "url": "https://www.jpmorgan.com" + item.get("link", ""),
+            "date": item.get("date", ""),
+            "content": item.get("description", ""),
+            "source": "press_release"
+        })
+
+    return results
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--company", default="blackstone")
+    parser.add_argument("--company", required=True)
     args = parser.parse_args()
 
     try:
@@ -50,9 +77,16 @@ def main():
         else:
             raise ValueError(f"Unsupported company: {args.company}")
 
-        print(json.dumps(data))
+        with open("scrape_output.json", "w") as f:
+            json.dump(data, f)
+
     except Exception as e:
-        print(json.dumps({"error": str(e)}))
+        with open("scrape_output.json", "w") as f:
+            json.dump({"error": str(e)}, f)
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":
