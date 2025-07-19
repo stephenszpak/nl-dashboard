@@ -4,8 +4,8 @@
       <span><%= @page_title %></span>
       <.button phx-click="run_scrapers" class="ml-2 px-2 py-1 text-xs">Run Scrapers</.button>
     </h1>
-    <%= if live_flash(@flash, :error) do %>
-      <div class="rounded-md border p-4 bg-white shadow-sm text-red-600"><%= live_flash(@flash, :error) %></div>
+    <%= if Phoenix.Flash.get(@flash, :error) do %>
+      <div class="rounded-md border p-4 bg-white shadow-sm text-red-600"><%= Phoenix.Flash.get(@flash, :error) %></div>
     <% end %>
 
     <%= if @loading do %>
