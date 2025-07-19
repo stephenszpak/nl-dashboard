@@ -13,6 +13,23 @@ from bs4 import BeautifulSoup
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
+# Static social handles used for scraping. The Elixir application passes
+# the company key (e.g. "blackstone") which we use to look up the
+# appropriate handle per platform. Any platform without a handle will be
+# skipped when scraping.
+COMPANY_HANDLES = {
+    "blackstone": {
+        "x": "blackstone",
+        "linkedin": "blackstone-group",
+        "youtube": "UC1q4bW9z9u6H_JvCQWrOXZw",  # channel_id
+    },
+    "jpmorgan": {
+        "x": "jpmorgan",
+        "linkedin": "jpmorganchase",
+        "youtube": "UCq3gDLkoL0YmCwqHi9nZxtA",
+    },
+}
+
 
 def _fetch(url: str, retries: int = 3, delay: float = 1.0) -> requests.Response | None:
     """Return a ``requests.Response`` with basic retry logic."""
@@ -29,7 +46,11 @@ def _fetch(url: str, retries: int = 3, delay: float = 1.0) -> requests.Response 
 
 def scrape_x(company: str) -> List[Dict]:
     """Scrape recent posts from a Nitter mirror for the given company."""
-    url = f"https://nitter.net/{company}"
+    handle = COMPANY_HANDLES.get(company, {}).get("x")
+    if not handle:
+        return []
+
+    url = f"https://nitter.net/{handle}"
     res = _fetch(url)
     if not res:
         return []
@@ -60,7 +81,11 @@ def scrape_x(company: str) -> List[Dict]:
 
 def scrape_linkedin(company: str) -> List[Dict]:
     """Scrape public LinkedIn posts for the given company."""
-    url = f"https://www.linkedin.com/company/{company}/posts/"
+    handle = COMPANY_HANDLES.get(company, {}).get("linkedin")
+    if not handle:
+        return []
+
+    url = f"https://www.linkedin.com/company/{handle}/posts/"
     res = _fetch(url)
     if not res:
         return []
@@ -88,7 +113,11 @@ def scrape_linkedin(company: str) -> List[Dict]:
 
 def scrape_youtube(company: str) -> List[Dict]:
     """Scrape recent YouTube videos for the given company."""
-    feed_url = f"https://www.youtube.com/feeds/videos.xml?search_query={company}"
+    channel_id = COMPANY_HANDLES.get(company, {}).get("youtube")
+    if not channel_id:
+        return []
+
+    feed_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
     res = _fetch(feed_url)
     if not res:
         return []
@@ -124,25 +153,17 @@ def scrape_youtube(company: str) -> List[Dict]:
 
 
 def scrape_company(company: str) -> List[Dict]:
-    """Run all scrapers for the given company."""
+    """Run all scrapers for the given company key."""
     data: List[Dict] = []
 
-    try:
-        data.extend(scrape_x(company))
-    except Exception:
-        pass
-
-    try:
-        data.extend(scrape_linkedin(company))
-    except Exception:
-        pass
-
-    try:
-        yt_posts = scrape_youtube(company)
-        if yt_posts:
-            data.extend(yt_posts)
-    except Exception:
-        pass
+    for scraper in (scrape_x, scrape_linkedin, scrape_youtube):
+        try:
+            posts = scraper(company)
+            if posts:
+                data.extend(posts)
+        except Exception:
+            # Ignore errors from individual scrapers
+            pass
 
     return data
 
