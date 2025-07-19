@@ -1,6 +1,7 @@
 defmodule DashboardGenWeb.RegisterLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
+  import DashboardGenWeb.CoreComponents
 
   alias DashboardGen.Accounts
   alias DashboardGen.Accounts.User
