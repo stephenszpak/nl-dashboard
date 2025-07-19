@@ -44,6 +44,11 @@ defmodule DashboardGenWeb.DashboardLive do
     {:noreply, update(socket, :collapsed, &(!&1))}
   end
 
+  def handle_event("run_scrapers", _params, socket) do
+    Task.start(fn -> DashboardGen.Scrapers.scrape_all() end)
+    {:noreply, put_flash(socket, :info, "Scrapers started")}
+  end
+
   def handle_event("generate_summary", _params, socket) do
     with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
          {:ok, summary} <-
