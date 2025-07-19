@@ -46,7 +46,8 @@ defmodule DashboardGen.MixProject do
       {:openai, "~> 0.5"},
       {:dotenvy, "~> 0.8"},
       {:req, "~> 0.4"},
-      {:bcrypt_elixir, "~> 3.0"}
+      {:bcrypt_elixir, "~> 3.0"},
+      {:quantum, "~> 3.0"}
     ]
   end
 

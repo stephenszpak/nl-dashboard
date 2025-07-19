@@ -8,7 +8,8 @@ defmodule DashboardGen.Application do
       DashboardGenWeb.Telemetry,
       DashboardGen.Repo,
       {Phoenix.PubSub, name: DashboardGen.PubSub},
-      DashboardGenWeb.Endpoint
+      DashboardGenWeb.Endpoint,
+      DashboardGen.Scheduler
     ]
 
     opts = [strategy: :one_for_one, name: DashboardGen.Supervisor]
