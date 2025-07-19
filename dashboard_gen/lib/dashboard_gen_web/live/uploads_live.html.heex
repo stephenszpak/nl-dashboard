@@ -1,13 +1,7 @@
 <h1 class="text-xl font-semibold mb-4"><%= @page_title %></h1>
 <div class="bg-white rounded-md shadow-sm p-4 mb-6 border">
   <.form id="upload-form" phx-change="validate" phx-submit="noop" multipart={true} class="space-y-2">
-    <input
-      type="text"
-      name="label"
-      value={@label}
-      placeholder="Optional label"
-      class="text-sm border rounded px-2 py-1"
-    />
+    <.text_input type="text" name="label" value={@label} placeholder="Optional label" class="text-sm" />
 
     <div phx-drop-target={@uploads.csv.ref}>
       <.live_file_input
@@ -20,7 +14,7 @@
     <%= for entry <- @uploads.csv.entries do %>
       <progress value={entry.progress} max="100" class="w-full mt-2"></progress>
     <% end %>
-    <button type="submit" class="rounded-full bg-green-600 text-white text-sm px-4 py-1 hover:bg-green-500" disabled={@uploading?}>Upload</button>
+    <.button type="submit" class="rounded-full text-sm" disabled={@uploading?}>Upload</.button>
   </.form>
 </div>
 
