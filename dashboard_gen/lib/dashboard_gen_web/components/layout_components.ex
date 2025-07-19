@@ -1,5 +1,6 @@
 defmodule DashboardGenWeb.LayoutComponents do
   use DashboardGenWeb, :html
+  import DashboardGenWeb.CoreComponents
 
   @doc """
   Sidebar navigation
