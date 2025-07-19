@@ -38,8 +38,8 @@
     <% end %>
   </div>
 
-  <form phx-submit="generate" class="bg-white border rounded-md flex items-center px-4 py-2 shadow-sm mt-6">
-    <.text_input type="text" name="prompt" value={@prompt} placeholder="Describe your query..." class="flex-1 bg-transparent outline-none text-sm" />
+  <form phx-submit="generate" class="bg-white border rounded-md flex items-center px-4 py-2 shadow-sm mt-6 w-full">
+    <.text_input type="text" name="prompt" value={@prompt} placeholder="Describe your query..." class="flex-1 bg-transparent outline-none text-sm w-full" />
     <.button type="submit" variant="secondary" class="p-2 text-gray-600 hover:text-gray-800">➤</.button>
   </form>
 </div>
