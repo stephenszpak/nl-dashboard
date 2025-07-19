@@ -37,14 +37,27 @@ defmodule DashboardGen.Scrapers do
     IO.puts("🚀 #{path}")
 
     case File.exists?(path) do
-      true -> run_script(path, Path.rootname(script))
+      true ->
+        case script do
+          "social_media.py" ->
+            ["blackstone", "jpmorgan"]
+            |> Enum.map(&run_script(path, Path.rootname(script), ["--company", &1]))
+            |> Enum.find(fn result -> match?({:error, _}, result) end)
+            |> case do
+              nil -> {:ok, :ok}
+              error -> error
+            end
+          _ ->
+            run_script(path, Path.rootname(script))
+        end
+
       false -> {:error, :not_found}
     end
   end
 
-  defp run_script(path, source) do
-    IO.inspect("Running: #{path}")
-    {output, status} = System.cmd("python3", [path], stderr_to_stdout: true)
+  defp run_script(path, source, args \\ []) do
+    IO.inspect("Running: #{path} #{Enum.join(args, " ")}")
+    {output, status} = System.cmd("python3", [path | args], stderr_to_stdout: true)
     IO.inspect({status, output}, label: "Script result")
 
     case Jason.decode(output) do
