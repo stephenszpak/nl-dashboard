@@ -20,17 +20,17 @@ defmodule DashboardGenWeb.SidebarComponent do
         </button>
       </div>
       <nav class="flex-1 p-2 space-y-1">
-        <Phoenix.Component.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          📊 <span :if={!@collapsed}>Dashboard</span>
+        <Phoenix.Component.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-chart-bar"></i> <span :if={!@collapsed}>Dashboard</span>
         </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          💾 <span :if={!@collapsed}>Saved Views</span>
+        <Phoenix.Component.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-save"></i> <span :if={!@collapsed}>Saved Views</span>
         </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          ⚙️ <span :if={!@collapsed}>Settings</span>
+        <Phoenix.Component.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-gear"></i> <span :if={!@collapsed}>Settings</span>
         </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          📁 <span :if={!@collapsed}>Uploads</span>
+        <Phoenix.Component.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-folder-open"></i> <span :if={!@collapsed}>Uploads</span>
         </Phoenix.Component.link>
       </nav>
     </aside>

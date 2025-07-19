@@ -16,20 +16,20 @@ defmodule DashboardGenWeb.LayoutComponents do
         </button>
       </div>
       <nav class="flex-1 p-2 space-y-1">
-        <.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          📊 <%= unless @collapsed, do: "Dashboard" %>
+        <.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-chart-bar"></i> <%= unless @collapsed, do: "Dashboard" %>
         </.link>
-        <.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          💾 <%= unless @collapsed, do: "Saved Views" %>
+        <.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-save"></i> <%= unless @collapsed, do: "Saved Views" %>
         </.link>
-        <.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          📰 <%= unless @collapsed, do: "Insights" %>
+        <.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-newspaper"></i> <%= unless @collapsed, do: "Insights" %>
         </.link>
-        <.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          ⚙️ <%= unless @collapsed, do: "Settings" %>
+        <.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-gear"></i> <%= unless @collapsed, do: "Settings" %>
         </.link>
-        <.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
-          📁 <%= unless @collapsed, do: "Uploads" %>
+        <.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-folder-open"></i> <%= unless @collapsed, do: "Uploads" %>
         </.link>
       </nav>
     </aside>
@@ -60,7 +60,7 @@ defmodule DashboardGenWeb.LayoutComponents do
   def alert_banner(assigns) do
     ~H"""
     <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-900 p-4 rounded-md text-sm">
-      <strong>⚠️ Alert:</strong>
+      <strong><i class="fa-solid fa-triangle-exclamation text-yellow-600"></i> Alert:</strong>
       <ul class="list-disc pl-6 space-y-1">
         <%= for line <- String.split(@alerts || "", "\n", trim: true) do %>
           <li><%= line %></li>
@@ -80,10 +80,10 @@ defmodule DashboardGenWeb.LayoutComponents do
     ~H"""
     <div class="mt-4 space-x-2">
       <%= if !@summary && !@loading do %>
-        <button phx-click="generate_summary" class="rounded-full border px-4 py-1 text-sm hover:bg-gray-100">Generate Insight</button>
+        <.button variant="secondary" phx-click="generate_summary" class="rounded-full">Generate Insight</.button>
       <% end %>
-      <button phx-click="explain_this" class="rounded-full border px-4 py-1 text-sm hover:bg-gray-100">Explain This</button>
-      <button phx-click="why_this" class="rounded-full border px-4 py-1 text-sm hover:bg-gray-100">Why Did This Happen?</button>
+      <.button variant="secondary" phx-click="explain_this" class="rounded-full">Explain This</.button>
+      <.button variant="secondary" phx-click="why_this" class="rounded-full">Why Did This Happen?</.button>
     </div>
     """
   end

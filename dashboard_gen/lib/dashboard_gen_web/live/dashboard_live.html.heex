@@ -2,11 +2,7 @@
   <div class="space-y-6 overflow-y-auto">
     <h1 class="text-xl font-semibold mb-4 flex items-center">
       <span><%= @page_title %></span>
-      <button
-        phx-click="run_scrapers"
-        class="ml-2 px-2 py-1 text-xs rounded bg-blue-500 text-white">
-        Run Scrapers
-      </button>
+      <.button phx-click="run_scrapers" class="ml-2 px-2 py-1 text-xs">Run Scrapers</.button>
     </h1>
     <%= if live_flash(@flash, :error) do %>
       <div class="rounded-md border p-4 bg-white shadow-sm text-red-600"><%= live_flash(@flash, :error) %></div>
@@ -43,13 +39,7 @@
   </div>
 
   <form phx-submit="generate" class="bg-white border rounded-md flex items-center px-4 py-2 shadow-sm mt-6">
-    <input
-      type="text"
-      name="prompt"
-      value={@prompt}
-      placeholder="Describe your query..."
-      class="flex-1 bg-transparent outline-none text-sm"
-    />
-    <button type="submit" class="text-gray-600 hover:text-gray-800 p-2">➤</button>
+    <.text_input type="text" name="prompt" value={@prompt} placeholder="Describe your query..." class="flex-1 bg-transparent outline-none text-sm" />
+    <.button type="submit" variant="secondary" class="p-2 text-gray-600 hover:text-gray-800">➤</.button>
   </form>
 </div>
