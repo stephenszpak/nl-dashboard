@@ -9,12 +9,30 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
     insights = Insights.list_recent_insights_by_company()
     companies = Enum.map(insights, &elem(&1, 0))
 
+    summaries =
+      Enum.into(companies, %{}, fn company ->
+        case Insights.generate_topic_summary(company) do
+          {:ok, summary} -> {company, summary}
+          _ -> {company, nil}
+        end
+      end)
+
+    loading =
+      summaries
+      |> Enum.filter(fn {_c, s} -> is_nil(s) end)
+      |> Enum.map(&elem(&1, 0))
+      |> MapSet.new()
+
+    Enum.each(loading, fn company -> send(self(), {:generate_summary, company}) end)
+
     {:ok,
      assign(socket,
        page_title: "Competitor Insights",
        collapsed: false,
        insights_by_company: insights,
        companies: companies,
+       summaries: summaries,
+       loading_summaries: loading,
        company_filter: ""
      )}
   end
@@ -26,5 +44,21 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
 
   def handle_event("filter_company", %{"company" => company}, socket) do
     {:noreply, assign(socket, :company_filter, company)}
+  end
+
+  @impl true
+  def handle_info({:generate_summary, company}, socket) do
+    case Insights.generate_topic_summary(company) do
+      {:ok, summary} ->
+        socket =
+          socket
+          |> update(:summaries, &Map.put(&1, company, summary))
+          |> update(:loading_summaries, &MapSet.delete(&1, company))
+
+        {:noreply, socket}
+
+      _ ->
+        {:noreply, update(socket, :loading_summaries, &MapSet.delete(&1, company))}
+    end
   end
 end
