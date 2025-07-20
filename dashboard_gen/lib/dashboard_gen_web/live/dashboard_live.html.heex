@@ -75,45 +75,68 @@
   <% end %>
 
   <!-- Main Content Area -->
-  <div class="flex-1 flex flex-col gap-6">
-    <!-- Analysis Response -->
-    <%= if @competitive_analysis do %>
-      <div class="bg-white rounded-md shadow-sm border flex-1">
-        <div class="border-b border-gray-200 p-4">
-          <h2 class="text-sm font-semibold text-gray-900">🎯 Analysis Response</h2>
-        </div>
-        <div class="p-6">
-          <div class="prose prose-sm max-w-none text-gray-800 leading-relaxed">
-            <%= @competitive_analysis |> String.replace("\n", "<br>") |> raw() %>
+  <div class="flex-1 flex gap-6">
+    <!-- Left Column: Analysis Response -->
+    <div class="flex-1 flex flex-col">
+      <%= if @competitive_analysis do %>
+        <div class="bg-white rounded-md shadow-sm border flex-1">
+          <div class="border-b border-gray-200 p-4">
+            <h2 class="text-sm font-semibold text-gray-900">🎯 Analysis Response</h2>
+          </div>
+          <div class="p-6">
+            <div class="prose prose-sm max-w-none text-gray-800 leading-relaxed">
+              <%= @competitive_analysis |> String.replace("\n", "<br>") |> raw() %>
+            </div>
           </div>
         </div>
-      </div>
-    <% else %>
-      <!-- Empty State -->
-      <div class="bg-white rounded-md shadow-sm border flex-1 flex items-center justify-center">
-        <div class="text-center py-12">
-          <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
-            <.icon name="chat-bubble-left-right" class="h-12 w-12" />
-          </div>
-          <h3 class="text-sm font-medium text-gray-900 mb-2">Ready for Analysis</h3>
-          <p class="text-sm text-gray-600 mb-4">Ask a question about your competitors or try one of the smart suggestions above.</p>
-          <div class="text-xs text-gray-500">
-            💡 Example: "Which competitor is most active this week?" or "What trends should we watch?"
+      <% else %>
+        <!-- Empty State -->
+        <div class="bg-white rounded-md shadow-sm border flex-1 flex items-center justify-center">
+          <div class="text-center py-12">
+            <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+              <.icon name="chat-bubble-left-right" class="h-12 w-12" />
+            </div>
+            <h3 class="text-sm font-medium text-gray-900 mb-2">Ready for Analysis</h3>
+            <p class="text-sm text-gray-600 mb-4">Ask a question about your competitors or try one of the smart suggestions above.</p>
+            <div class="text-xs text-gray-500">
+              💡 Example: "Which competitor is most active this week?" or "What trends should we watch?"
+            </div>
           </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
 
-    <!-- Loading State -->
-    <%= if @loading do %>
-      <div class="bg-white rounded-md shadow-sm border flex-1 flex items-center justify-center">
-        <div class="text-center py-12">
-          <div class="mx-auto mb-4">
-            <div class="w-8 h-8 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+      <!-- Loading State -->
+      <%= if @loading do %>
+        <div class="bg-white rounded-md shadow-sm border flex-1 flex items-center justify-center">
+          <div class="text-center py-12">
+            <div class="mx-auto mb-4">
+              <div class="w-8 h-8 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+            </div>
+            <h3 class="text-sm font-medium text-gray-900 mb-2">Analyzing...</h3>
+            <p class="text-sm text-gray-600">Processing your competitive intelligence query</p>
           </div>
-          <h3 class="text-sm font-medium text-gray-900 mb-2">Analyzing...</h3>
-          <p class="text-sm text-gray-600">Processing your competitive intelligence query</p>
         </div>
+      <% end %>
+    </div>
+
+    <!-- Right Column: Analytics Charts -->
+    <%= if @analytics_charts != [] do %>
+      <div class="w-80 flex flex-col gap-4">
+        <%= for chart <- @analytics_charts do %>
+          <div class="bg-white rounded-md shadow-sm border">
+            <div class="border-b border-gray-200 p-3">
+              <h3 class="text-sm font-semibold text-gray-900"><%= chart.title %></h3>
+            </div>
+            <div class="p-4">
+              <canvas 
+                id={chart.id}
+                phx-hook="AnalyticsChart" 
+                data-config={Jason.encode!(chart)}
+                class="w-full h-48"
+              ></canvas>
+            </div>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
