@@ -179,7 +179,7 @@ def main() -> None:
     args = parser.parse_args()
 
     results = scrape_company(args.company)
-    json.dump(results, sys.stdout)
+    print(json.dumps(results))
 
 
 if __name__ == "__main__":

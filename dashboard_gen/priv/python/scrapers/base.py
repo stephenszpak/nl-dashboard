@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
+import snscrape.modules.twitter as sntwitter
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 CONFIG_PATH = Path(__file__).with_name("scrape_config_urls.json")
@@ -33,12 +34,20 @@ def _fetch(url: str) -> BeautifulSoup | None:
     try:
         res = requests.get(url, headers=HEADERS, timeout=10)
         res.raise_for_status()
-        if url.endswith(".xml"):
-            return BeautifulSoup(res.text, "xml")
-        return BeautifulSoup(res.text, "html.parser")
+    except requests.exceptions.HTTPError as e:
+        status = getattr(e.response, "status_code", None)
+        if status in (403, 404):
+            logging.warning("fetch %s returned %s", url, status)
+            return None
+        logging.warning("fetch failed %s: %s", url, e)
+        return None
     except Exception as e:
         logging.warning("fetch failed %s: %s", url, e)
         return None
+
+    if url.endswith(".xml"):
+        return BeautifulSoup(res.text, "xml")
+    return BeautifulSoup(res.text, "html.parser")
 
 
 def scrape_press_releases(urls, company: str) -> List[Dict[str, Any]]:
@@ -85,75 +94,76 @@ def scrape_press_releases(urls, company: str) -> List[Dict[str, Any]]:
 def scrape_twitter(url, company: str) -> List[Dict[str, Any]]:
     if not url:
         return []
-    handle = url.rstrip("/").split("/")[-1].lstrip("@")
-    nitter_url = f"https://nitter.net/{handle}"
-    soup = _fetch(nitter_url)
-    if not soup:
-        return []
-    results = []
-    for item in soup.select("div.timeline-item")[:5]:
-        content_el = item.select_one(".tweet-content")
-        date_el = item.select_one(".tweet-date a")
-        if not content_el or not date_el:
-            continue
-        date = (date_el.get("title") or date_el.text).split(" ")[0]
-        results.append({
-            "source": "twitter",
-            "company": company,
-            "date": date,
-            "title": content_el.get_text(" ", strip=True)[:100],
-            "content": content_el.get_text(" ", strip=True),
-            "url": f"https://twitter.com{date_el.get('href')}",
-        })
+
+    handles: List[str] = []
+    if isinstance(url, list):
+        for u in url:
+            if isinstance(u, str):
+                handles.append(u.rstrip("/").split("/")[-1].lstrip("@"))
+    elif isinstance(url, str):
+        handles.append(url.rstrip("/").split("/")[-1].lstrip("@"))
+
+    results: List[Dict[str, Any]] = []
+    for handle in handles:
+        try:
+            scraper = sntwitter.TwitterUserScraper(handle)
+            for i, tweet in enumerate(scraper.get_items()):
+                if i >= 5:
+                    break
+                if not hasattr(tweet, "content"):
+                    continue
+                results.append({
+                    "source": "twitter",
+                    "company": company,
+                    "date": tweet.date.date().isoformat() if hasattr(tweet, "date") else "",
+                    "title": tweet.content[:100],
+                    "content": tweet.content,
+                    "url": tweet.url,
+                })
+        except Exception as e:
+            logging.warning("twitter scrape failed for %s handle %s: %s", company, handle, e)
     return results
 
 
 def scrape_linkedin(url, company: str) -> List[Dict[str, Any]]:
     if not url:
         return []
-    soup = _fetch(url)
-    if not soup:
-        return []
-    results = []
-    for post in soup.select("div.feed-shared-update-v2")[:5]:
-        text = post.get_text(" ", strip=True)
-        date_el = post.select_one("span.visually-hidden")
-        date = date_el.get_text(strip=True) if date_el else ""
-        if not text:
-            continue
-        results.append({
-            "source": "linkedin",
-            "company": company,
-            "date": date,
-            "title": text[:100],
-            "content": text,
-            "url": url,
-        })
-    return results
+    return [{
+        "source": "linkedin",
+        "company": company,
+        "date": "",
+        "title": "LinkedIn scraping disabled (API/login required)",
+        "content": "LinkedIn scraping disabled (API/login required)",
+        "url": url,
+    }]
 
 
 def scrape_youtube(url, company: str) -> List[Dict[str, Any]]:
     if not url:
         return []
-    handle = url.rstrip("/").split("/")[-1].lstrip("@")
-    feed_url = f"https://www.youtube.com/feeds/videos.xml?user={handle}"
-    soup = _fetch(feed_url)
+    channel_url = url.rstrip('/') + '/videos'
+    soup = _fetch(channel_url)
     if not soup:
         return []
-    results = []
-    for entry in soup.select("entry")[:5]:
-        title_el = entry.find("title")
-        link_el = entry.find("link")
-        date_el = entry.find("published")
-        if not (title_el and link_el and date_el):
+
+    results: List[Dict[str, Any]] = []
+    for vid in soup.select('ytd-grid-video-renderer')[:5]:
+        a = vid.select_one('a#video-title')
+        if not a:
+            continue
+        title = a.get('title') or a.get_text(strip=True)
+        href = a.get('href')
+        date_el = vid.select_one('#metadata-line span:nth-child(2)')
+        date = date_el.get_text(strip=True) if date_el else ''
+        if not href or not title:
             continue
         results.append({
             "source": "youtube",
             "company": company,
-            "date": date_el.text.split("T")[0],
-            "title": title_el.text,
-            "content": title_el.text,
-            "url": link_el.get("href"),
+            "date": date,
+            "title": title,
+            "content": title,
+            "url": urljoin('https://www.youtube.com', href),
         })
     return results
 
