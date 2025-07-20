@@ -78,7 +78,24 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
       is_nil(url) -> "chat-bubble-left-right"
       String.contains?(url, "twitter") -> "twitter"
       String.contains?(url, "linkedin") -> "linkedin"
+      String.contains?(url, "youtube") -> "play"
       true -> "chat-bubble-left-right"
     end
   end
+
+  defp format_number(nil), do: "0"
+  defp format_number(num) when is_integer(num) and num >= 0 do
+    cond do
+      num >= 1_000_000 -> "#{Float.round(num / 1_000_000, 1)}M"
+      num >= 1_000 -> "#{Float.round(num / 1_000, 1)}K"
+      true -> Integer.to_string(num)
+    end
+  end
+  defp format_number(num) when is_binary(num) do
+    case Integer.parse(num) do
+      {parsed_num, ""} when parsed_num >= 0 -> format_number(parsed_num)
+      _ -> "0"
+    end
+  end
+  defp format_number(_), do: "0"
 end

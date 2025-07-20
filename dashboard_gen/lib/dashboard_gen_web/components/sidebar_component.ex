@@ -26,6 +26,12 @@ defmodule DashboardGenWeb.SidebarComponent do
         <Phoenix.Component.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
           <i class="fa-solid fa-save"></i> <span :if={!@collapsed}>Saved Views</span>
         </Phoenix.Component.link>
+        <Phoenix.Component.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-lightbulb"></i> <span :if={!@collapsed}>Insights</span>
+        </Phoenix.Component.link>
+        <Phoenix.Component.link navigate={~p"/agent"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+          <i class="fa-solid fa-robot"></i> <span :if={!@collapsed}>AI Agent</span>
+        </Phoenix.Component.link>
         <Phoenix.Component.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
           <i class="fa-solid fa-gear"></i> <span :if={!@collapsed}>Settings</span>
         </Phoenix.Component.link>
