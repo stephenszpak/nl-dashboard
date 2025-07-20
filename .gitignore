@@ -9,5 +9,6 @@ erl_crash.dump
 /config/*.secret.exs
 .elixir_ls/
 .DS_Store
+dashboard_gen/priv/.DS_Store
 ./../.DS_Store
 dashboard_gen.zip
