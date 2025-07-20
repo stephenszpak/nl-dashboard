@@ -10,5 +10,5 @@ def scrape():
 
 
 if __name__ == '__main__':
-    import json, sys
-    json.dump(scrape(), sys.stdout)
+    import json
+    print(json.dumps(scrape()))

@@ -8,7 +8,7 @@
   },
   {
     "company": "J.P. Morgan Asset Management",
-    "press_releases": "https://am.jpmorgan.com/us/en/asset-management/adv/newsroom/press-releases/",
+    "press_releases": "https://am.jpmorgan.com/us/en/asset-management/adv/newsroom/press-releases",
     "twitter": "https://twitter.com/jpmorganam",
     "linkedin": "https://www.linkedin.com/company/jpmorganassetmanagement/",
     "youtube": "https://www.youtube.com/@jpmorganassetmanagement"
@@ -42,14 +42,14 @@
     "company": "T. Rowe Price",
     "press_releases": "https://www.troweprice.com/corporate/us/en/what-we-do/newsroom.html",
     "twitter": "https://twitter.com/troweprice",
-    "linkedin": "https://www.linkedin.com/company/t--rowe-price/",
+    "linkedin": "https://www.linkedin.com/company/t-rowe-price/",
     "youtube": "https://www.youtube.com/@TRowePrice"
   },
   {
     "company": "Invesco",
     "press_releases": "https://www.invesco.com/corporate/about-us/media-center/press-releases",
     "twitter": "https://twitter.com/InvescoUS",
-    "linkedin": "https://www.linkedin.com/company/invesco-ltd-/",
+    "linkedin": "https://www.linkedin.com/company/invesco-ltd/",
     "youtube": "https://www.youtube.com/@InvescoUS"
   },
   {

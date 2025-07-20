@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--company", default="blackrock")
     args = parser.parse_args()
     data = scrape(args.company)
-    json.dump(data, sys.stdout)
+    print(json.dumps(data))
 
 
 if __name__ == "__main__":
