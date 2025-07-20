@@ -15,13 +15,24 @@ Hooks.AutoGrow = {
   }
 };
 
-Hooks.VegaLiteChart = {
+// Chart.js hooks for analytics charts
+Hooks.AnalyticsChart = {
   mounted() { this.renderChart(); },
   updated() { this.renderChart(); },
+  destroyed() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  },
   renderChart() {
-    const spec = JSON.parse(this.el.dataset.spec || '{}');
-    if (window.vegaEmbed) {
-      window.vegaEmbed(this.el, spec, {actions: false});
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    
+    const config = JSON.parse(this.el.dataset.config || '{}');
+    if (window.Chart && config.type) {
+      const ctx = this.el.getContext('2d');
+      this.chart = new window.Chart(ctx, config);
     }
   }
 };

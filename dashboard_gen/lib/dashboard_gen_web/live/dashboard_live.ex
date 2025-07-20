@@ -27,6 +27,7 @@ defmodule DashboardGenWeb.DashboardLive do
        prompt_categories: CompetitivePrompts.get_categories(),
        smart_suggestions: CompetitivePrompts.get_smart_suggestions(),
        competitive_analysis: nil,
+       analytics_charts: [],
        mode: "competitive_intelligence" # "data_analysis" or "competitive_intelligence"
      )}
   end
@@ -41,6 +42,7 @@ defmodule DashboardGenWeb.DashboardLive do
        prompt: prompt,
        loading: true,
        competitive_analysis: nil,
+       analytics_charts: [],
        chart_spec: nil,
        summary: nil,
        explanation: nil,
@@ -58,6 +60,7 @@ defmodule DashboardGenWeb.DashboardLive do
       prompt: "",
       chart_spec: nil,
       competitive_analysis: nil,
+      analytics_charts: [],
       summary: nil,
       explanation: nil,
       alerts: nil,
@@ -162,9 +165,17 @@ defmodule DashboardGenWeb.DashboardLive do
   def handle_info({:analyze_competitive, prompt}, socket) do
     case analyze_competitive_intelligence(prompt) do
       {:ok, analysis} ->
+        # If this is an analytics question, also generate charts
+        charts = if is_analytics_question?(prompt) do
+          generate_analytics_charts()
+        else
+          []
+        end
+        
         {:noreply,
          assign(socket,
            competitive_analysis: analysis,
+           analytics_charts: charts,
            loading: false
          )}
       
@@ -372,5 +383,109 @@ defmodule DashboardGenWeb.DashboardLive do
     |> VegaLite.encode(:x, field: "x", type: :nominal)
     |> VegaLite.encode(:y, field: "value", type: :quantitative)
     |> VegaLite.encode(:color, field: "category", type: :nominal)
+  end
+  
+  defp generate_analytics_charts do
+    # Get analytics summary data
+    summary = Analytics.get_analytics_summary(7)
+    
+    [
+      generate_top_pages_chart(summary.top_pages),
+      generate_geography_chart(summary.geographic_breakdown),
+      generate_events_chart(summary.top_events)
+    ]
+  end
+  
+  defp generate_top_pages_chart(top_pages) do
+    %{
+      id: "top-pages-chart",
+      title: "📊 Top Pages",
+      type: "bar",
+      data: %{
+        labels: Enum.map(top_pages, & &1.page),
+        datasets: [%{
+          label: "Page Views",
+          data: Enum.map(top_pages, & &1.views),
+          backgroundColor: "rgba(59, 130, 246, 0.8)",
+          borderColor: "rgba(59, 130, 246, 1)",
+          borderWidth: 1
+        }]
+      },
+      options: %{
+        responsive: true,
+        plugins: %{
+          legend: %{display: false}
+        },
+        scales: %{
+          y: %{beginAtZero: true}
+        }
+      }
+    }
+  end
+  
+  defp generate_geography_chart(geographic_breakdown) do
+    %{
+      id: "geography-chart", 
+      title: "🌍 Geographic Distribution",
+      type: "doughnut",
+      data: %{
+        labels: Enum.map(geographic_breakdown, & &1.country),
+        datasets: [%{
+          data: Enum.map(geographic_breakdown, & &1.visitors),
+          backgroundColor: [
+            "rgba(59, 130, 246, 0.8)",
+            "rgba(16, 185, 129, 0.8)", 
+            "rgba(245, 158, 11, 0.8)",
+            "rgba(239, 68, 68, 0.8)",
+            "rgba(139, 92, 246, 0.8)",
+            "rgba(236, 72, 153, 0.8)",
+            "rgba(34, 197, 94, 0.8)",
+            "rgba(251, 146, 60, 0.8)",
+            "rgba(168, 85, 247, 0.8)"
+          ]
+        }]
+      },
+      options: %{
+        responsive: true,
+        plugins: %{
+          legend: %{
+            position: "bottom",
+            labels: %{
+              boxWidth: 12,
+              font: %{size: 11}
+            }
+          }
+        }
+      }
+    }
+  end
+  
+  defp generate_events_chart(top_events) do
+    %{
+      id: "events-chart",
+      title: "📈 User Events", 
+      type: "line",
+      data: %{
+        labels: Enum.map(top_events, & &1.event),
+        datasets: [%{
+          label: "Event Count",
+          data: Enum.map(top_events, & &1.count),
+          borderColor: "rgba(16, 185, 129, 1)",
+          backgroundColor: "rgba(16, 185, 129, 0.1)",
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: %{
+        responsive: true,
+        plugins: %{
+          legend: %{display: false}
+        },
+        scales: %{
+          y: %{beginAtZero: true}
+        }
+      }
+    }
   end
 end
