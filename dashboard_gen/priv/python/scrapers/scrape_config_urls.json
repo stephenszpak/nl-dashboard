@@ -1,14 +1,14 @@
 [
   {
     "company": "BlackRock",
-    "press_releases": "https://www.blackrock.com/corporate/newsroom/press-releases",
+    "press_releases": "https://www.blackrock.com/corporate/newsroom",
     "twitter": "https://twitter.com/blackrock",
     "linkedin": "https://www.linkedin.com/company/blackrock/",
     "youtube": "https://www.youtube.com/@blackrock"
   },
   {
     "company": "J.P. Morgan Asset Management",
-    "press_releases": "https://am.jpmorgan.com/us/en/asset-management/adv/newsroom/press-releases",
+    "press_releases": "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/press-releases/",
     "twitter": "https://twitter.com/jpmorganam",
     "linkedin": "https://www.linkedin.com/company/jpmorganassetmanagement/",
     "youtube": "https://www.youtube.com/@jpmorganassetmanagement"
@@ -22,7 +22,7 @@
   },
   {
     "company": "Goldman Sachs Private Wealth",
-    "press_releases": "https://www.goldmansachs.com/media-relations/press-releases/",
+    "press_releases": "https://www.goldmansachs.com/pressroom",
     "twitter": "https://twitter.com/goldmansachs",
     "linkedin": "https://www.linkedin.com/company/goldman-sachs/",
     "youtube": "https://www.youtube.com/@goldmansachs"
