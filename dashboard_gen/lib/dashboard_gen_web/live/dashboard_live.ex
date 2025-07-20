@@ -8,7 +8,7 @@ defmodule DashboardGenWeb.DashboardLive do
   alias DashboardGen.Uploads
   alias DashboardGen.AnomalyDetector
   alias DashboardGen.CompetitivePrompts
-  alias DashboardGen.{Insights, CodexClient}
+  alias DashboardGen.{Insights, CodexClient, Analytics}
   alias VegaLite
 
   @impl true
@@ -70,7 +70,13 @@ defmodule DashboardGenWeb.DashboardLive do
   end
 
   def handle_event("use_prompt", %{"prompt" => prompt}, socket) do
-    contextualized_prompt = CompetitivePrompts.contextualize_prompt(prompt)
+    # Always ensure we have the raw prompt first, then contextualize it
+    cleaned_prompt = String.trim(prompt)
+    contextualized_prompt = CompetitivePrompts.contextualize_prompt(cleaned_prompt)
+    
+    # Debug logging to ensure prompt is being captured
+    IO.inspect(prompt, label: "Original prompt")
+    IO.inspect(contextualized_prompt, label: "Contextualized prompt")
     
     {:noreply, 
      socket
@@ -78,7 +84,7 @@ defmodule DashboardGenWeb.DashboardLive do
        prompt: contextualized_prompt,
        show_prompt_categories: false
      )
-     |> put_flash(:info, "Prompt added to input box")
+     |> put_flash(:info, "✅ Prompt template added to input")
      |> push_event("focus_input", %{})}
   end
 
@@ -270,6 +276,15 @@ defmodule DashboardGenWeb.DashboardLive do
   end
 
   defp analyze_competitive_intelligence(prompt) do
+    # Determine if this is an analytics question or competitive intelligence question
+    if is_analytics_question?(prompt) do
+      Analytics.analyze_question(prompt)
+    else
+      analyze_competitor_intelligence(prompt)
+    end
+  end
+  
+  defp analyze_competitor_intelligence(prompt) do
     # Get recent competitor insights
     recent_insights = Insights.list_recent_insights_by_company(10)
     
@@ -299,6 +314,17 @@ defmodule DashboardGenWeb.DashboardLive do
       {:ok, analysis} -> {:ok, analysis}
       {:error, reason} -> {:error, reason}
     end
+  end
+  
+  defp is_analytics_question?(prompt) do
+    analytics_keywords = [
+      "homepage", "website", "alliancebernstein.com", "fund search", "page", "traffic",
+      "conversion", "bounce", "engagement", "user", "visitor", "session", "click",
+      "navigation", "behavior", "analytics", "performance", "mobile", "desktop"
+    ]
+    
+    prompt_lower = String.downcase(prompt)
+    Enum.any?(analytics_keywords, &String.contains?(prompt_lower, &1))
   end
 
   defp build_competitive_context(recent_insights) do

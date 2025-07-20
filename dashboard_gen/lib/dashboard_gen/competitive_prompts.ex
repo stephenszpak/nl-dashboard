@@ -47,6 +47,12 @@ defmodule DashboardGen.CompetitivePrompts do
         description: "Actionable strategies and counter-moves",
         color: "indigo",
         prompts: response_prompts()
+      },
+      "website_analytics" => %{
+        name: "📊 Website Analytics",
+        description: "AllianceBernstein.com performance insights",
+        color: "emerald",
+        prompts: analytics_prompts()
       }
     }
   end
@@ -174,6 +180,26 @@ defmodule DashboardGen.CompetitivePrompts do
       "Recommend product features to stay competitive with {competitor}",
       "Create a roadmap to match or exceed {competitor}'s capabilities",
       "Generate PR strategy to respond to {competitor}'s recent announcements"
+    ]
+  end
+  
+  defp analytics_prompts do
+    [
+      "How has our US homepage been performing lately based on user interactions?",
+      "Analyze fund search behavior and conversion patterns on our website",
+      "What are the top performing pages on alliancebernstein.com this month?",
+      "Compare mobile vs desktop user engagement on our fund pages",
+      "Identify drop-off points in our website user journey",
+      "What content types are driving the most engagement?",
+      "Analyze geographic patterns in our website traffic and conversions",
+      "How effective are our call-to-action buttons across different pages?",
+      "What search terms are users entering on our fund search page?",
+      "Compare bounce rates across our different investment product pages",
+      "Analyze user behavior flow from homepage to fund details",
+      "What time of day do we see peak engagement on our insights content?",
+      "How do users navigate through our fund comparison tools?",
+      "Identify our highest converting traffic sources and campaigns",
+      "Analyze session duration patterns across different visitor segments"
     ]
   end
   
