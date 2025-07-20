@@ -48,7 +48,7 @@ def scrape_all():
 
 
 def main():
-    json.dump(scrape_all(), sys.stdout)
+    print(json.dumps(scrape_all()))
 
 
 if __name__ == "__main__":
