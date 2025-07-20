@@ -1,0 +1,98 @@
+[
+  {
+    "company": "BlackRock",
+    "press_releases": "https://www.blackrock.com/corporate/newsroom/press-releases",
+    "twitter": "https://twitter.com/blackrock",
+    "linkedin": "https://www.linkedin.com/company/blackrock/",
+    "youtube": "https://www.youtube.com/@blackrock"
+  },
+  {
+    "company": "J.P. Morgan Asset Management",
+    "press_releases": "https://am.jpmorgan.com/us/en/asset-management/adv/newsroom/press-releases/",
+    "twitter": "https://twitter.com/jpmorganam",
+    "linkedin": "https://www.linkedin.com/company/jpmorganassetmanagement/",
+    "youtube": "https://www.youtube.com/@jpmorganassetmanagement"
+  },
+  {
+    "company": "Morgan Stanley Wealth Management",
+    "press_releases": "https://www.morganstanley.com/press-releases",
+    "twitter": "https://twitter.com/morganstanley",
+    "linkedin": "https://www.linkedin.com/showcase/morgan-stanley-wealth-management/",
+    "youtube": "https://www.youtube.com/@morganstanley"
+  },
+  {
+    "company": "Goldman Sachs Private Wealth",
+    "press_releases": "https://www.goldmansachs.com/media-relations/press-releases/",
+    "twitter": "https://twitter.com/goldmansachs",
+    "linkedin": "https://www.linkedin.com/company/goldman-sachs/",
+    "youtube": "https://www.youtube.com/@goldmansachs"
+  },
+  {
+    "company": "Fidelity Investments",
+    "press_releases": "https://newsroom.fidelity.com/",
+    "rss": "https://newsroom.fidelity.com/rss/news-releases.xml",
+    "twitter": [
+      "https://twitter.com/fidelity",
+      "https://twitter.com/FidelityNews"
+    ],
+    "linkedin": "https://www.linkedin.com/company/fidelity-investments/",
+    "youtube": "https://www.youtube.com/@FidelityInvestments"
+  },
+  {
+    "company": "T. Rowe Price",
+    "press_releases": "https://www.troweprice.com/corporate/us/en/what-we-do/newsroom.html",
+    "twitter": "https://twitter.com/troweprice",
+    "linkedin": "https://www.linkedin.com/company/t--rowe-price/",
+    "youtube": "https://www.youtube.com/@TRowePrice"
+  },
+  {
+    "company": "Invesco",
+    "press_releases": "https://www.invesco.com/corporate/about-us/media-center/press-releases",
+    "twitter": "https://twitter.com/InvescoUS",
+    "linkedin": "https://www.linkedin.com/company/invesco-ltd-/",
+    "youtube": "https://www.youtube.com/@InvescoUS"
+  },
+  {
+    "company": "Franklin Templeton",
+    "press_releases": [
+      "https://www.franklintempleton.com/about-us/newsroom",
+      "https://investors.franklinresources.com/news-events/press-releases/"
+    ],
+    "twitter": "https://twitter.com/FTI_US",
+    "linkedin": "https://www.linkedin.com/company/franklin-templeton/",
+    "youtube": "https://www.youtube.com/@FranklinTempletonTV"
+  },
+  {
+    "company": "Vanguard Group",
+    "press_releases": "https://pressroom.vanguard.com/news/press-release.html",
+    "rss": "https://pressroom.vanguard.com/news/rss.xml",
+    "twitter": "https://twitter.com/Vanguard_Group",
+    "linkedin": "https://www.linkedin.com/company/vanguard/",
+    "youtube": "https://www.youtube.com/@Vanguard"
+  },
+  {
+    "company": "UBS",
+    "press_releases": [
+      "https://www.ubs.com/global/en/media/display-page-ndp/en-2025.html",
+      "https://www.ubs.com/us/en/media.html"
+    ],
+    "twitter": "https://twitter.com/ubs",
+    "linkedin": "https://www.linkedin.com/company/ubs/",
+    "youtube": "https://www.youtube.com/@ubs"
+  },
+  {
+    "company": "Northern Trust",
+    "press_releases": "https://www.northerntrust.com/united-states/about-us/news/press-release-archive",
+    "twitter": "https://twitter.com/NorthernTrust",
+    "linkedin": "https://www.linkedin.com/company/northern-trust/",
+    "youtube": "https://www.youtube.com/@NorthernTrustCorp"
+  },
+  {
+    "company": "Charles Schwab",
+    "press_releases": "https://pressroom.aboutschwab.com/",
+    "rss": "https://pressroom.aboutschwab.com/rss/news-releases.xml",
+    "twitter": "https://twitter.com/CharlesSchwab",
+    "linkedin": "https://www.linkedin.com/company/charles-schwab/",
+    "youtube": "https://www.youtube.com/@CharlesSchwab"
+  }
+]
