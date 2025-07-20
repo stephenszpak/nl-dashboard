@@ -36,7 +36,7 @@ defmodule DashboardGen.Scrapers do
 
   defp run_script(path, source, args \\ []) do
     IO.inspect("Running: #{path} #{Enum.join(args, " ")}")
-    {output, status} = System.cmd("python3", [path | args], stderr_to_stdout: true)
+    {output, status} = System.cmd("python3.11", [path | args], stderr_to_stdout: true)
     IO.inspect({status, output}, label: "Script result")
 
     case Jason.decode(output) do
