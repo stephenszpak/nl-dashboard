@@ -5,6 +5,14 @@ import sys
 from pathlib import Path
 from typing import List, Dict, Any
 from urllib.parse import urljoin
+import ssl
+import certifi
+import urllib3
+import os
+
+urllib3.disable_warnings()
+ssl_context = ssl.create_default_context(cafile=certifi.where())
+verify_ssl = False if os.getenv("SCRAPER_DEV_MODE") else certifi.where()
 
 import requests
 from bs4 import BeautifulSoup
@@ -32,7 +40,7 @@ def load_config() -> Dict[str, Dict[str, Any]]:
 
 def _fetch(url: str) -> BeautifulSoup | None:
     try:
-        res = requests.get(url, headers=HEADERS, timeout=10)
+        res = requests.get(url, headers=HEADERS, timeout=10, verify=verify_ssl)
         res.raise_for_status()
     except requests.exceptions.HTTPError as e:
         status = getattr(e.response, "status_code", None)
