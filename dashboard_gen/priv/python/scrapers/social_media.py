@@ -9,6 +9,14 @@ from typing import List, Dict
 
 import requests
 from bs4 import BeautifulSoup
+import ssl
+import certifi
+import urllib3
+import os
+
+urllib3.disable_warnings()
+ssl_context = ssl.create_default_context(cafile=certifi.where())
+verify_ssl = False if os.getenv("SCRAPER_DEV_MODE") else certifi.where()
 
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
@@ -40,7 +48,7 @@ def _fetch(url: str, retries: int = 3, delay: float = 1.0) -> requests.Response 
     """Return a ``requests.Response`` with basic retry logic."""
     for attempt in range(retries):
         try:
-            res = requests.get(url, headers=HEADERS, timeout=10)
+            res = requests.get(url, headers=HEADERS, timeout=10, verify=verify_ssl)
             res.raise_for_status()
             return res
         except Exception:
