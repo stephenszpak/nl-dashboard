@@ -10,6 +10,32 @@ defmodule DashboardGen.Insights do
   alias DashboardGen.CodexClient
 
   @doc """
+  Normalize company names to ensure consistency across the application.
+  """
+  def normalize_company_name(name) when is_binary(name) do
+    name = String.trim(name)
+    
+    cond do
+      String.contains?(String.downcase(name), "blackrock") ->
+        "BlackRock"
+      
+      String.contains?(String.downcase(name), "j.p. morgan") or
+      String.contains?(String.downcase(name), "jp morgan") or
+      String.contains?(String.downcase(name), "jpmorgan") ->
+        "J.P. Morgan Asset Management"
+      
+      String.contains?(String.downcase(name), "goldman sachs") ->
+        "Goldman Sachs Private Wealth"
+      
+      String.contains?(String.downcase(name), "fidelity") ->
+        "Fidelity Investments"
+      
+      true ->
+        name
+    end
+  end
+
+  @doc """
   Returns insights grouped by company and source. Each company map
   includes two lists under the `:press_releases` and `:social_media`
   keys. Items are sorted by `inserted_at` and truncated to the given
@@ -22,7 +48,7 @@ defmodule DashboardGen.Insights do
     |> Enum.flat_map(fn insight ->
       Enum.map(insight.data, fn item ->
         %{
-          company: item["company"] || insight.source,
+          company: normalize_company_name(item["company"] || insight.source),
           title: item["title"],
           content: item["content"],
           url: item["url"],
@@ -106,13 +132,13 @@ defmodule DashboardGen.Insights do
     |> Enum.flat_map(fn insight ->
       Enum.map(insight.data, fn item ->
         %{
-          company: item["company"] || insight.source,
+          company: normalize_company_name(item["company"] || insight.source),
           title: item["title"],
           content: item["content"] || item["summary"],
           inserted_at: insight.inserted_at
         }
       end)
     end)
-    |> Enum.filter(&(&1.company == company))
+    |> Enum.filter(&(&1.company == normalize_company_name(company)))
   end
 end

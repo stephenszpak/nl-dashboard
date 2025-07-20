@@ -2,12 +2,13 @@ defmodule DashboardGenWeb.DashboardLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
-  import DashboardGenWeb.LayoutComponents
   alias DashboardGen.GPTClient
   alias DashboardGen.Codex.Summarizer
   alias DashboardGen.Codex.Explainer
   alias DashboardGen.Uploads
   alias DashboardGen.AnomalyDetector
+  alias DashboardGen.CompetitivePrompts
+  alias DashboardGen.{Insights, CodexClient}
   alias VegaLite
 
   @impl true
@@ -21,18 +22,25 @@ defmodule DashboardGenWeb.DashboardLive do
        collapsed: false,
        summary: nil,
        explanation: nil,
-       alerts: nil
+       alerts: nil,
+       show_prompt_categories: false,
+       prompt_categories: CompetitivePrompts.get_categories(),
+       smart_suggestions: CompetitivePrompts.get_smart_suggestions(),
+       competitive_analysis: nil,
+       mode: "competitive_intelligence" # "data_analysis" or "competitive_intelligence"
      )}
   end
 
   @impl true
   def handle_event("generate", %{"prompt" => prompt}, socket) do
-    send(self(), {:generate_chart, prompt})
-
+    # Always use competitive intelligence for now
+    send(self(), {:analyze_competitive, prompt})
+    
     {:noreply,
      assign(socket,
        prompt: prompt,
        loading: true,
+       competitive_analysis: nil,
        chart_spec: nil,
        summary: nil,
        explanation: nil,
@@ -42,6 +50,47 @@ defmodule DashboardGenWeb.DashboardLive do
 
   def handle_event("toggle_sidebar", _params, socket) do
     {:noreply, update(socket, :collapsed, &(!&1))}
+  end
+
+  def handle_event("switch_mode", %{"mode" => mode}, socket) do
+    {:noreply, assign(socket, 
+      mode: mode,
+      prompt: "",
+      chart_spec: nil,
+      competitive_analysis: nil,
+      summary: nil,
+      explanation: nil,
+      alerts: nil,
+      show_prompt_categories: false
+    )}
+  end
+
+  def handle_event("toggle_prompt_categories", _params, socket) do
+    {:noreply, update(socket, :show_prompt_categories, &(!&1))}
+  end
+
+  def handle_event("use_prompt", %{"prompt" => prompt}, socket) do
+    contextualized_prompt = CompetitivePrompts.contextualize_prompt(prompt)
+    
+    {:noreply, 
+     socket
+     |> assign(
+       prompt: contextualized_prompt,
+       show_prompt_categories: false
+     )
+     |> put_flash(:info, "Prompt added to input box")
+     |> push_event("focus_input", %{})}
+  end
+
+  def handle_event("use_suggestion", %{"prompt" => prompt}, socket) do
+    {:noreply, assign(socket, 
+      prompt: prompt,
+      mode: "competitive_intelligence"
+    )}
+  end
+
+  def handle_event("refresh_suggestions", _params, socket) do
+    {:noreply, assign(socket, smart_suggestions: CompetitivePrompts.get_smart_suggestions())}
   end
 
   def handle_event("run_scrapers", _params, socket) do
@@ -100,6 +149,24 @@ defmodule DashboardGenWeb.DashboardLive do
 
       nil ->
         {:noreply, put_flash(socket, :error, "No upload found")}
+    end
+  end
+
+  @impl true
+  def handle_info({:analyze_competitive, prompt}, socket) do
+    case analyze_competitive_intelligence(prompt) do
+      {:ok, analysis} ->
+        {:noreply,
+         assign(socket,
+           competitive_analysis: analysis,
+           loading: false
+         )}
+      
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Analysis failed: #{reason}")
+         |> assign(loading: false)}
     end
   end
 
@@ -200,6 +267,55 @@ defmodule DashboardGenWeb.DashboardLive do
       {orig, nil}, acc -> [orig | acc]
       {_, _}, acc -> acc
     end)
+  end
+
+  defp analyze_competitive_intelligence(prompt) do
+    # Get recent competitor insights
+    recent_insights = Insights.list_recent_insights_by_company(10)
+    
+    # Prepare context for analysis
+    context = build_competitive_context(recent_insights)
+    
+    # Create enhanced prompt with context
+    enhanced_prompt = """
+    You are a competitive intelligence analyst. Analyze the following prompt using the provided competitor data.
+
+    User Query: #{prompt}
+
+    Recent Competitor Activity:
+    #{context}
+
+    Provide a detailed analysis including:
+    1. Key findings and insights
+    2. Strategic implications 
+    3. Recommended actions
+    4. Risk assessment
+    5. Opportunities identified
+
+    Format your response in clear sections with actionable insights.
+    """
+
+    case CodexClient.ask(enhanced_prompt) do
+      {:ok, analysis} -> {:ok, analysis}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp build_competitive_context(recent_insights) do
+    recent_insights
+    |> Enum.map(fn {company, data} ->
+      press_count = length(data.press_releases)
+      social_count = length(data.social_media)
+      
+      recent_titles = 
+        (data.press_releases ++ data.social_media)
+        |> Enum.take(3)
+        |> Enum.map(& &1.title)
+        |> Enum.join("; ")
+      
+      "#{company}: #{press_count} press releases, #{social_count} social posts. Recent: #{recent_titles}"
+    end)
+    |> Enum.join("\n")
   end
 
   @doc """

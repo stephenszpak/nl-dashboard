@@ -1,45 +1,190 @@
-<div class="flex flex-col h-full justify-between">
-  <div class="space-y-6 overflow-y-auto">
-    <h1 class="text-xl font-semibold mb-4 flex items-center">
+<div class="flex flex-col h-full">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-xl font-semibold flex items-center">
       <span><%= @page_title %></span>
-      <.button phx-click="run_scrapers" class="ml-2 px-2 py-1 text-xs">Run Scrapers</.button>
+      <.button phx-click="run_scrapers" class="ml-3 px-3 py-1 text-xs bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100">Run Scrapers</.button>
     </h1>
-    <%= if Phoenix.Flash.get(@flash, :error) do %>
-      <div class="rounded-md border p-4 bg-white shadow-sm text-red-600"><%= Phoenix.Flash.get(@flash, :error) %></div>
+    
+    <!-- Mode Toggle -->
+    <div class="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+      <button 
+        phx-click="switch_mode" 
+        phx-value-mode="data_analysis"
+        class={"px-3 py-1 text-sm rounded transition-colors #{if @mode == "data_analysis", do: "bg-white text-blue-600 shadow-sm", else: "text-gray-600 hover:text-gray-800"}"}
+        style="display: none;"
+      >
+        📊 Data Analysis
+      </button>
+      <button 
+        phx-click="switch_mode" 
+        phx-value-mode="competitive_intelligence"
+        class={"px-3 py-1 text-sm rounded transition-colors bg-white text-blue-600 shadow-sm"}
+      >
+        🎯 Competitive Intelligence
+      </button>
+    </div>
+  </div>
+
+  <!-- Smart Suggestions -->
+  <%= if @smart_suggestions != [] do %>
+    <div class="bg-white rounded-md shadow-sm p-4 border mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold text-gray-900">💡 Smart Suggestions</h3>
+        <button phx-click="refresh_suggestions" class="text-blue-600 hover:text-blue-800">
+          <.icon name="arrow-path" class="h-4 w-4" />
+        </button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <%= for suggestion <- @smart_suggestions do %>
+          <div class={"p-3 rounded border cursor-pointer hover:shadow-sm transition-shadow #{
+            case suggestion.priority do
+              "high" -> "bg-red-50 border-red-200 hover:bg-red-100"
+              "medium" -> "bg-yellow-50 border-yellow-200 hover:bg-yellow-100"
+              _ -> "bg-gray-50 border-gray-200 hover:bg-gray-100"
+            end
+          }"} phx-click="use_suggestion" phx-value-prompt={suggestion.prompt}>
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-gray-900"><%= suggestion.title %></h4>
+                <p class="text-xs text-gray-600 mt-1"><%= suggestion.reason %></p>
+              </div>
+              <span class={"px-2 py-1 text-xs rounded #{
+                case suggestion.priority do
+                  "high" -> "bg-red-100 text-red-700"
+                  "medium" -> "bg-yellow-100 text-yellow-700"
+                  _ -> "bg-gray-100 text-gray-700"
+                end
+              }"}><%= String.upcase(suggestion.priority) %></span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Error Messages -->
+  <%= if Phoenix.Flash.get(@flash, :error) do %>
+    <div class="bg-white rounded-md shadow-sm p-4 border text-red-600 mb-6">
+      <div class="flex items-center gap-2">
+        <.icon name="exclamation-triangle" class="h-4 w-4" />
+        <span class="font-medium">Error:</span>
+      </div>
+      <div class="mt-2 text-sm"><%= Phoenix.Flash.get(@flash, :error) %></div>
+    </div>
+  <% end %>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col gap-6">
+    <!-- Analysis Response -->
+    <%= if @competitive_analysis do %>
+      <div class="bg-white rounded-md shadow-sm border flex-1">
+        <div class="border-b border-gray-200 p-4">
+          <h2 class="text-sm font-semibold text-gray-900">🎯 Analysis Response</h2>
+        </div>
+        <div class="p-6">
+          <div class="prose prose-sm max-w-none text-gray-800 leading-relaxed">
+            <%= @competitive_analysis |> String.replace("\n", "<br>") |> raw() %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="bg-white rounded-md shadow-sm border flex-1 flex items-center justify-center">
+        <div class="text-center py-12">
+          <div class="mx-auto h-12 w-12 text-gray-400 mb-4">
+            <.icon name="chat-bubble-left-right" class="h-12 w-12" />
+          </div>
+          <h3 class="text-sm font-medium text-gray-900 mb-2">Ready for Analysis</h3>
+          <p class="text-sm text-gray-600 mb-4">Ask a question about your competitors or try one of the smart suggestions above.</p>
+          <div class="text-xs text-gray-500">
+            💡 Example: "Which competitor is most active this week?" or "What trends should we watch?"
+          </div>
+        </div>
+      </div>
     <% end %>
 
+    <!-- Loading State -->
     <%= if @loading do %>
-      <div class="text-gray-500">Generating...</div>
-    <% end %>
-
-    <%= if @alerts do %>
-      <div class="mb-4">
-        <.alert_banner alerts={@alerts} />
-      </div>
-    <% end %>
-
-    <%= if @chart_spec do %>
-      <div class="bg-white rounded-md shadow-sm p-4">
-        <h2 class="text-sm font-semibold mb-4">Top 5 Performing Campaigns</h2>
-        <div id="chart-container" phx-hook="VegaLiteChart" phx-update="ignore" data-spec={@chart_spec} />
-      </div>
-      <.insight_buttons summary={@summary} loading={@loading} />
-    <% end %>
-
-    <%= if @summary do %>
-      <div class="bg-white rounded-md shadow-sm p-4 mb-4 text-gray-800 text-sm leading-relaxed">
-        <strong>Insight:</strong> <%= @summary %>
-      </div>
-    <% end %>
-    <%= if @explanation do %>
-      <div class="bg-white rounded-md shadow-sm p-4 mb-4 text-gray-800 text-sm leading-relaxed">
-        <strong>Explanation:</strong> <%= @explanation %>
+      <div class="bg-white rounded-md shadow-sm border flex-1 flex items-center justify-center">
+        <div class="text-center py-12">
+          <div class="mx-auto mb-4">
+            <div class="w-8 h-8 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+          <h3 class="text-sm font-medium text-gray-900 mb-2">Analyzing...</h3>
+          <p class="text-sm text-gray-600">Processing your competitive intelligence query</p>
+        </div>
       </div>
     <% end %>
   </div>
 
-  <form phx-submit="generate" class="bg-white border rounded-md flex items-center px-4 py-2 shadow-sm mt-6 w-full">
-    <.text_input type="text" name="prompt" value={@prompt} placeholder="Describe your query..." class="flex-1 bg-transparent outline-none text-sm w-full" />
-    <.button type="submit" variant="secondary" class="p-2 text-gray-600 hover:text-gray-800">➤</.button>
-  </form>
+  <!-- Input Section -->
+  <div class="mt-6 space-y-4">
+    <!-- Prompt Categories -->
+    <div class="relative">
+      <button 
+        phx-click="toggle_prompt_categories"
+        class="w-full flex items-center justify-between px-4 py-3 bg-white border rounded-md shadow-sm text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+      >
+        <span class="flex items-center gap-2">
+          <.icon name="clipboard-document-list" class="h-4 w-4" />
+          Browse Prompt Templates
+        </span>
+        <.icon name={if @show_prompt_categories, do: "chevron-up", else: "chevron-down"} class="h-4 w-4" />
+      </button>
+      
+      <%= if @show_prompt_categories do %>
+        <div class="absolute bottom-full left-0 right-0 mb-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-y-auto z-10">
+          <%= for {_category_key, category} <- @prompt_categories do %>
+            <div class="p-4 border-b last:border-b-0">
+              <h4 class="text-sm font-semibold mb-2 text-gray-900"><%= category.name %></h4>
+              <p class="text-xs text-gray-600 mb-3"><%= category.description %></p>
+              <div class="space-y-2">
+                <%= for prompt <- Enum.take(category.prompts, 3) do %>
+                  <button 
+                    phx-click="use_prompt" 
+                    phx-value-prompt={prompt}
+                    class="block w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 rounded border border-gray-200 transition-colors"
+                    title="Click to use this prompt"
+                  >
+                    <span class="font-medium">💡</span> <%= prompt %>
+                  </button>
+                <% end %>
+                <%= if length(category.prompts) > 3 do %>
+                  <div class="text-xs text-gray-500 px-3 py-1">+ <%= length(category.prompts) - 3 %> more prompts...</div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Main Input Form -->
+    <form phx-submit="generate" class="bg-white border rounded-md shadow-sm">
+      <div class="flex items-center px-4 py-3">
+        <.text_input 
+          type="text" 
+          id="prompt-input"
+          name="prompt" 
+          value={@prompt} 
+          placeholder="Ask about competitor strategies, trends, threats, or opportunities..."
+          class="flex-1 bg-transparent border-none outline-none text-sm"
+          disabled={@loading}
+        />
+        <.button 
+          type="submit" 
+          class={"ml-3 px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors #{if @loading, do: "opacity-50 cursor-not-allowed", else: ""}"}
+          disabled={@loading}
+        >
+          <%= if @loading, do: "Analyzing...", else: "Analyze" %>
+        </.button>
+      </div>
+    </form>
+
+    <!-- Help Text -->
+    <div class="text-xs text-gray-500 px-1">
+      💡 <strong>Quick examples:</strong> "Which competitor is most active this week?" • "Analyze BlackRock's recent strategy" • "What trends should we watch?"
+    </div>
+  </div>
 </div>

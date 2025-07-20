@@ -46,12 +46,34 @@
               <%= for post <- data.social_media do %>
                 <li class="flex items-start gap-2">
                   <.icon name={platform_icon(post.url)} class="h-4 w-4 mt-0.5" />
-                  <div>
+                  <div class="flex-1">
                     <div class="text-sm"><%= snippet(post.content) %></div>
                     <div class="text-xs text-gray-500">
                       <%= post.date %>
                       <a :if={post.url} href={post.url} target="_blank" class="ml-1 text-blue-600 hover:underline">Link</a>
                     </div>
+                    
+                    <!-- YouTube Engagement Metrics -->
+                    <%= if String.contains?(post.url || "", "youtube.com") and Map.get(post, :view_count) do %>
+                      <div class="text-xs text-gray-600 mt-1 flex items-center gap-3">
+                        <span title="Views" class="flex items-center gap-1">
+                          <.icon name="eye" class="h-3 w-3" />
+                          <%= format_number(Map.get(post, :view_count, 0)) %>
+                        </span>
+                        <%= if Map.get(post, :like_count, 0) > 0 do %>
+                          <span title="Likes" class="flex items-center gap-1">
+                            <.icon name="heart" class="h-3 w-3" />
+                            <%= format_number(Map.get(post, :like_count, 0)) %>
+                          </span>
+                        <% end %>
+                        <%= if Map.get(post, :comment_count, 0) > 0 do %>
+                          <span title="Comments" class="flex items-center gap-1">
+                            <.icon name="chat-bubble-left" class="h-3 w-3" />
+                            <%= format_number(Map.get(post, :comment_count, 0)) %>
+                          </span>
+                        <% end %>
+                      </div>
+                    <% end %>
                   </div>
                 </li>
               <% end %>

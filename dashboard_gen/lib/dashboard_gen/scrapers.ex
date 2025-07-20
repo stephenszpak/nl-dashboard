@@ -36,7 +36,11 @@ defmodule DashboardGen.Scrapers do
 
   defp run_script(path, source, args \\ []) do
     IO.inspect("Running: #{path} #{Enum.join(args, " ")}")
-    {output, status} = System.cmd("python3.11", [path | args], stderr_to_stdout: true)
+    
+    # Use absolute path to virtual environment
+    venv_python = "/Users/stephenszpak/workspace/nl-dashboard/dashboard_gen/venv/bin/python"
+    
+    {output, status} = System.cmd(venv_python, [path | args], stderr_to_stdout: false)
     IO.inspect({status, output}, label: "Script result")
 
     case Jason.decode(output) do
