@@ -6,8 +6,7 @@ defmodule DashboardGen.Scrapers do
   alias DashboardGen.Repo
   alias DashboardGen.Scrapers.Insight
 
-  @scripts ["competitor_sites.py", "social_media.py"]
-  @press_release_companies ~w(blackrock jp-morgan-am)
+  @scripts ["scrape_all.py"]
 
   priv_dir = :code.priv_dir(:dashboard_gen) |> to_string()
   @scripts_path Path.join([priv_dir, "python", "scrapers"])
@@ -22,13 +21,6 @@ defmodule DashboardGen.Scrapers do
         {:error, reason} -> IO.inspect(reason, label: "❌ #{script} failed")
       end
     end)
-
-    Enum.each(@press_release_companies, fn company ->
-      case run_press_release_script(company) do
-        {:ok, _} -> IO.puts("✅ press_releases.py (#{company}) succeeded")
-        {:error, reason} -> IO.inspect(reason, label: "❌ press_releases.py (#{company}) failed")
-      end
-    end)
   end
 
   @doc "Run a single scraper script by filename"
@@ -37,20 +29,7 @@ defmodule DashboardGen.Scrapers do
     IO.puts("🚀 #{path}")
 
     case File.exists?(path) do
-      true ->
-        case script do
-          "social_media.py" ->
-            ["blackrock", "jp-morgan-am"]
-            |> Enum.map(&run_script(path, Path.rootname(script), ["--company", &1]))
-            |> Enum.find(fn result -> match?({:error, _}, result) end)
-            |> case do
-              nil -> {:ok, :ok}
-              error -> error
-            end
-          _ ->
-            run_script(path, Path.rootname(script))
-        end
-
+      true -> run_script(path, Path.rootname(script))
       false -> {:error, :not_found}
     end
   end
@@ -72,38 +51,6 @@ defmodule DashboardGen.Scrapers do
         IO.inspect(reason, label: "JSON parse error")
         IO.inspect(output, label: "Raw scraper output")
         {:error, {reason, output}}
-    end
-  end
-
-  defp run_press_release_script(company) do
-    path = Path.join(@scripts_path, "press_releases.py")
-
-    case File.exists?(path) do
-      true ->
-        {_, _status} = System.cmd("python3", [path, "--company", company], stderr_to_stdout: true)
-
-        output_path = Path.join(File.cwd!(), "scrape_output.json")
-
-        case File.read(output_path) do
-          {:ok, json} ->
-            case Jason.decode(json) do
-              {:ok, data} ->
-                %Insight{}
-                |> Insight.changeset(%{source: company, data: data})
-                |> Repo.insert()
-
-              {:error, reason} ->
-                IO.inspect(reason, label: "JSON decode error (#{company})")
-                IO.inspect(json, label: "Raw output (#{company})")
-                {:error, {reason, json}}
-            end
-
-          {:error, reason} ->
-            {:error, {:file_read_failed, reason}}
-        end
-
-      false ->
-        {:error, :press_release_script_not_found}
     end
   end
 end
