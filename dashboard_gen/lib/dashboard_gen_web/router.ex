@@ -34,11 +34,10 @@ defmodule DashboardGenWeb.Router do
 
     live("/", DashboardLive)
     live("/dashboard", DashboardLive)
+    live("/conversation/:conversation_id", DashboardLive)
     live("/onboarding", OnboardingLive)
-    live("/saved", SavedLive)
     live("/insights", CompetitorInsightsLive)
     live("/agent", AgentLive)
-    live("/settings", SettingsLive)
     live("/uploads", UploadsLive)
   end
 

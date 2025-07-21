@@ -29,9 +29,15 @@ defmodule DashboardGenWeb.Plugs.Auth do
 
   @doc """
   Fetches the currently logged in user and assigns it to the connection.
+  Uses session token for authentication.
   """
   def fetch_current_user(conn, _opts) do
-    user = get_session(conn, :user_id) && Accounts.get_user(get_session(conn, :user_id))
+    user = with token when is_binary(token) <- get_session(conn, :session_token),
+                session when not is_nil(session) <- Accounts.get_valid_session(token) do
+             session.user
+           else
+             _ -> nil
+           end
     assign(conn, :current_user, user)
   end
 
