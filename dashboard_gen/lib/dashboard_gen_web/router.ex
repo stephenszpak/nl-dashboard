@@ -13,6 +13,14 @@ defmodule DashboardGenWeb.Router do
     plug(:put_secure_browser_headers)
   end
 
+  pipeline :auth do
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {DashboardGenWeb.Layouts, :root})
+    plug(:put_secure_browser_headers)
+  end
+
   pipeline :api do
     plug(:accepts, ["json"])
   end
@@ -27,6 +35,12 @@ defmodule DashboardGenWeb.Router do
     live("/register", RegisterLive)
     live("/login", LoginLive)
     delete("/logout", AuthController, :delete)
+  end
+
+  scope "/", DashboardGenWeb do
+    pipe_through(:auth)
+    
+    post("/session", SessionController, :create)
   end
 
   scope "/", DashboardGenWeb do

@@ -4,9 +4,21 @@ defmodule DashboardGenWeb.AgentLive do
   import DashboardGenWeb.CoreComponents
 
   alias DashboardGen.AutonomousAgent
+  alias DashboardGen.Accounts
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    # Get current user from session token for the layout
+    user = case Map.get(session, "session_token") do
+      token when is_binary(token) ->
+        case Accounts.get_valid_session(token) do
+          %{user: user} -> user
+          _ -> nil
+        end
+      _ -> nil
+    end
+
+    socket = assign(socket, :current_user, user)
     # Subscribe to agent updates if it's running
     if Process.whereis(AutonomousAgent) do
       Phoenix.PubSub.subscribe(DashboardGen.PubSub, "agent_updates")
@@ -26,6 +38,42 @@ defmodule DashboardGenWeb.AgentLive do
   @impl true
   def handle_event("toggle_sidebar", _params, socket) do
     {:noreply, update(socket, :collapsed, &(!&1))}
+  end
+
+  def handle_event("update_chat_input", %{"message" => content}, socket) do
+    {:noreply, assign(socket, :chat_input, content)}
+  end
+
+  def handle_event("send_message", %{"message" => content}, socket) when content != "" do
+    content = String.trim(content)
+    
+    # Add user message to chat
+    user_message = %{type: :user, content: content, timestamp: DateTime.utc_now()}
+    updated_messages = socket.assigns.chat_messages ++ [user_message]
+    
+    # Send message to autonomous agent and get response
+    if Process.whereis(AutonomousAgent) do
+      # Send the question and handle response asynchronously
+      pid = self()
+      Task.start(fn ->
+        case AutonomousAgent.ask_question(content) do
+          {:ok, answer} -> 
+            send(pid, {:agent_response, answer})
+          {:error, reason} -> 
+            send(pid, {:agent_error, reason})
+        end
+      end)
+    end
+    
+    {:noreply, 
+     socket
+     |> assign(:chat_messages, updated_messages)
+     |> assign(:chat_input, "")
+     |> assign(:loading_response, true)}
+  end
+
+  def handle_event("send_message", %{"message" => ""}, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("start_agent", _params, socket) do
@@ -88,7 +136,7 @@ defmodule DashboardGenWeb.AgentLive do
   end
 
   @impl true
-  def handle_info({_task_ref, {:agent_response, response}}, socket) do
+  def handle_info({:agent_response, response}, socket) do
     agent_message = %{type: :agent, content: response, timestamp: DateTime.utc_now()}
     
     {:noreply,
@@ -97,7 +145,7 @@ defmodule DashboardGenWeb.AgentLive do
      |> assign(:loading_response, false)}
   end
 
-  def handle_info({_task_ref, {:agent_error, reason}}, socket) do
+  def handle_info({:agent_error, reason}, socket) do
     error_message = %{type: :error, content: "Error: #{reason}", timestamp: DateTime.utc_now()}
     
     {:noreply,

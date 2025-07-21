@@ -10,6 +10,8 @@ defmodule DashboardGenWeb.LiveHelpers do
     if function_exported?(Phoenix.LiveView, :put_session, 3) do
       apply(Phoenix.LiveView, :put_session, [socket, key, value])
     else
+      # Fallback: Send session update to parent process for older LiveView versions
+      send(self(), {:put_session, key, value})
       socket
     end
   end

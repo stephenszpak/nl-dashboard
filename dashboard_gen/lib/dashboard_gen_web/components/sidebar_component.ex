@@ -10,8 +10,8 @@ defmodule DashboardGenWeb.SidebarComponent do
     ~H"""
     <aside
       class={[
-        "bg-white border-r transition-all transform duration-200 flex flex-col md:translate-x-0",
-        "absolute inset-y-0 left-0 z-20 md:static",
+        "bg-white border-r transition-all transform duration-200 flex flex-col h-screen md:translate-x-0",
+        "absolute inset-y-0 left-0 z-20 md:static md:relative",
         @collapsed && "-translate-x-full md:w-16",
         !@collapsed && "translate-x-0 w-60"
       ]}
@@ -41,14 +41,14 @@ defmodule DashboardGenWeb.SidebarComponent do
         </nav>
 
         <!-- Chat History List -->
-        <div :if={!@collapsed} class="flex-1 px-2 mt-4 overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
+        <div :if={!@collapsed} class="flex-1 px-2 mt-4 overflow-hidden flex flex-col">
+          <div class="flex items-center justify-between mb-2 flex-shrink-0">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Recent Chats</h3>
-            <Phoenix.Component.link navigate={~p"/"} class="p-1 text-gray-400 hover:text-gray-600" title="New conversation">
+            <button phx-click="new_conversation" class="p-1 text-gray-400 hover:text-gray-600" title="New conversation">
               <i class="fa-solid fa-plus text-xs"></i>
-            </Phoenix.Component.link>
+            </button>
           </div>
-          <div class="space-y-1 overflow-y-auto max-h-64">
+          <div class="space-y-1 overflow-y-auto flex-1">
             <%= if @current_user do %>
               <% conversations = get_recent_conversations(@current_user.id) %>
               <%= if conversations == [] do %>

@@ -5,10 +5,18 @@ defmodule DashboardGenWeb.OnboardingLive do
   alias DashboardGen.Accounts
 
   def mount(_params, session, socket) do
-    user = session["user_id"] && Accounts.get_user(session["user_id"])
+    # Get current user from session token for the layout
+    user = case Map.get(session, "session_token") do
+      token when is_binary(token) ->
+        case Accounts.get_valid_session(token) do
+          %{user: user} -> user
+          _ -> nil
+        end
+      _ -> nil
+    end
 
     if user do
-      {:ok, assign(socket, user: user, collapsed: false, page_title: "Onboarding")}
+      {:ok, assign(socket, user: user, current_user: user, collapsed: false, page_title: "Onboarding")}
     else
       {:ok, Phoenix.LiveView.redirect(socket, to: "/login")}
     end
