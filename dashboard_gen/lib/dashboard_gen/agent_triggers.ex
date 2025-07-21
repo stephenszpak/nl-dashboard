@@ -172,7 +172,7 @@ defmodule DashboardGen.AgentTriggers do
   defp generate_trigger_analysis(trigger_data) do
     prompt = build_trigger_analysis_prompt(trigger_data)
     
-    case CodexClient.ask(prompt) do
+    case DashboardGen.OpenAIClient.ask(prompt) do
       {:ok, analysis} -> analysis
       {:error, _} -> "Unable to generate analysis at this time."
     end

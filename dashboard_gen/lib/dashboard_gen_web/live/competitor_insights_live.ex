@@ -5,6 +5,7 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
   import DashboardGenWeb.AuthHelpers
 
   alias DashboardGen.Insights
+  alias DashboardGen.Conversations
 
   @impl true
   def mount(_params, session, socket) do
@@ -49,7 +50,12 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
          keyword: ""
        },
        # UI state
-       show_filters: false
+       show_filters: false,
+       # Modal state
+       show_delete_modal: false,
+       show_clear_all_modal: false,
+       delete_conversation_id: nil,
+       delete_conversation_title: nil
      )}
     end
   end
@@ -91,6 +97,104 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
      socket
      |> assign(:filters, default_filters)
      |> assign(:insights_by_company, socket.assigns.all_insights)}
+  end
+
+  # Sidebar conversation deletion handlers
+  def handle_event("show_delete_confirmation", %{"id" => conversation_id} = params, socket) do
+    title = Map.get(params, "title", "Untitled")
+    safe_title = case title do
+      t when is_binary(t) and byte_size(t) > 0 -> String.trim(t)
+      _ -> "Untitled"
+    end
+    
+    {:noreply, 
+     assign(socket,
+       show_delete_modal: true,
+       delete_conversation_id: conversation_id,
+       delete_conversation_title: safe_title
+     )}
+  end
+
+  def handle_event("close_delete_modal", _params, socket) do
+    {:noreply, 
+     assign(socket,
+       show_delete_modal: false,
+       delete_conversation_id: nil,
+       delete_conversation_title: nil
+     )}
+  end
+
+  def handle_event("confirm_delete_conversation", _params, socket) do
+    if socket.assigns[:delete_conversation_id] do
+      case Conversations.get_conversation(socket.assigns.delete_conversation_id) do
+        {:ok, conversation} ->
+          case Conversations.delete_conversation(conversation) do
+            {:ok, _} ->
+              if socket.assigns[:current_conversation] && socket.assigns.current_conversation.id == conversation.id do
+                {:noreply, 
+                 socket
+                 |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+                 |> put_flash(:info, "Conversation deleted")
+                 |> push_navigate(to: "/")}
+              else
+                {:noreply, 
+                 socket
+                 |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+                 |> put_flash(:info, "Conversation deleted")}
+              end
+            
+            {:error, _} ->
+              {:noreply, 
+               socket
+               |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+               |> put_flash(:error, "Failed to delete conversation")}
+          end
+        
+        {:error, :not_found} ->
+          {:noreply, 
+           socket
+           |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+           |> put_flash(:error, "Conversation not found")}
+      end
+    else
+      {:noreply, 
+       socket
+       |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+       |> put_flash(:error, "No conversation selected")}
+    end
+  end
+
+  def handle_event("show_clear_all_confirmation", _params, socket) do
+    {:noreply, assign(socket, show_clear_all_modal: true)}
+  end
+
+  def handle_event("close_clear_all_modal", _params, socket) do
+    {:noreply, assign(socket, show_clear_all_modal: false)}
+  end
+
+  def handle_event("confirm_clear_all_conversations", _params, socket) do
+    case Conversations.delete_all_user_conversations(socket.assigns.current_user.id) do
+      {_count, _} ->
+        {:noreply, 
+         socket
+         |> assign(show_clear_all_modal: false)
+         |> put_flash(:info, "All conversations deleted")}
+      
+      {:error, _} ->
+        {:noreply, 
+         socket
+         |> assign(show_clear_all_modal: false)
+         |> put_flash(:error, "Failed to delete conversations")}
+    end
+  end
+
+  def handle_event("modal_content_click", _params, socket) do
+    # Prevent modal from closing when clicking inside content
+    {:noreply, socket}
+  end
+
+  def handle_event("new_conversation", _params, socket) do
+    {:noreply, push_navigate(socket, to: "/")}
   end
 
   @impl true

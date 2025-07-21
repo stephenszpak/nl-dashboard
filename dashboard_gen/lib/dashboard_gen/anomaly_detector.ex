@@ -123,7 +123,10 @@ defmodule DashboardGen.AnomalyDetector do
       Return a short list of bullet points (2–5 total).
     """
 
-    CodexClient.ask(prompt)
+    case DashboardGen.OpenAIClient.ask(prompt) do
+      {:ok, response} -> {:ok, response}
+      {:error, _} -> {:error, "Analysis generation failed"}
+    end
   end
 
   def summarize_anomalies(_), do: {:error, :invalid_arguments}

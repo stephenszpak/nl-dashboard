@@ -37,6 +37,53 @@ Hooks.AnalyticsChart = {
   }
 };
 
+// Chart renderer hook for dashboard charts  
+Hooks.ChartRenderer = {
+  mounted() { 
+    this.waitForChart();
+  },
+  updated() { 
+    this.waitForChart();
+  },
+  destroyed() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  },
+  waitForChart() {
+    // Wait for Chart.js to load before rendering
+    const checkChart = () => {
+      if (window.Chart) {
+        this.renderChart();
+      } else {
+        setTimeout(checkChart, 100);
+      }
+    };
+    checkChart();
+  },
+  renderChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    
+    const configData = this.el.dataset.chartConfig;
+    if (!configData) {
+      console.error('No chart config data found');
+      return;
+    }
+    
+    try {
+      const config = JSON.parse(configData);
+      if (config && config.type) {
+        const ctx = this.el.getContext('2d');
+        this.chart = new window.Chart(ctx, config);
+      }
+    } catch (error) {
+      console.error('Error parsing chart config:', error);
+    }
+  }
+};
+
 Hooks.EnableSubmitOnFileSelect = {
   mounted() {
     this.el.addEventListener("change", () => {

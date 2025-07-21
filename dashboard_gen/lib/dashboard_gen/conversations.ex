@@ -176,6 +176,14 @@ defmodule DashboardGen.Conversations do
     Repo.delete(conversation)
   end
 
+  @doc """
+  Deletes all conversations for a user.
+  """
+  def delete_all_user_conversations(user_id) do
+    from(c in Conversation, where: c.user_id == ^user_id)
+    |> Repo.delete_all()
+  end
+
   ## Messages
 
   @doc """

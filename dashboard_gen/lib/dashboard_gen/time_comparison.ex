@@ -264,7 +264,7 @@ defmodule DashboardGen.TimeComparison do
   defp generate_comparison_analysis(comparison, metric_type, current_period, previous_period) do
     prompt = build_comparison_analysis_prompt(comparison, metric_type, current_period, previous_period)
     
-    case CodexClient.ask(prompt) do
+    case DashboardGen.OpenAIClient.ask(prompt) do
       {:ok, analysis} -> analysis
       {:error, _} -> "Analysis generation failed"
     end
