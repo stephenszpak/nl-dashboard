@@ -18,18 +18,25 @@ defmodule DashboardGenWeb.RegisterLive do
           {:ok, session} ->
             {:noreply,
              socket
+             |> DashboardGenWeb.LiveHelpers.maybe_put_session(:session_token, session.token)
              |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
              |> Phoenix.LiveView.redirect(to: "/onboarding")}
+
           {:error, _} ->
-            changeset = User.registration_changeset(%User{}, user_params)
-            |> Ecto.Changeset.add_error(:password, "Unable to create session. Please try again.")
+            changeset =
+              User.registration_changeset(%User{}, user_params)
+              |> Ecto.Changeset.add_error(
+                :password,
+                "Unable to create session. Please try again."
+              )
+
             {:noreply, assign(socket, changeset: changeset)}
         end
+
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
   end
-
 
   defp error_tag(form, field) do
     Enum.map(Keyword.get_values(form.errors, field), fn {message, _opts} ->

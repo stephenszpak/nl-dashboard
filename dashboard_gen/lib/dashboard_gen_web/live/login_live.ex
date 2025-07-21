@@ -15,14 +15,16 @@ defmodule DashboardGenWeb.LoginLive do
           {:ok, session} ->
             {:noreply,
              socket
+             |> DashboardGenWeb.LiveHelpers.maybe_put_session(:session_token, session.token)
              |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
              |> Phoenix.LiveView.redirect(to: "/dashboard")}
+
           {:error, _} ->
             {:noreply, assign(socket, error: "Unable to create session. Please try again.")}
         end
+
       :error ->
         {:noreply, assign(socket, error: "Invalid email or password")}
     end
   end
-
 end
