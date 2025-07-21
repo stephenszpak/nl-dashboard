@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={Phoenix.HTML.Tag.csrf_token_value()} />
+    <.live_title suffix=" · DashboardGen">
+      <%= assigns[:page_title] || "DashboardGen" %>
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>
+  </head>
+  <body class="bg-gray-50 font-sans antialiased">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-md w-full space-y-8">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-gray-900">DashboardGen</h1>
+          <p class="mt-2 text-sm text-gray-600">AI-powered business intelligence platform</p>
+        </div>
+        <div class="bg-white py-8 px-6 shadow rounded-lg">
+          <%= @inner_content %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
