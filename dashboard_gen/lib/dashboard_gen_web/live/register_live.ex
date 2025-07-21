@@ -17,7 +17,7 @@ defmodule DashboardGenWeb.RegisterLive do
         {:noreply,
          socket
          |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
-         |> Phoenix.LiveView.push_navigate(to: "/onboarding")}
+         |> Phoenix.LiveView.redirect(to: "/onboarding")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
