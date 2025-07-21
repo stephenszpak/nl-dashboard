@@ -1,7 +1,10 @@
 defmodule DashboardGenWeb.SidebarComponent do
   use DashboardGenWeb, :html
+  alias DashboardGen.Accounts.User
+  alias DashboardGen.Conversations
 
   attr(:collapsed, :boolean, default: false)
+  attr(:current_user, User, default: nil)
 
   def sidebar(assigns) do
     ~H"""
@@ -19,27 +22,125 @@ defmodule DashboardGenWeb.SidebarComponent do
           <%= if @collapsed, do: "▶", else: "◀" %>
         </button>
       </div>
-      <nav class="flex-1 p-2 space-y-1">
-        <Phoenix.Component.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-chart-bar"></i> <span :if={!@collapsed}>Dashboard</span>
-        </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-save"></i> <span :if={!@collapsed}>Saved Views</span>
-        </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-lightbulb"></i> <span :if={!@collapsed}>Insights</span>
-        </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/agent"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-robot"></i> <span :if={!@collapsed}>AI Agent</span>
-        </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-gear"></i> <span :if={!@collapsed}>Settings</span>
-        </Phoenix.Component.link>
-        <Phoenix.Component.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-folder-open"></i> <span :if={!@collapsed}>Uploads</span>
-        </Phoenix.Component.link>
-      </nav>
+      <!-- Chat History Section -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Main Navigation -->
+        <nav class="p-2 space-y-1">
+          <Phoenix.Component.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-chart-bar"></i> <span :if={!@collapsed}>Dashboard</span>
+          </Phoenix.Component.link>
+          <Phoenix.Component.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-lightbulb"></i> <span :if={!@collapsed}>Insights</span>
+          </Phoenix.Component.link>
+          <Phoenix.Component.link navigate={~p"/agent"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-robot"></i> <span :if={!@collapsed}>AI Agent</span>
+          </Phoenix.Component.link>
+          <Phoenix.Component.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-folder-open"></i> <span :if={!@collapsed}>Uploads</span>
+          </Phoenix.Component.link>
+        </nav>
+
+        <!-- Chat History List -->
+        <div :if={!@collapsed} class="flex-1 px-2 mt-4 overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Recent Chats</h3>
+            <Phoenix.Component.link navigate={~p"/"} class="p-1 text-gray-400 hover:text-gray-600" title="New conversation">
+              <i class="fa-solid fa-plus text-xs"></i>
+            </Phoenix.Component.link>
+          </div>
+          <div class="space-y-1 overflow-y-auto max-h-64">
+            <%= if @current_user do %>
+              <% conversations = get_recent_conversations(@current_user.id) %>
+              <%= if conversations == [] do %>
+                <div class="text-xs text-gray-500 p-2 text-center">
+                  No conversations yet
+                </div>
+              <% else %>
+                <%= for conversation <- conversations do %>
+                  <Phoenix.Component.link 
+                    navigate={~p"/conversation/#{conversation.id}"}
+                    class="block px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 rounded-md group transition-colors"
+                  >
+                    <div class="font-medium truncate"><%= conversation.title %></div>
+                    <div class="text-gray-500 truncate mt-1">
+                      <%= format_conversation_time(conversation.last_activity_at) %> • <%= conversation.message_count %> messages
+                    </div>
+                  </Phoenix.Component.link>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Profile Section -->
+      <div class="border-t p-3">
+        <div :if={@current_user} class="flex items-center gap-3">
+          <!-- Avatar -->
+          <div class="w-8 h-8 bg-brandBlue rounded-full flex items-center justify-center text-white text-sm font-semibold">
+            <%= if @current_user.avatar_url do %>
+              <img src={@current_user.avatar_url} alt="Avatar" class="w-full h-full rounded-full object-cover">
+            <% else %>
+              <%= @current_user |> display_initials() %>
+            <% end %>
+          </div>
+          
+          <!-- User Info -->
+          <div :if={!@collapsed} class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-gray-900 truncate">
+              <%= display_name(@current_user) %>
+            </div>
+            <div class="text-xs text-gray-500 truncate">
+              <%= @current_user.email %>
+            </div>
+          </div>
+          
+          <!-- Logout Button -->
+          <div :if={!@collapsed}>
+            <Phoenix.Component.link href="/logout" method="delete" class="p-1 text-gray-400 hover:text-gray-600">
+              <i class="fa-solid fa-sign-out-alt text-sm"></i>
+            </Phoenix.Component.link>
+          </div>
+        </div>
+      </div>
     </aside>
     """
+  end
+
+  # Helper functions for user display
+  defp display_name(%User{} = user) do
+    User.display_name(user)
+  end
+  defp display_name(_), do: "Guest"
+
+  defp display_initials(%User{} = user) do
+    User.initials(user)
+  end
+  defp display_initials(_), do: "G"
+  
+  defp get_recent_conversations(user_id) do
+    Conversations.list_user_conversations(user_id, limit: 10)
+  rescue
+    _ -> []
+  end
+  
+  defp format_conversation_time(datetime) do
+    case datetime do
+      %DateTime{} ->
+        now = DateTime.utc_now()
+        diff = DateTime.diff(now, datetime, :second)
+        
+        cond do
+          diff < 60 -> "Just now"
+          diff < 3600 -> "#{div(diff, 60)}m ago"
+          diff < 86400 -> "#{div(diff, 3600)}h ago"
+          diff < 604800 -> "#{div(diff, 86400)}d ago"
+          true -> 
+            datetime
+            |> DateTime.to_date()
+            |> Date.to_string()
+        end
+      _ -> "Unknown"
+    end
   end
 end

@@ -2,40 +2,6 @@ defmodule DashboardGenWeb.LayoutComponents do
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
 
-  @doc """
-  Sidebar navigation
-  """
-  attr(:collapsed, :boolean, default: false)
-
-  def sidebar(assigns) do
-    ~H"""
-    <aside class={[if(@collapsed, do: "w-16", else: "w-60"), "bg-white border-r min-h-screen transition-all flex flex-col"]}>
-      <div class="flex items-center justify-between px-4 py-3 font-semibold border-b">
-        <span :if={!@collapsed}>DashboardGen</span>
-        <button phx-click="toggle_sidebar" aria-label="Toggle sidebar" class="text-gray-600 hover:text-gray-800 p-2">
-          <%= if @collapsed, do: "➡️", else: "⬅️" %>
-        </button>
-      </div>
-      <nav class="flex-1 p-2 space-y-1">
-        <.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-chart-bar"></i> <%= unless @collapsed, do: "Dashboard" %>
-        </.link>
-        <.link navigate={~p"/saved"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-save"></i> <%= unless @collapsed, do: "Saved Views" %>
-        </.link>
-        <.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-newspaper"></i> <%= unless @collapsed, do: "Insights" %>
-        </.link>
-        <.link navigate={~p"/settings"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-gear"></i> <%= unless @collapsed, do: "Settings" %>
-        </.link>
-        <.link navigate={~p"/uploads"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
-          <i class="fa-solid fa-folder-open"></i> <%= unless @collapsed, do: "Uploads" %>
-        </.link>
-      </nav>
-    </aside>
-    """
-  end
 
   @doc """
   Mobile top bar
