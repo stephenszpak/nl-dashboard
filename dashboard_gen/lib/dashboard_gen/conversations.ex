@@ -133,8 +133,7 @@ defmodule DashboardGen.Conversations do
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:conversation, Conversation.new_changeset(user_id))
     |> Ecto.Multi.run(:message, fn repo, %{conversation: conversation} ->
-      content
-      |> ConversationMessage.user_message_changeset(conversation.id, prompt_type)
+      ConversationMessage.user_message_changeset(conversation.id, content, prompt_type)
       |> repo.insert()
     end)
     |> Ecto.Multi.run(:update_conversation, fn repo, %{conversation: conversation, message: _message} ->

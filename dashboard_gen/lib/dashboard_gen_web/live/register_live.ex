@@ -18,8 +18,8 @@ defmodule DashboardGenWeb.RegisterLive do
           {:ok, session} ->
             {:noreply,
              socket
-             |> DashboardGenWeb.LiveHelpers.maybe_put_session(:session_token, session.token)
-             |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
+             |> Phoenix.LiveView.put_session(:session_token, session.token)
+             |> Phoenix.LiveView.put_session(:user_id, user.id)
              |> Phoenix.LiveView.redirect(to: "/onboarding")}
 
           {:error, _} ->

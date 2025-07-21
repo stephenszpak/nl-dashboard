@@ -8,38 +8,74 @@ defmodule DashboardGenWeb.DashboardLive do
   alias DashboardGen.Uploads
   alias DashboardGen.AnomalyDetector
   alias DashboardGen.CompetitivePrompts
-  alias DashboardGen.{Insights, CodexClient, Analytics, Conversations}
+  alias DashboardGen.{Insights, CodexClient, Analytics, Conversations, Accounts}
   alias DashboardGen.Conversations.{Conversation, ConversationMessage}
   alias VegaLite
 
   @impl true
-  def mount(%{"conversation_id" => conversation_id}, _session, socket) do
-    user = socket.assigns.current_user
-    
-    case Conversations.get_conversation(conversation_id, user.id) do
-      %Conversation{} = conversation ->
-        messages = Conversations.list_conversation_messages(conversation.id)
-        {:ok, assign_conversation_state(socket, conversation, messages)}
-      nil ->
-        {:ok, redirect(socket, to: "/")}
+  def mount(%{"conversation_id" => conversation_id}, session, socket) do
+    # Get current user from session token
+    user = case Map.get(session, "session_token") do
+      token when is_binary(token) ->
+        case Accounts.get_valid_session(token) do
+          %{user: user} -> user
+          _ -> nil
+        end
+      _ -> nil
     end
-  end
-  
-  def mount(_params, _session, socket) do
-    # Check if user is authenticated
-    case Map.get(socket.assigns, :current_user) do
+
+    case user do
       nil ->
         # User not authenticated, redirect to login
         {:ok, redirect(socket, to: "/login")}
       user ->
-        # User authenticated, load conversation state
-        case Conversations.get_most_recent_conversation(user.id) do
+        # User authenticated, assign user and load specific conversation
+        socket = assign(socket, :current_user, user)
+        
+        case Conversations.get_conversation(conversation_id, user.id) do
           %Conversation{} = conversation ->
             messages = Conversations.list_conversation_messages(conversation.id)
             {:ok, assign_conversation_state(socket, conversation, messages)}
           nil ->
-            # No conversations yet, start with empty state
+            {:ok, redirect(socket, to: "/")}
+        end
+    end
+  end
+  
+  def mount(params, session, socket) do
+    # Get current user from session token
+    user = case Map.get(session, "session_token") do
+      token when is_binary(token) ->
+        case Accounts.get_valid_session(token) do
+          %{user: user} -> user
+          _ -> nil
+        end
+      _ -> nil
+    end
+
+    case user do
+      nil ->
+        # User not authenticated, redirect to login
+        {:ok, redirect(socket, to: "/login")}
+      user ->
+        # User authenticated, assign user and load conversation state
+        socket = assign(socket, :current_user, user)
+        
+        # Check if this is a request for a new conversation
+        case Map.get(params, "new") do
+          "true" ->
+            # Start with empty state for new conversation
             {:ok, assign_empty_state(socket)}
+          _ ->
+            # Load most recent conversation or start empty
+            case Conversations.get_most_recent_conversation(user.id) do
+              %Conversation{} = conversation ->
+                messages = Conversations.list_conversation_messages(conversation.id)
+                {:ok, assign_conversation_state(socket, conversation, messages)}
+              nil ->
+                # No conversations yet, start with empty state
+                {:ok, assign_empty_state(socket)}
+            end
         end
     end
   end
@@ -54,8 +90,8 @@ defmodule DashboardGenWeb.DashboardLive do
       nil ->
         # Create new conversation
         case Conversations.create_conversation_with_message(user.id, content) do
-          {:ok, %{conversation: conv, messages: messages}} -> 
-            {conv, messages}
+          {:ok, conversation} -> 
+            {conversation, conversation.messages}
           {:error, _} ->
             {nil, []}
         end
@@ -88,6 +124,10 @@ defmodule DashboardGenWeb.DashboardLive do
   
   def handle_event("send_message", %{"message" => ""}, socket) do
     {:noreply, socket}
+  end
+
+  def handle_event("update_message", %{"message" => content}, socket) do
+    {:noreply, assign(socket, :current_message, content)}
   end
 
   def handle_event("toggle_sidebar", _params, socket) do
@@ -196,10 +236,14 @@ defmodule DashboardGenWeb.DashboardLive do
   end
   
   def handle_event("new_conversation", _params, socket) do
+    # Focus the input after a short delay to ensure DOM is updated
+    Process.send_after(self(), :focus_input, 100)
+    
     {:noreply, 
      socket
      |> assign_empty_state()
-     |> push_navigate(to: "/")}
+     |> put_flash(:info, "✨ Started new conversation")
+     |> push_navigate(to: "/?new=true")}
   end
   
   def handle_event("load_conversation", %{"id" => conversation_id}, socket) do
@@ -346,6 +390,10 @@ defmodule DashboardGenWeb.DashboardLive do
          |> put_flash(:error, reason)
          |> assign(loading: false, alerts: nil)}
     end
+  end
+
+  def handle_info(:focus_input, socket) do
+    {:noreply, push_event(socket, "focus", %{to: "#message-input"})}
   end
 
   # Conversation state management helpers

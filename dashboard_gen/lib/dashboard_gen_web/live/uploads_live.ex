@@ -4,12 +4,23 @@ defmodule DashboardGenWeb.UploadsLive do
   import DashboardGenWeb.CoreComponents
 
   alias DashboardGen.Uploads
+  alias DashboardGen.Accounts
   require Logger
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    # Get current user from session token for the layout
+    user = case Map.get(session, "session_token") do
+      token when is_binary(token) ->
+        case Accounts.get_valid_session(token) do
+          %{user: user} -> user
+          _ -> nil
+        end
+      _ -> nil
+    end
     socket =
       socket
+      |> assign(:current_user, user)
       |> assign(:page_title, "Uploads")
       |> assign(:uploads_list, Uploads.list_uploads())
       |> assign(:label, "")

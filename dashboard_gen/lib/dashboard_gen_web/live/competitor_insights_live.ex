@@ -4,9 +4,21 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
   import DashboardGenWeb.CoreComponents
 
   alias DashboardGen.Insights
+  alias DashboardGen.Accounts
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    # Get current user from session token for the layout
+    user = case Map.get(session, "session_token") do
+      token when is_binary(token) ->
+        case Accounts.get_valid_session(token) do
+          %{user: user} -> user
+          _ -> nil
+        end
+      _ -> nil
+    end
+
+    socket = assign(socket, :current_user, user)
     insights = Insights.list_recent_insights_by_company()
     companies = Enum.map(insights, &elem(&1, 0))
 

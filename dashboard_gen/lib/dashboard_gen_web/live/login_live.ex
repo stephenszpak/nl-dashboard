@@ -4,27 +4,9 @@ defmodule DashboardGenWeb.LoginLive do
   import DashboardGenWeb.CoreComponents
   alias DashboardGen.Accounts
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, error: nil, page_title: "Login")}
+  def mount(_params, session, socket) do
+    csrf_token = Map.get(session, "_csrf_token")
+    {:ok, assign(socket, error: nil, page_title: "Login", csrf_token: csrf_token)}
   end
 
-  def handle_event("login", %{"user" => %{"email" => email, "password" => password}}, socket) do
-    case Accounts.authenticate_user(email, password) do
-      {:ok, user} ->
-        case Accounts.create_session(user.id) do
-          {:ok, session} ->
-            {:noreply,
-             socket
-             |> DashboardGenWeb.LiveHelpers.maybe_put_session(:session_token, session.token)
-             |> DashboardGenWeb.LiveHelpers.maybe_put_session(:user_id, user.id)
-             |> Phoenix.LiveView.redirect(to: "/dashboard")}
-
-          {:error, _} ->
-            {:noreply, assign(socket, error: "Unable to create session. Please try again.")}
-        end
-
-      :error ->
-        {:noreply, assign(socket, error: "Invalid email or password")}
-    end
-  end
 end

@@ -175,7 +175,7 @@
       <% end %>
 
       <!-- Message Input Form -->
-      <form phx-submit="send_message" class="flex items-end gap-3">
+      <form phx-submit="send_message" phx-change="update_message" class="flex items-end gap-3">
         <div class="flex-1">
           <.text_input 
             type="text" 
