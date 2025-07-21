@@ -25,7 +25,7 @@ defmodule DashboardGenWeb.SessionController do
     end
   end
 
-  def create(conn, params) do
+  def create(conn, _params) do
     conn
     |> put_flash(:error, "Invalid request format")
     |> redirect(to: "/login")

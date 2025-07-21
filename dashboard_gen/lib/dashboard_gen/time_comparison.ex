@@ -210,16 +210,20 @@ defmodule DashboardGen.TimeComparison do
     
     # Check for significant analytics changes
     page_view_change = calculate_percentage_change(current.analytics.total_page_views, previous.analytics.total_page_views)
-    if abs(page_view_change) > 20 do
-      changes = [%{type: :page_views, change: page_view_change, significance: :high} | changes]
+    changes = if abs(page_view_change) > 20 do
+      [%{type: :page_views, change: page_view_change, significance: :high} | changes]
+    else
+      changes
     end
     
     # Check for competitive activity spikes
     current_activity = calculate_total_activity(current.competitor_activity)
     previous_activity = calculate_total_activity(previous.competitor_activity)
     activity_change = calculate_percentage_change(current_activity, previous_activity)
-    if abs(activity_change) > 50 do
-      changes = [%{type: :competitor_activity, change: activity_change, significance: :high} | changes]
+    changes = if abs(activity_change) > 50 do
+      [%{type: :competitor_activity, change: activity_change, significance: :high} | changes]
+    else
+      changes
     end
     
     changes
@@ -338,12 +342,12 @@ defmodule DashboardGen.TimeComparison do
     }
   end
   
-  defp generate_monthly_periods(start_date, end_date) do
+  defp generate_monthly_periods(_start_date, _end_date) do
     # Generate list of monthly periods between start and end dates
     []
   end
   
-  defp generate_quarterly_periods(start_date, end_date) do
+  defp generate_quarterly_periods(_start_date, _end_date) do
     # Generate list of quarterly periods between start and end dates
     []
   end
