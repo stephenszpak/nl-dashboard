@@ -324,8 +324,28 @@ defmodule DashboardGenWeb.DashboardLive do
   def handle_info({:process_ai_response, user_content, conversation_id}, socket) do
     case analyze_competitive_intelligence(user_content) do
       {:ok, ai_response} ->
-        # Add AI response to conversation
+        # Standard text response
         case Conversations.add_message(conversation_id, ai_response, "assistant") do
+          {:ok, ai_message} ->
+            updated_messages = (socket.assigns.messages || []) ++ [ai_message]
+            
+            {:noreply,
+             assign(socket,
+               messages: updated_messages,
+               loading: false
+             )}
+          {:error, _} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Failed to save AI response")
+             |> assign(loading: false)}
+        end
+        
+      {:ok, analysis, chart_data} ->
+        # Chart response with data
+        full_response = "#{analysis}\n\n[CHART_DATA]:#{Jason.encode!(chart_data)}"
+        
+        case Conversations.add_message(conversation_id, full_response, "assistant") do
           {:ok, ai_message} ->
             updated_messages = (socket.assigns.messages || []) ++ [ai_message]
             
@@ -342,9 +362,20 @@ defmodule DashboardGenWeb.DashboardLive do
         end
       
       {:error, reason} ->
+        error_message = cond do
+          is_binary(reason) and String.contains?(reason, "Connection error") ->
+            "🔌 Unable to connect to AI service. Please check your internet connection and try again."
+          is_binary(reason) and String.contains?(reason, "OPENAI_API_KEY") ->
+            "⚙️ AI service configuration error. Please contact support."
+          is_binary(reason) and String.contains?(reason, "timeout") ->
+            "⏱️ Analysis is taking longer than expected. Please try a shorter question."
+          true ->
+            "❌ Analysis failed. Please try again or rephrase your question."
+        end
+        
         {:noreply,
          socket
-         |> put_flash(:error, "Analysis failed: #{reason}")
+         |> put_flash(:error, error_message)
          |> assign(loading: false)}
     end
   end
@@ -1050,6 +1081,19 @@ defmodule DashboardGenWeb.DashboardLive do
   end
   
   # Helper Functions
+  
+  defp extract_chart_data(content) do
+    case String.split(content, "[CHART_DATA]:", parts: 2) do
+      [analysis, chart_json] ->
+        case Jason.decode(String.trim(chart_json)) do
+          {:ok, chart_data} -> {String.trim(analysis), chart_data}
+          _ -> {content, nil}
+        end
+      [_] -> {content, nil}
+    end
+  rescue
+    _ -> {content, nil}
+  end
   
   defp format_message_time(datetime) do
     case datetime do

@@ -100,9 +100,32 @@
             }"}>
               <div class="text-sm leading-relaxed">
                 <%= if message.role == "assistant" do %>
-                  <div class="prose prose-sm max-w-none">
-                    <%= message.content |> String.replace("\n", "<br>") |> raw() %>
-                  </div>
+                  <%= 
+                    {analysis, chart_data} = extract_chart_data(message.content)
+                    if not is_nil(chart_data) do
+                  %>
+                    <!-- Render analysis text -->
+                    <div class="prose prose-sm max-w-none mb-4">
+                      <%= analysis |> String.replace("\n", "<br>") |> raw() %>
+                    </div>
+                    <!-- Render chart -->
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                      <canvas id={"chart-#{message.id}"} width="400" height="200"></canvas>
+                      <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                          const ctx = document.getElementById('<%= "chart-#{message.id}" %>');
+                          if (ctx && !ctx.chart) {
+                            ctx.chart = new Chart(ctx, <%= raw(Jason.encode!(chart_data)) %>);
+                          }
+                        });
+                      </script>
+                    </div>
+                  <% else %>
+                    <!-- Regular text analysis -->
+                    <div class="prose prose-sm max-w-none">
+                      <%= message.content |> String.replace("\n", "<br>") |> raw() %>
+                    </div>
+                  <% end %>
                 <% else %>
                   <%= message.content %>
                 <% end %>

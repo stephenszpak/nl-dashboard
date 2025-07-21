@@ -9,16 +9,41 @@ defmodule DashboardGen.CodexClient do
            System.get_env("OPENAI_API_KEY") ||
              {:error, "OPENAI_API_KEY environment variable is missing"},
          body <- %{model: "gpt-3.5-turbo", messages: [%{role: "user", content: prompt}]},
-         headers <- [{"authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}],
-         {:ok, %Req.Response{status: 200, body: %{"choices" => choices}}} <-
-           Req.post(@openai_url, json: body, headers: headers),
-         %{"message" => %{"content" => content}} <- List.first(choices) do
-      {:ok, String.trim(content)}
+         headers <- [{"authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}] do
+      
+      # Make request with timeout and retry configuration
+      case Req.post(@openai_url, 
+        json: body, 
+        headers: headers,
+        receive_timeout: 60_000,  # 60 second timeout
+        connect_options: [timeout: 30_000],  # 30 second connection timeout
+        retry: :transient,
+        max_retries: 2
+      ) do
+        {:ok, %Req.Response{status: 200, body: %{"choices" => choices}}} ->
+          case List.first(choices) do
+            %{"message" => %{"content" => content}} ->
+              {:ok, String.trim(content)}
+            _ ->
+              {:error, "Invalid response format from OpenAI"}
+          end
+        
+        {:ok, %Req.Response{status: status, body: body}} ->
+          {:error, "OpenAI API error (#{status}): #{inspect(body)}"}
+        
+        {:error, %Req.TransportError{reason: reason}} ->
+          require Logger
+          Logger.error("OpenAI API Transport Error: #{inspect(reason)}")
+          {:error, "Connection error: #{inspect(reason)}. Please check your internet connection and try again."}
+        
+        {:error, reason} ->
+          require Logger
+          Logger.error("OpenAI API Request Error: #{inspect(reason)}")
+          {:error, "Request failed: #{inspect(reason)}"}
+      end
     else
-      {:error, %Req.Response{body: body}} -> {:error, inspect(body)}
-      {:error, reason} -> {:error, inspect(reason)}
+      {:error, reason} -> {:error, reason}
       nil -> {:error, "OPENAI_API_KEY environment variable is missing"}
-      _ -> {:error, "Invalid response from OpenAI"}
     end
   end
 end
