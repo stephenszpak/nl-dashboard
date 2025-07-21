@@ -13,12 +13,13 @@ defmodule DashboardGen.Scrapers do
 
   @doc "Run all configured scraper scripts and company press releases"
   def scrape_all do
-    IO.puts("🚀 Starting scraper pipeline...")
+    require Logger
+    Logger.info("Starting scraper pipeline...")
 
     Enum.each(@scripts, fn script ->
       case scrape_source(script) do
-        {:ok, _result} -> IO.puts("✅ #{script} succeeded")
-        {:error, reason} -> IO.inspect(reason, label: "❌ #{script} failed")
+        {:ok, _result} -> Logger.info("✅ #{script} succeeded")
+        {:error, reason} -> Logger.error("❌ #{script} failed: #{inspect(reason)}")
       end
     end)
   end
@@ -26,7 +27,8 @@ defmodule DashboardGen.Scrapers do
   @doc "Run a single scraper script by filename"
   def scrape_source(script) when is_binary(script) do
     path = Path.join(@scripts_path, script)
-    IO.puts("🚀 #{path}")
+    require Logger
+    Logger.info("Running scraper: #{path}")
 
     case File.exists?(path) do
       true -> run_script(path, Path.rootname(script))
@@ -35,25 +37,26 @@ defmodule DashboardGen.Scrapers do
   end
 
   defp run_script(path, source, args \\ []) do
-    IO.inspect("Running: #{path} #{Enum.join(args, " ")}")
+    require Logger
+    Logger.debug("Running: #{path} #{Enum.join(args, " ")}")
     
     # Use absolute path to virtual environment
     venv_python = "/Users/stephenszpak/workspace/nl-dashboard/dashboard_gen/venv/bin/python"
     
     {output, status} = System.cmd(venv_python, [path | args], stderr_to_stdout: false)
-    IO.inspect({status, output}, label: "Script result")
+    Logger.debug("Script result: status=#{status}, output_length=#{String.length(output)}")
 
     case Jason.decode(output) do
       {:ok, data} ->
-        IO.inspect(data, label: "Parsed data")
+        Logger.debug("Successfully parsed #{map_size(data)} data items")
 
         %Insight{}
         |> Insight.changeset(%{source: source, data: data})
         |> Repo.insert()
 
       {:error, reason} ->
-        IO.inspect(reason, label: "JSON parse error")
-        IO.inspect(output, label: "Raw scraper output")
+        Logger.error("JSON parse error: #{inspect(reason)}")
+        Logger.error("Raw scraper output: #{String.slice(output, 0, 500)}...")
         {:error, {reason, output}}
     end
   end

@@ -325,7 +325,7 @@ defmodule DashboardGen.PlanningAgents do
     geo |> Enum.take(3) |> Enum.map(&"#{&1.country} (#{&1.visitors})") |> Enum.join(", ")
   end
   
-  defp format_competitor_activity(competitors) do
+  defp format_competitor_activity(_competitors) do
     # Format competitor activity data
     "Competitor activity analysis would go here"
   end
@@ -337,11 +337,11 @@ defmodule DashboardGen.PlanningAgents do
     end
   end
   
-  defp format_insights_summary(insights) do
+  defp format_insights_summary(_insights) do
     "Insights summary formatting would go here"
   end
   
-  defp format_competitive_content(content) do
+  defp format_competitive_content(_content) do
     "Competitive content analysis would go here"
   end
   

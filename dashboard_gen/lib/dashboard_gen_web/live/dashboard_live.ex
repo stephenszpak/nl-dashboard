@@ -2,37 +2,26 @@ defmodule DashboardGenWeb.DashboardLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
+  import DashboardGenWeb.AuthHelpers
   alias DashboardGen.GPTClient
   alias DashboardGen.Codex.Summarizer
   alias DashboardGen.Codex.Explainer
   alias DashboardGen.Uploads
   alias DashboardGen.AnomalyDetector
   alias DashboardGen.CompetitivePrompts
-  alias DashboardGen.{Insights, CodexClient, Analytics, Conversations, Accounts}
-  alias DashboardGen.Conversations.{Conversation, ConversationMessage}
+  alias DashboardGen.{Insights, CodexClient, Analytics, Conversations}
+  alias DashboardGen.Conversations.Conversation
   alias VegaLite
 
   @impl true
   def mount(%{"conversation_id" => conversation_id}, session, socket) do
-    # Get current user from session token
-    user = case Map.get(session, "session_token") do
-      token when is_binary(token) ->
-        case Accounts.get_valid_session(token) do
-          %{user: user} -> user
-          _ -> nil
-        end
-      _ -> nil
-    end
-
-    case user do
-      nil ->
-        # User not authenticated, redirect to login
-        {:ok, redirect(socket, to: "/login")}
-      user ->
-        # User authenticated, assign user and load specific conversation
-        socket = assign(socket, :current_user, user)
-        
-        case Conversations.get_conversation(conversation_id, user.id) do
+    user = get_current_user(session)
+    case require_authentication(socket, user) do
+      {:error, redirect_socket} ->
+        {:ok, redirect_socket}
+      {:ok, socket} ->
+        # Load specific conversation for authenticated user
+        case Conversations.get_conversation(conversation_id, socket.assigns.current_user.id) do
           %Conversation{} = conversation ->
             messages = Conversations.list_conversation_messages(conversation.id)
             {:ok, assign_conversation_state(socket, conversation, messages)}
@@ -43,24 +32,12 @@ defmodule DashboardGenWeb.DashboardLive do
   end
   
   def mount(params, session, socket) do
-    # Get current user from session token
-    user = case Map.get(session, "session_token") do
-      token when is_binary(token) ->
-        case Accounts.get_valid_session(token) do
-          %{user: user} -> user
-          _ -> nil
-        end
-      _ -> nil
-    end
-
-    case user do
-      nil ->
-        # User not authenticated, redirect to login
-        {:ok, redirect(socket, to: "/login")}
-      user ->
-        # User authenticated, assign user and load conversation state
-        socket = assign(socket, :current_user, user)
-        
+    user = get_current_user(session)
+    case require_authentication(socket, user) do
+      {:error, redirect_socket} ->
+        {:ok, redirect_socket}
+      {:ok, socket} ->
+        # Load conversation state for authenticated user
         # Check if this is a request for a new conversation
         case Map.get(params, "new") do
           "true" ->
@@ -68,7 +45,7 @@ defmodule DashboardGenWeb.DashboardLive do
             {:ok, assign_empty_state(socket)}
           _ ->
             # Load most recent conversation or start empty
-            case Conversations.get_most_recent_conversation(user.id) do
+            case Conversations.get_most_recent_conversation(socket.assigns.current_user.id) do
               %Conversation{} = conversation ->
                 messages = Conversations.list_conversation_messages(conversation.id)
                 {:ok, assign_conversation_state(socket, conversation, messages)}
@@ -157,9 +134,9 @@ defmodule DashboardGenWeb.DashboardLive do
     cleaned_prompt = String.trim(prompt)
     contextualized_prompt = CompetitivePrompts.contextualize_prompt(cleaned_prompt)
     
-    # Debug logging to ensure prompt is being captured
-    IO.inspect(prompt, label: "Original prompt")
-    IO.inspect(contextualized_prompt, label: "Contextualized prompt")
+    # Log prompt usage for monitoring
+    require Logger
+    Logger.debug("Using prompt template: #{String.slice(prompt, 0, 50)}...")
     
     {:noreply, 
      socket
@@ -618,109 +595,7 @@ defmodule DashboardGenWeb.DashboardLive do
     |> VegaLite.encode(:color, field: "category", type: :nominal)
   end
   
-  defp generate_analytics_charts do
-    # Get analytics summary data
-    summary = Analytics.get_analytics_summary(7)
-    
-    [
-      generate_top_pages_chart(summary.top_pages),
-      generate_geography_chart(summary.geographic_breakdown),
-      generate_events_chart(summary.top_events)
-    ]
-  end
-  
-  defp generate_top_pages_chart(top_pages) do
-    %{
-      id: "top-pages-chart",
-      title: "📊 Top Pages",
-      type: "bar",
-      data: %{
-        labels: Enum.map(top_pages, & &1.page),
-        datasets: [%{
-          label: "Page Views",
-          data: Enum.map(top_pages, & &1.views),
-          backgroundColor: "rgba(59, 130, 246, 0.8)",
-          borderColor: "rgba(59, 130, 246, 1)",
-          borderWidth: 1
-        }]
-      },
-      options: %{
-        responsive: true,
-        plugins: %{
-          legend: %{display: false}
-        },
-        scales: %{
-          y: %{beginAtZero: true}
-        }
-      }
-    }
-  end
-  
-  defp generate_geography_chart(geographic_breakdown) do
-    %{
-      id: "geography-chart", 
-      title: "🌍 Geographic Distribution",
-      type: "doughnut",
-      data: %{
-        labels: Enum.map(geographic_breakdown, & &1.country),
-        datasets: [%{
-          data: Enum.map(geographic_breakdown, & &1.visitors),
-          backgroundColor: [
-            "rgba(59, 130, 246, 0.8)",
-            "rgba(16, 185, 129, 0.8)", 
-            "rgba(245, 158, 11, 0.8)",
-            "rgba(239, 68, 68, 0.8)",
-            "rgba(139, 92, 246, 0.8)",
-            "rgba(236, 72, 153, 0.8)",
-            "rgba(34, 197, 94, 0.8)",
-            "rgba(251, 146, 60, 0.8)",
-            "rgba(168, 85, 247, 0.8)"
-          ]
-        }]
-      },
-      options: %{
-        responsive: true,
-        plugins: %{
-          legend: %{
-            position: "bottom",
-            labels: %{
-              boxWidth: 12,
-              font: %{size: 11}
-            }
-          }
-        }
-      }
-    }
-  end
-  
-  defp generate_events_chart(top_events) do
-    %{
-      id: "events-chart",
-      title: "📈 User Events", 
-      type: "line",
-      data: %{
-        labels: Enum.map(top_events, & &1.event),
-        datasets: [%{
-          label: "Event Count",
-          data: Enum.map(top_events, & &1.count),
-          borderColor: "rgba(16, 185, 129, 1)",
-          backgroundColor: "rgba(16, 185, 129, 0.1)",
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: %{
-        responsive: true,
-        plugins: %{
-          legend: %{display: false}
-        },
-        scales: %{
-          y: %{beginAtZero: true}
-        }
-      }
-    }
-  end
+  # These chart generation functions have been moved to DashboardGen.Analytics module
   
   # GenServer Startup Helpers
   

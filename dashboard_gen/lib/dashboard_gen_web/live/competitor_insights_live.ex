@@ -2,24 +2,18 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
   use Phoenix.LiveView, layout: {DashboardGenWeb.Layouts, :dashboard}
   use DashboardGenWeb, :html
   import DashboardGenWeb.CoreComponents
+  import DashboardGenWeb.AuthHelpers
 
   alias DashboardGen.Insights
-  alias DashboardGen.Accounts
 
   @impl true
   def mount(_params, session, socket) do
-    # Get current user from session token for the layout
-    user = case Map.get(session, "session_token") do
-      token when is_binary(token) ->
-        case Accounts.get_valid_session(token) do
-          %{user: user} -> user
-          _ -> nil
-        end
-      _ -> nil
-    end
-
-    socket = assign(socket, :current_user, user)
-    insights = Insights.list_recent_insights_by_company()
+    user = get_current_user(session)
+    case require_authentication(socket, user) do
+      {:error, redirect_socket} ->
+        {:ok, redirect_socket}
+      {:ok, socket} ->
+        insights = Insights.list_recent_insights_by_company()
     companies = Enum.map(insights, &elem(&1, 0))
 
     summaries =
@@ -57,6 +51,7 @@ defmodule DashboardGenWeb.CompetitorInsightsLive do
        # UI state
        show_filters: false
      )}
+    end
   end
 
   @impl true

@@ -266,7 +266,7 @@ defmodule DashboardGen.AgentTriggers do
     []
   end
   
-  defp store_trigger_event(trigger_data, analysis) do
+  defp store_trigger_event(_trigger_data, _analysis) do
     # Store in database for dashboard display
     # Could create a triggers table to track all events
     :ok
