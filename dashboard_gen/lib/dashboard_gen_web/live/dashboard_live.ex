@@ -227,6 +227,108 @@ defmodule DashboardGenWeb.DashboardLive do
     {:noreply, push_navigate(socket, to: "/conversation/#{conversation_id}")}
   end
 
+  def handle_event("show_clear_all_confirmation", _params, socket) do
+    {:noreply, assign(socket, show_clear_all_modal: true)}
+  end
+
+  def handle_event("close_clear_all_modal", _params, socket) do
+    {:noreply, assign(socket, show_clear_all_modal: false)}
+  end
+
+  def handle_event("confirm_clear_all_conversations", _params, socket) do
+    user_id = socket.assigns.current_user.id
+    
+    case Conversations.delete_all_user_conversations(user_id) do
+      {count, _} when count > 0 ->
+        {:noreply, 
+         socket
+         |> assign(show_clear_all_modal: false)
+         |> put_flash(:info, "#{count} conversations deleted")
+         |> push_navigate(to: "/")}
+      
+      {0, _} ->
+        {:noreply, 
+         socket
+         |> assign(show_clear_all_modal: false)
+         |> put_flash(:info, "No conversations to delete")}
+      
+      _ ->
+        {:noreply, 
+         socket
+         |> assign(show_clear_all_modal: false)
+         |> put_flash(:error, "Failed to delete conversations")}
+    end
+  end
+
+  def handle_event("show_delete_confirmation", %{"id" => conversation_id} = params, socket) do
+    title = Map.get(params, "title", "Untitled")
+    safe_title = case title do
+      t when is_binary(t) and byte_size(t) > 0 -> String.trim(t)
+      _ -> "Untitled"
+    end
+    
+    {:noreply, 
+     assign(socket,
+       show_delete_modal: true,
+       delete_conversation_id: conversation_id,
+       delete_conversation_title: safe_title
+     )}
+  end
+
+  def handle_event("close_delete_modal", _params, socket) do
+    {:noreply, 
+     assign(socket,
+       show_delete_modal: false,
+       delete_conversation_id: nil,
+       delete_conversation_title: nil
+     )}
+  end
+
+  def handle_event("confirm_delete_conversation", _params, socket) do
+    user_id = socket.assigns.current_user.id
+    conversation_id = socket.assigns.delete_conversation_id
+    
+    if conversation_id do
+      case Conversations.get_user_conversation(user_id, conversation_id) do
+        {:ok, conversation} ->
+          case Conversations.delete_conversation(conversation) do
+            {:ok, _} ->
+              # Check if we're currently viewing the deleted conversation
+              current_conversation = Map.get(socket.assigns, :current_conversation)
+              if current_conversation && to_string(current_conversation.id) == conversation_id do
+                {:noreply, 
+                 socket
+                 |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+                 |> put_flash(:info, "Conversation deleted")
+                 |> push_navigate(to: "/")}
+              else
+                {:noreply, 
+                 socket
+                 |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+                 |> put_flash(:info, "Conversation deleted")}
+              end
+            
+            {:error, _} ->
+              {:noreply, 
+               socket
+               |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+               |> put_flash(:error, "Failed to delete conversation")}
+          end
+        
+        {:error, :not_found} ->
+          {:noreply, 
+           socket
+           |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+           |> put_flash(:error, "Conversation not found")}
+      end
+    else
+      {:noreply, 
+       socket
+       |> assign(show_delete_modal: false, delete_conversation_id: nil, delete_conversation_title: nil)
+       |> put_flash(:error, "No conversation selected")}
+    end
+  end
+
   def handle_event("modal_content_click", _params, socket) do
     # Prevent modal from closing when clicking inside content
     {:noreply, socket}
@@ -360,7 +462,7 @@ defmodule DashboardGenWeb.DashboardLive do
   @impl true
   def handle_info({:generate_chart, prompt}, socket) do
     with %Uploads.Upload{} = upload <- Uploads.latest_upload(),
-         {:ok, spec} <- GPTClient.get_chart_spec(prompt, upload.headers),
+         {:ok, spec} <- DashboardGen.OpenAIClient.get_chart_spec(prompt, upload.headers, %{format: :json}),
          %{"charts" => [chart_spec | _]} <- spec,
          {:ok, long_data} <- prepare_long_data(upload, chart_spec) do
       vl =
@@ -419,7 +521,11 @@ defmodule DashboardGenWeb.DashboardLive do
       smart_suggestions: CompetitivePrompts.get_smart_suggestions(),
       show_dev_modal: false,
       dev_modal_title: "",
-      dev_modal_content: ""
+      dev_modal_content: "",
+      show_delete_modal: false,
+      delete_conversation_id: nil,
+      delete_conversation_title: nil,
+      show_clear_all_modal: false
     )
   end
   
@@ -436,7 +542,11 @@ defmodule DashboardGenWeb.DashboardLive do
       smart_suggestions: CompetitivePrompts.get_smart_suggestions(),
       show_dev_modal: false,
       dev_modal_title: "",
-      dev_modal_content: ""
+      dev_modal_content: "",
+      show_delete_modal: false,
+      delete_conversation_id: nil,
+      delete_conversation_title: nil,
+      show_clear_all_modal: false
     )
   end
 
@@ -531,7 +641,7 @@ defmodule DashboardGenWeb.DashboardLive do
     Format your response in clear sections with actionable insights.
     """
 
-    case CodexClient.ask(enhanced_prompt) do
+    case DashboardGen.OpenAIClient.ask(enhanced_prompt) do
       {:ok, analysis} -> {:ok, analysis}
       {:error, reason} -> {:error, reason}
     end

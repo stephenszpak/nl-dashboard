@@ -154,7 +154,7 @@ defmodule DashboardGen.PlanningAgents do
     # Generate comprehensive brief
     prompt = build_marketing_brief_prompt(analytics_summary, competitor_activity, trending_analysis)
     
-    case CodexClient.ask(prompt) do
+    case DashboardGen.OpenAIClient.ask(prompt) do
       {:ok, brief} ->
         store_generated_report(:marketing_brief, brief, %{
           analytics: analytics_summary,
@@ -179,7 +179,7 @@ defmodule DashboardGen.PlanningAgents do
     
     prompt = build_competitive_summary_prompt(insights_summary, competitive_content)
     
-    case CodexClient.ask(prompt) do
+    case DashboardGen.OpenAIClient.ask(prompt) do
       {:ok, summary} ->
         store_generated_report(:competitive_summary, summary, insights_summary)
         Logger.info("Weekly Competitive Summary generated successfully")
@@ -198,7 +198,7 @@ defmodule DashboardGen.PlanningAgents do
     
     prompt = build_trend_analysis_prompt(trends, content)
     
-    case CodexClient.ask(prompt) do
+    case DashboardGen.OpenAIClient.ask(prompt) do
       {:ok, analysis} ->
         store_generated_report(:trend_analysis, analysis, trends)
         Logger.info("Monthly Trend Analysis generated successfully")

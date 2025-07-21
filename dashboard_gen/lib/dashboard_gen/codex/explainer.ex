@@ -21,7 +21,10 @@ defmodule DashboardGen.Codex.Explainer do
     Provide 2–3 sentences summarizing the result.
     """
 
-    CodexClient.ask(prompt)
+    case DashboardGen.OpenAIClient.ask(prompt) do
+      {:ok, response} -> {:ok, response}
+      {:error, _} -> {:error, "Explanation generation failed"}
+    end
   end
 
   def explain(_, _, _), do: {:error, :invalid_arguments}
@@ -42,7 +45,10 @@ defmodule DashboardGen.Codex.Explainer do
     Give possible causes like timing, platform behavior, or user engagement shifts. Be concise.
     """
 
-    CodexClient.ask(prompt)
+    case DashboardGen.OpenAIClient.ask(prompt) do
+      {:ok, response} -> {:ok, response}
+      {:error, _} -> {:error, "Explanation generation failed"}
+    end
   end
 
   def why(_, _, _), do: {:error, :invalid_arguments}

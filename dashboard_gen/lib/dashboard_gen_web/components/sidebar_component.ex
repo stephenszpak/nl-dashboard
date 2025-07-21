@@ -44,9 +44,23 @@ defmodule DashboardGenWeb.SidebarComponent do
         <div :if={!@collapsed} class="flex-1 px-2 mt-4 overflow-hidden flex flex-col">
           <div class="flex items-center justify-between mb-2 flex-shrink-0">
             <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Recent Chats</h3>
-            <button phx-click="new_conversation" class="p-1 text-gray-400 hover:text-gray-600" title="New conversation">
-              <i class="fa-solid fa-plus text-xs"></i>
-            </button>
+            <div class="flex items-center gap-1">
+              <%= if @current_user do %>
+                <% conversations = get_recent_conversations(@current_user.id) %>
+                <%= if conversations != [] do %>
+                  <button 
+                    phx-click="show_clear_all_confirmation" 
+                    class="p-1 text-gray-400 hover:text-red-600" 
+                    title="Clear all conversations"
+                  >
+                    <i class="fa-solid fa-trash text-xs"></i>
+                  </button>
+                <% end %>
+              <% end %>
+              <button phx-click="new_conversation" class="p-1 text-gray-400 hover:text-gray-600" title="New conversation">
+                <i class="fa-solid fa-plus text-xs"></i>
+              </button>
+            </div>
           </div>
           <div class="space-y-1 overflow-y-auto flex-1">
             <%= if @current_user do %>
@@ -57,15 +71,30 @@ defmodule DashboardGenWeb.SidebarComponent do
                 </div>
               <% else %>
                 <%= for conversation <- conversations do %>
-                  <Phoenix.Component.link 
-                    navigate={~p"/conversation/#{conversation.id}"}
-                    class="block px-3 py-2 text-xs text-gray-700 hover:bg-gray-100 rounded-md group transition-colors"
-                  >
-                    <div class="font-medium truncate"><%= conversation.title %></div>
-                    <div class="text-gray-500 truncate mt-1">
-                      <%= format_conversation_time(conversation.last_activity_at) %> • <%= conversation.message_count %> messages
+                  <div class="flex items-center group hover:bg-gray-100 rounded-md">
+                    <Phoenix.Component.link 
+                      navigate={~p"/conversation/#{conversation.id}"}
+                      class="flex-1 min-w-0 px-3 py-2 text-xs text-gray-700 transition-colors"
+                    >
+                      <div class="font-medium truncate pr-2" title={conversation.title}>
+                        <%= truncate_title(conversation.title, 30) %>
+                      </div>
+                      <div class="text-gray-500 truncate mt-1 pr-2">
+                        <%= format_conversation_time(conversation.last_activity_at) %> • <%= conversation.message_count %> messages
+                      </div>
+                    </Phoenix.Component.link>
+                    <div class="flex-shrink-0">
+                      <button 
+                        phx-click="show_delete_confirmation" 
+                        phx-value-id={conversation.id}
+                        phx-value-title={safe_title(conversation.title)}
+                        class="px-2 py-2 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Delete conversation"
+                      >
+                        <i class="fa-solid fa-trash text-xs"></i>
+                      </button>
                     </div>
-                  </Phoenix.Component.link>
+                  </div>
                 <% end %>
               <% end %>
             <% end %>
@@ -143,4 +172,17 @@ defmodule DashboardGenWeb.SidebarComponent do
       _ -> "Unknown"
     end
   end
+  
+  defp truncate_title(title, max_length) when is_binary(title) and title != "" do
+    if String.length(title) > max_length do
+      String.slice(title, 0, max_length) <> "..."
+    else
+      title
+    end
+  end
+  defp truncate_title(title, _) when is_binary(title), do: "Untitled"
+  defp truncate_title(_, _), do: "Untitled"
+  
+  defp safe_title(title) when is_binary(title) and title != "", do: title
+  defp safe_title(_), do: "Untitled"
 end

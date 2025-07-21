@@ -9,7 +9,6 @@ defmodule DashboardGen.Analytics do
   import Ecto.Query, warn: false
   alias DashboardGen.Repo
   alias DashboardGen.Analytics.{PageView, Event, Visitor, Session}
-  alias DashboardGen.CodexClient
   
   @doc """
   Ingest Adobe Analytics data from various sources
@@ -66,7 +65,7 @@ defmodule DashboardGen.Analytics do
       Focus on data-driven insights and specific metrics when available.
       """
       
-      case CodexClient.ask(prompt) do
+      case DashboardGen.OpenAIClient.ask(prompt) do
         {:ok, analysis} -> {:ok, analysis}
         {:error, reason} -> {:error, reason}
       end

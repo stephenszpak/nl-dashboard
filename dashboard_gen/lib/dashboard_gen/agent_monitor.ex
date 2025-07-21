@@ -295,7 +295,7 @@ defmodule DashboardGen.AgentMonitor do
   
   defp check_codex_client do
     # Test API connectivity with simple request
-    case CodexClient.ask("Test") do
+    case DashboardGen.OpenAIClient.ask("Test") do
       {:ok, _} -> :ok
       {:error, reason} -> {:error, reason}
     end
@@ -303,7 +303,7 @@ defmodule DashboardGen.AgentMonitor do
   
   defp check_openai_api do
     # Simple API health check
-    case CodexClient.ask("Health check") do
+    case DashboardGen.OpenAIClient.ask("Health check") do
       {:ok, _} -> :ok
       {:error, reason} -> {:error, reason}
     end

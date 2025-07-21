@@ -1,0 +1,587 @@
+    warning: unused alias CodexClient
+    │
+ 10 │   alias DashboardGen.{CodexClient, Insights, Analytics, AgentTagging}
+    │   ~
+    │
+    └─ lib/dashboard_gen/planning_agents.ex:10:3
+
+     warning: DashboardGen.Insights.get_weekly_activity_summary/2 is undefined or private
+     │
+ 148 │     competitor_activity = Insights.get_weekly_activity_summary(start_date, end_date)
+     │                                    ~
+     │
+     └─ lib/dashboard_gen/planning_agents.ex:148:36: DashboardGen.PlanningAgents.execute_marketing_brief/0
+
+     warning: DashboardGen.Insights.get_recent_content_for_analysis/2 is undefined or private
+     │
+ 151 │     recent_content = Insights.get_recent_content_for_analysis(start_date, end_date)
+     │                               ~
+     │
+     └─ lib/dashboard_gen/planning_agents.ex:151:31: DashboardGen.PlanningAgents.execute_marketing_brief/0
+
+     warning: DashboardGen.Insights.get_recent_content_for_analysis/2 is undefined or private
+     │
+ 196 │     content = Insights.get_recent_content_for_analysis(DateTime.add(DateTime.utc_now(), -30 * 86400, :second), DateTime.utc_now())
+     │                        ~
+     │
+     └─ lib/dashboard_gen/planning_agents.ex:196:24: DashboardGen.PlanningAgents.execute_trend_analysis/0
+
+     warning: DashboardGen.Insights.get_competitive_summary/1 is undefined or private. Did you mean:
+
+           * generate_topic_summary/1
+
+     │
+ 175 │     insights_summary = Insights.get_competitive_summary(7)
+     │                                 ~
+     │
+     └─ lib/dashboard_gen/planning_agents.ex:175:33: DashboardGen.PlanningAgents.execute_competitive_summary/0
+
+     warning: DashboardGen.Insights.get_recent_content_by_type/2 is undefined or private
+     │
+ 178 │     competitive_content = Insights.get_recent_content_by_type("competitive", 7)
+     │                                    ~
+     │
+     └─ lib/dashboard_gen/planning_agents.ex:178:36: DashboardGen.PlanningAgents.execute_competitive_summary/0
+
+    warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+    │
+ 44 │     case CodexClient.ask(prompt) do
+    │                      ~
+    │
+    └─ lib/dashboard_gen/agent_tagging.ex:44:22: DashboardGen.AgentTagging.tag_content/1
+
+    warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+    │
+ 67 │     case CodexClient.ask(prompt) do
+    │                      ~
+    │
+    └─ lib/dashboard_gen/agent_tagging.ex:67:22: DashboardGen.AgentTagging.detect_trending_topics/2
+
+    warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+    │
+ 79 │     case CodexClient.ask(prompt) do
+    │                      ~
+    │
+    └─ lib/dashboard_gen/agent_tagging.ex:79:22: DashboardGen.AgentTagging.analyze_competitive_significance/2
+
+    warning: unused alias CodexClient
+    │
+  6 │   alias DashboardGen.CodexClient
+    │   ~
+    │
+    └─ lib/dashboard_gen/anomaly_detector.ex:6:3
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 24 │       <.text_input type="password" name="user[password]" id="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brandBlue focus:border-brandBlue" required />
+    │       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/login_live.html.heex:24: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 19 │       <.text_input type="email" name="user[email]" id="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brandBlue focus:border-brandBlue" required />
+    │       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/login_live.html.heex:19: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 24 │       <.text_input type="password" name="user[password]" id="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brandBlue focus:border-brandBlue" required />
+    │       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/login_live.html.heex:24: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 19 │       <.text_input type="email" name="user[email]" id="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-brandBlue focus:border-brandBlue" required />
+    │       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/login_live.html.heex:19: (file)
+
+    warning: unused alias CodexClient
+    │
+ 12 │   alias DashboardGen.{Insights, CodexClient, Analytics, Conversations}
+    │   ~
+    │
+    └─ lib/dashboard_gen_web/live/dashboard_live.ex:12:3
+
+    warning: unused alias GPTClient
+    │
+  6 │   alias DashboardGen.GPTClient
+    │   ~
+    │
+    └─ lib/dashboard_gen_web/live/dashboard_live.ex:6:3
+
+    warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+    │
+ 24 │     CodexClient.ask(prompt)
+    │                 ~
+    │
+    └─ lib/dashboard_gen/codex/summarizer.ex:24:17: DashboardGen.Codex.Summarizer.summarize/3
+
+    warning: unused alias CodexClient
+    │
+ 12 │   alias DashboardGen.{Analytics, Insights, CodexClient}
+    │   ~
+    │
+    └─ lib/dashboard_gen/time_comparison.ex:12:3
+
+    warning: unused import Ecto.Query
+    │
+ 13 │   import Ecto.Query
+    │   ~
+    │
+    └─ lib/dashboard_gen/time_comparison.ex:13:3
+
+     warning: DashboardGen.Insights.get_activity_for_period/2 is undefined or private
+     │
+ 143 │     Insights.get_activity_for_period(period.start_date, period.end_date)
+     │              ~
+     │
+     └─ lib/dashboard_gen/time_comparison.ex:143:14: DashboardGen.TimeComparison.get_competitor_activity_for_period/1
+
+     warning: DashboardGen.Insights.get_competitor_insights_for_period/3 is undefined or private
+     │
+ 161 │     Insights.get_competitor_insights_for_period(competitor, period.start_date, period.end_date)
+     │              ~
+     │
+     └─ lib/dashboard_gen/time_comparison.ex:161:14: DashboardGen.TimeComparison.get_competitor_period_data/2
+
+     warning: variable "suggestions" is unused (there is a variable with the same name in the context, use the pin operator (^) to match on it or prefix this variable with underscore if it is not meant to be used)
+     │
+ 438 │         suggestions = [
+     │         ~
+     │
+     └─ lib/dashboard_gen/prompt_drift_detector.ex:438:9: DashboardGen.PromptDriftDetector.generate_optimization_suggestions/1
+
+    warning: unused alias CodexClient
+    │
+ 11 │   alias DashboardGen.{CodexClient, AlertStore}
+    │   ~
+    │
+    └─ lib/dashboard_gen/prompt_drift_detector.ex:11:3
+
+     warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+     │
+ 105 │          {:ok, summary} <- CodexClient.ask(prompt),
+     │                                        ~
+     │
+     └─ lib/dashboard_gen/insights.ex:105:40: DashboardGen.Insights.do_generate_summary/1
+
+     warning: Logger.warn/1 is deprecated. Use Logger.warning/2 instead
+     │
+ 176 │           Logger.warn("Health check failed for #{component}: #{inspect(error)}")
+     │                  ~
+     │
+     └─ lib/dashboard_gen/agent_monitor.ex:176:18: DashboardGen.AgentMonitor.check_agent_components/1
+
+     warning: variable "current_system" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 208 │     current_system = Map.get(state.system_metrics, :dependencies, %{})
+     │     ~~~~~~~~~~~~~~
+     │
+     └─ lib/dashboard_gen/agent_monitor.ex:208:5: DashboardGen.AgentMonitor.check_external_dependencies/1
+
+     warning: variable "issues" is unused (there is a variable with the same name in the context, use the pin operator (^) to match on it or prefix this variable with underscore if it is not meant to be used)
+     │
+ 238 │       issues = [%{type: :low_success_rate, value: success_rate, threshold: 0.8} | issues]
+     │       ~
+     │
+     └─ lib/dashboard_gen/agent_monitor.ex:238:7: DashboardGen.AgentMonitor.check_for_critical_issues/1
+
+     warning: variable "issues" is unused (there is a variable with the same name in the context, use the pin operator (^) to match on it or prefix this variable with underscore if it is not meant to be used)
+     │
+ 244 │       issues = [%{type: :high_memory_usage, value: memory_usage, threshold: 0.9} | issues]
+     │       ~
+     │
+     └─ lib/dashboard_gen/agent_monitor.ex:244:7: DashboardGen.AgentMonitor.check_for_critical_issues/1
+
+     warning: variable "issues" is unused (there is a variable with the same name in the context, use the pin operator (^) to match on it or prefix this variable with underscore if it is not meant to be used)
+     │
+ 249 │       issues = [%{type: :slow_response_time, value: state.average_response_time, threshold: 10000} | issues]
+     │       ~
+     │
+     └─ lib/dashboard_gen/agent_monitor.ex:249:7: DashboardGen.AgentMonitor.check_for_critical_issues/1
+
+    warning: module attribute @performance_window_hours was set but never used
+    │
+ 15 │   @performance_window_hours 24
+    │   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen/agent_monitor.ex:15: DashboardGen.AgentMonitor (module)
+
+    warning: module attribute @health_check_timeout was set but never used
+    │
+ 14 │   @health_check_timeout 30_000 # 30 seconds
+    │   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen/agent_monitor.ex:14: DashboardGen.AgentMonitor (module)
+
+    warning: unused alias CodexClient
+    │
+ 10 │   alias DashboardGen.{CodexClient, AlertStore}
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_monitor.ex:10:3
+
+     warning: variable "step" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 226 │   defp execute_tagging_step(step, params) do
+     │                             ~~~~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:226:29: DashboardGen.AgentCoordinator.execute_tagging_step/2
+
+     warning: variable "step" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 241 │   defp execute_analytics_step(step, params) do
+     │                               ~~~~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:241:31: DashboardGen.AgentCoordinator.execute_analytics_step/2
+
+     warning: variable "step" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 250 │   defp execute_insights_step(step, params) do
+     │                              ~~~~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:250:30: DashboardGen.AgentCoordinator.execute_insights_step/2
+
+     warning: variable "step" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 259 │   defp execute_time_comparison_step(step, params) do
+     │                                     ~~~~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:259:37: DashboardGen.AgentCoordinator.execute_time_comparison_step/2
+
+     warning: variable "params" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 364 │   defp build_synthesis_prompt(step, previous_results, params) do
+     │                                                       ~~~~~~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:364:55: DashboardGen.AgentCoordinator.build_synthesis_prompt/3
+
+     warning: variable "results" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 439 │   defp validate_criterion(criterion, results) do
+     │                                      ~~~~~~~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:439:38: DashboardGen.AgentCoordinator.validate_criterion/2
+
+    warning: unused alias AgentMonitor
+    │
+ 11 │   alias DashboardGen.{
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_coordinator.ex:11:3
+
+    warning: unused alias AgentTriggers
+    │
+ 11 │   alias DashboardGen.{
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_coordinator.ex:11:3
+
+    warning: unused alias PlanningAgents
+    │
+ 11 │   alias DashboardGen.{
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_coordinator.ex:11:3
+
+     warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+     │
+ 273 │     case CodexClient.ask(synthesis_prompt) do
+     │                      ~
+     │
+     └─ lib/dashboard_gen/agent_coordinator.ex:273:22: DashboardGen.AgentCoordinator.execute_synthesis_step/2
+
+    warning: Phoenix.LiveView.put_session/3 is undefined or private
+    │
+ 21 │              |> Phoenix.LiveView.put_session(:session_token, session.token)
+    │                                  ~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.ex:21:34: DashboardGenWeb.RegisterLive.handle_event/3
+
+    warning: Phoenix.LiveView.put_session/3 is undefined or private
+    │
+ 22 │              |> Phoenix.LiveView.put_session(:user_id, user.id)
+    │                                  ~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.ex:22:34: DashboardGenWeb.RegisterLive.handle_event/3
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 28 │         required />
+    │         ~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.html.heex:28: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 20 │         required />
+    │         ~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.html.heex:20: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 12 │         required />
+    │         ~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.html.heex:12: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 28 │         required />
+    │         ~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.html.heex:28: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 20 │         required />
+    │         ~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.html.heex:20: (file)
+
+    warning: undefined attribute "required" for component DashboardGenWeb.CoreComponents.text_input/1
+    │
+ 12 │         required />
+    │         ~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen_web/live/register_live.html.heex:12: (file)
+
+    warning: module attribute @scraping was set but never used
+    │
+ 22 │   @scraping :scraping
+    │   ~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen/autonomous_agent.ex:22: DashboardGen.AutonomousAgent (module)
+
+    warning: module attribute @analyzing was set but never used
+    │
+ 21 │   @analyzing :analyzing
+    │   ~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen/autonomous_agent.ex:21: DashboardGen.AutonomousAgent (module)
+
+    warning: unused alias GPTClient
+    │
+ 16 │   alias DashboardGen.{Scrapers, Insights, GPTClient, CodexClient}
+    │   ~
+    │
+    └─ lib/dashboard_gen/autonomous_agent.ex:16:3
+
+     warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+     │
+ 185 │     case CodexClient.ask(prompt) do
+     │                      ~
+     │
+     └─ lib/dashboard_gen/autonomous_agent.ex:185:22: DashboardGen.AutonomousAgent.analyze_insights/1
+
+     warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+     │
+ 273 │     CodexClient.ask(prompt)
+     │                 ~
+     │
+     └─ lib/dashboard_gen/autonomous_agent.ex:273:17: DashboardGen.AutonomousAgent.answer_question/2
+
+    warning: Logger.warn/1 is deprecated. Use Logger.warning/2 instead
+    │
+ 74 │         Logger.warn("Local inference failed: #{reason}, trying cloud fallback")
+    │                ~
+    │
+    └─ lib/dashboard_gen/local_inference.ex:74:16: DashboardGen.LocalInference.ask/2
+
+    warning: module attribute @openrouter_models was set but never used
+    │
+ 37 │   @openrouter_models %{
+    │   ~~~~~~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen/local_inference.ex:37: DashboardGen.LocalInference (module)
+
+    warning: module attribute @local_models was set but never used
+    │
+ 16 │   @local_models %{
+    │   ~~~~~~~~~~~~~~~~
+    │
+    └─ lib/dashboard_gen/local_inference.ex:16: DashboardGen.LocalInference (module)
+
+    warning: unused alias CodexClient
+    │
+ 10 │   alias DashboardGen.CodexClient
+    │   ~
+    │
+    └─ lib/dashboard_gen/local_inference.ex:10:3
+
+     warning: variable "results" is unused (if the variable is not meant to be used, prefix it with an underscore)
+     │
+ 259 │   defp execute_step({:analyze_trends, _params}, results, _plan) do
+     │                                                 ~~~~~~~
+     │
+     └─ lib/dashboard_gen/agent_router.ex:259:49: DashboardGen.AgentRouter.execute_step/3
+
+     warning: Logger.warn/1 is deprecated. Use Logger.warning/2 instead
+     │
+ 275 │     Logger.warn("Unhandled step: #{inspect(step)}")
+     │            ~
+     │
+     └─ lib/dashboard_gen/agent_router.ex:275:12: DashboardGen.AgentRouter.execute_step/3
+
+     warning: Logger.warn/1 is deprecated. Use Logger.warning/2 instead
+     │
+ 281 │       Logger.warn("Execution completed with errors: #{inspect(errors)}")
+     │              ~
+     │
+     └─ lib/dashboard_gen/agent_router.ex:281:14: DashboardGen.AgentRouter.compile_response/4
+
+    warning: unused alias AgentTagging
+    │
+ 10 │   alias DashboardGen.{CodexClient, Analytics, Insights, AgentTagging}
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_router.ex:10:3
+
+    warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+    │
+ 33 │     case CodexClient.ask(prompt) do
+    │                      ~
+    │
+    └─ lib/dashboard_gen/agent_router.ex:33:22: DashboardGen.AgentRouter.classify_query_intent/1
+
+     warning: DashboardGen.CodexClient.ask/1 is deprecated. Use DashboardGen.OpenAIClient.ask/2 instead
+     │
+ 268 │     case CodexClient.ask(analysis_prompt) do
+     │                      ~
+     │
+     └─ lib/dashboard_gen/agent_router.ex:268:22: DashboardGen.AgentRouter.execute_step/3
+
+     warning: unused alias Multi
+     │
+ 332 │   alias Ecto.Multi
+     │   ~
+     │
+     └─ lib/dashboard_gen/conversations.ex:332:3
+
+    warning: unused alias User
+    │
+  9 │   alias DashboardGen.Accounts.User
+    │   ~
+    │
+    └─ lib/dashboard_gen/conversations.ex:9:3
+
+    warning: defp check_analytics_spikes/1 is private, @doc attribute is always discarded for private functions/macros/types
+    │
+ 49 │   @doc """
+    │   ~~~~~~~~
+    │
+    └─ lib/dashboard_gen/agent_triggers.ex:49: DashboardGen.AgentTriggers.check_analytics_spikes/1
+
+    warning: defp check_competitor_activity/1 is private, @doc attribute is always discarded for private functions/macros/types
+    │
+ 87 │   @doc """
+    │   ~~~~~~~~
+    │
+    └─ lib/dashboard_gen/agent_triggers.ex:87: DashboardGen.AgentTriggers.check_competitor_activity/1
+
+     warning: defp check_market_changes/1 is private, @doc attribute is always discarded for private functions/macros/types
+     │
+ 127 │   @doc """
+     │   ~~~~~~~~
+     │
+     └─ lib/dashboard_gen/agent_triggers.ex:127: DashboardGen.AgentTriggers.check_market_changes/1
+
+    warning: unused alias CodexClient
+    │
+ 10 │   alias DashboardGen.{Analytics, Insights, CodexClient}
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_triggers.ex:10:3
+
+    warning: DashboardGen.Insights.get_recent_activity_summary/1 is undefined or private
+    │
+ 91 │     recent_activity = Insights.get_recent_activity_summary(hours: 6)
+    │                                ~
+    │
+    └─ lib/dashboard_gen/agent_triggers.ex:91:32: DashboardGen.AgentTriggers.check_competitor_activity/1
+
+     warning: DashboardGen.Insights.get_recent_content/3 is undefined or private
+     │
+ 246 │     case Insights.get_recent_content(company, type, limit) do
+     │                   ~
+     │
+     └─ lib/dashboard_gen/agent_triggers.ex:246:19: DashboardGen.AgentTriggers.get_recent_titles/3
+
+    warning: unused alias AgentTriggers
+    │
+  8 │   alias DashboardGen.{
+    │   ~
+    │
+    └─ lib/dashboard_gen/agent_test_helpers.ex:8:3
+
+    warning: unused alias CodexClient
+    │
+  6 │   alias DashboardGen.CodexClient
+    │   ~
+    │
+    └─ lib/dashboard_gen/codex/explainer.ex:6:3
+
+16:39:31.099 [info] Running DashboardGenWeb.Endpoint with cowboy 2.13.0 at 127.0.0.1:4000 (http)
+16:39:31.101 [info] Access DashboardGenWeb.Endpoint at http://localhost:4000
+[watch] build finished, watching for changes...
+16:39:31.130 [debug] Loading Initial Jobs from Config
+16:39:31.132 [debug] Adding job
+
+Rebuilding...
+
+Done in 142ms.
+16:39:38.298 [info] CONNECTED TO Phoenix.LiveView.Socket in 12µs
+  Transport: :websocket
+  Serializer: Phoenix.Socket.V2.JSONSerializer
+  Parameters: %{"_csrf_token" => "KWlTSwIEcGZGdR08SDQgZB44CnVkWhgYYY4-JkH5tGxS0ay6LQnGPjpQ", "_live_referer" => "http://localhost:4000/", "_mounts" => "4", "_track_static" => %{"0" => "http://localhost:4000/assets/app.css", "1" => "http://localhost:4000/assets/app.js"}, "vsn" => "2.0.0"}
+16:39:38.326 [debug] MOUNT DashboardGenWeb.CompetitorInsightsLive
+  Parameters: %{}
+  Session: %{"_csrf_token" => "p0gfHo8S22eoxUYRRid240hI", "session_token" => "8WXE_lys-2kaiP7U1HejpwXMANrQ3pjZFmxaV42_O2Y", "user_id" => 6}
+16:39:38.340 [debug] QUERY OK source="user_sessions" db=2.6ms decode=0.6ms queue=1.0ms idle=1274.7ms
+SELECT u0."id", u0."token", u0."device_info", u0."ip_address", u0."user_agent", u0."expires_at", u0."last_used_at", u0."is_active", u0."user_id", u0."inserted_at", u0."updated_at" FROM "user_sessions" AS u0 WHERE (u0."token" = $1) ["8WXE_lys-2kaiP7U1HejpwXMANrQ3pjZFmxaV42_O2Y"]
+[90m↳ DashboardGen.Accounts.get_session_by_token/1, at: lib/dashboard_gen/accounts.ex:67[0m
+16:39:38.352 [debug] QUERY OK source="users" db=0.6ms queue=0.7ms idle=1290.0ms
+SELECT u0."id", u0."email", u0."hashed_password", u0."onboarded_at", u0."username", u0."first_name", u0."last_name", u0."avatar_url", u0."preferences", u0."last_active_at", u0."timezone", u0."inserted_at", u0."updated_at", u0."id" FROM "users" AS u0 WHERE (u0."id" = $1) [6]
+[90m↳ DashboardGen.Accounts.get_session_by_token/1, at: lib/dashboard_gen/accounts.ex:67[0m
+16:39:38.363 [debug] QUERY OK source="user_sessions" db=2.1ms queue=0.6ms idle=1298.6ms
+UPDATE "user_sessions" SET "last_used_at" = $1, "updated_at" = $2 WHERE "id" = $3 [~U[2025-07-21 21:39:38Z], ~N[2025-07-21 21:39:38], 20]
+[90m↳ DashboardGen.Accounts.get_session_by_token/1, at: lib/dashboard_gen/accounts.ex:71[0m
+16:39:38.371 [debug] QUERY OK source="insights" db=2.8ms queue=0.5ms idle=1307.2ms
+SELECT i0."id", i0."source", i0."data", i0."inserted_at" FROM "insights" AS i0 ORDER BY i0."inserted_at" DESC []
+[90m↳ DashboardGen.Insights.list_recent_insights_by_company/1, at: lib/dashboard_gen/insights.ex:47[0m
+16:39:38.376 [debug] QUERY OK source="insight_summaries" db=1.3ms queue=1.3ms idle=1312.4ms
+SELECT i0."id", i0."company", i0."summary", i0."inserted_at" FROM "insight_summaries" AS i0 WHERE ((i0."company" = $1) AND (i0."inserted_at" > $2::timestamp + (-1::decimal::numeric * interval '1 day'))) ORDER BY i0."inserted_at" DESC LIMIT 1 ["BlackRock", ~U[2025-07-21 21:39:38.373689Z]]
+[90m↳ DashboardGen.Insights.generate_topic_summary/1, at: lib/dashboard_gen/insights.ex:86[0m
+16:39:38.379 [debug] QUERY OK source="insight_summaries" db=3.1ms idle=1315.2ms
+SELECT i0."id", i0."company", i0."summary", i0."inserted_at" FROM "insight_summaries" AS i0 WHERE ((i0."company" = $1) AND (i0."inserted_at" > $2::timestamp + (-1::decimal::numeric * interval '1 day'))) ORDER BY i0."inserted_at" DESC LIMIT 1 ["Blackstone", ~U[2025-07-21 21:39:38.376498Z]]
+[90m↳ DashboardGen.Insights.generate_topic_summary/1, at: lib/dashboard_gen/insights.ex:86[0m
+16:39:38.381 [debug] QUERY OK source="insight_summaries" db=1.5ms idle=1318.5ms
+SELECT i0."id", i0."company", i0."summary", i0."inserted_at" FROM "insight_summaries" AS i0 WHERE ((i0."company" = $1) AND (i0."inserted_at" > $2::timestamp + (-1::decimal::numeric * interval '1 day'))) ORDER BY i0."inserted_at" DESC LIMIT 1 ["Fidelity Investments", ~U[2025-07-21 21:39:38.379769Z]]
+[90m↳ DashboardGen.Insights.generate_topic_summary/1, at: lib/dashboard_gen/insights.ex:86[0m
+16:39:38.384 [debug] QUERY OK source="insight_summaries" db=3.2ms idle=1320.0ms
+SELECT i0."id", i0."company", i0."summary", i0."inserted_at" FROM "insight_summaries" AS i0 WHERE ((i0."company" = $1) AND (i0."inserted_at" > $2::timestamp + (-1::decimal::numeric * interval '1 day'))) ORDER BY i0."inserted_at" DESC LIMIT 1 ["Goldman Sachs Private Wealth", ~U[2025-07-21 21:39:38.381353Z]]
+[90m↳ DashboardGen.Insights.generate_topic_summary/1, at: lib/dashboard_gen/insights.ex:86[0m
+16:39:38.387 [debug] QUERY OK source="insight_summaries" db=3.1ms idle=1323.3ms
+SELECT i0."id", i0."company", i0."summary", i0."inserted_at" FROM "insight_summaries" AS i0 WHERE ((i0."company" = $1) AND (i0."inserted_at" > $2::timestamp + (-1::decimal::numeric * interval '1 day'))) ORDER BY i0."inserted_at" DESC LIMIT 1 ["J.P. Morgan Asset Management", ~U[2025-07-21 21:39:38.384632Z]]
+[90m↳ DashboardGen.Insights.generate_topic_summary/1, at: lib/dashboard_gen/insights.ex:86[0m
+16:39:38.388 [debug] Replied in 64ms
+[Telemetry.Metrics.ConsoleReporter] Got new event!
+Event name: phoenix.live_view.mount.stop
+All measurements: %{monotonic_time: -576460743953756292, duration: 64145625}
+All metadata: %{session: %{"_csrf_token" => "p0gfHo8S22eoxUYRRid240hI", "session_token" => "8WXE_lys-2kaiP7U1HejpwXMANrQ3pjZFmxaV42_O2Y", "user_id" => 6}, socket: #Phoenix.LiveView.Socket<id: "phx-GFRh19nX9EXRyQhh", endpoint: DashboardGenWeb.Endpoint, view: DashboardGenWeb.CompetitorInsightsLive, parent_pid: nil, root_pid: #PID<0.639.0>, router: DashboardGenWeb.Router, assigns: %{filters: %{keyword: "", content_type: "all", company: "all", date_range: "all"}, __changed__: %{filters: true, page_title: true, current_user: true, collapsed: true, all_insights: true, insights_by_company: true, show_filters: true, summaries: true, loading_summaries: true, companies: true}, page_title: "Competitor Insights", current_user: %DashboardGen.Accounts.User{__meta__: #Ecto.Schema.Metadata<:loaded, "users">, id: 6, email: "yo@yo.com", hashed_password: "$2b$12$m0TfGhAx.yiy8AUGWfk6wuGD3AXOewdagKz/sTdCjchcMYY6lExz6", onboarded_at: nil, password: nil, password_confirmation: nil, username: nil, first_name: nil, last_name: nil, avatar_url: nil, preferences: %{}, last_active_at: ~U[2025-07-21 02:09:07Z], timezone: "UTC", sessions: #Ecto.Association.NotLoaded<association :sessions is not loaded>, conversations: #Ecto.Association.NotLoaded<association :conversations is not loaded>, inserted_at: ~N[2025-07-21 02:09:07], updated_at: ~N[2025-07-21 02:09:07]}, collapsed: false, live_action: nil, flash: %{}, all_insights: [{"BlackRock", %{press_releases: [%{date: "Jul 15, 2025", title: "BlackRock Reports Second Quarter 2025 Diluted EPS of $10.19, or $12.05 as adjusted", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-reports-second-quarter-2025", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jul 07, 2025", title: "BlackRock to Acquire ElmTree Funds", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-acquires-elmtree-funds", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jul 01, 2025", title: "BlackRock Completes Acquisition of HPS Investment Partners", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-acquires-hps-investment-partners", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jun 26, 2025", title: "BlackRock’s Custom Glidepath to Power Great Gray Trust Company’s New Target Date Retirement Solution with Access to Private Markets", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/retirement-access-to-private-markets", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jun 17, 2025", title: "BlackRock Study: Family Offices are in Risk-Management Mode, Focused on Increasing Diversification and Idiosyncratic Sources of Return", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-family-office-survey-2025", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Apr 28, 2025", title: "The BlackRock Foundation and Technical College System of Georgia Partner to Launch The BlackRock Foundation Empowerment Fund", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-foundation-empowerment-fund", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Apr 11, 2025", title: "BlackRock Reports First Quarter 2025 Diluted EPS of $9.64, or $11.30 as adjusted", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-reports-first-quarter-2025", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Apr 09, 2025", title: "The BlackRock Foundation Awards $3.75 Million Grant to NYC Kids RISE", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/community-based-financial-empowerment-infrastructure-initiative", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Mar 28, 2025", title: "The BlackRock Foundation Awards Grant to Atlas School, Expanding Services that Reduce Barriers to Enrollment and Drive Student Success", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-foundation-grant-to-atlas-school", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Mar 19, 2025", title: "BlackRock, Global Infrastructure Partners, Microsoft, and MGX welcome NVIDIA and xAI to the AI Infrastructure Partnership to drive investment in data ...", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/ai-infrastructure-partnership", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}], social_media: [%{date: "2025-07-18", title: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", source: "social_media", url: "https://www.youtube.com/shorts/DD8E1pE783E", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", company: "BlackRock"}, %{date: "2025-07-18", title: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", source: "social_media", url: "https://www.youtube.com/watch?v=vXeM-KZFDY4", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", company: "BlackRock"}, %{date: "2025-07-17", title: "Debating the dollar in New York City | On the Ground", source: "social_media", url: "https://www.youtube.com/shorts/fxTFPHa06jU", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Debating the dollar in New York City | On the Ground", company: "BlackRock"}, %{date: "2025-07-15", title: "Why now is a great time for alpha | Market take", source: "social_media", url: "https://www.youtube.com/watch?v=iJxnVem2KOc", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Why now is a great time for alpha | Market take", company: "BlackRock"}, %{date: "2025-07-14", title: "Why now is a great time for alpha", source: "social_media", url: "https://www.youtube.com/watch?v=TjB456WKdxc", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Why now is a great time for alpha", company: "BlackRock"}, %{date: "2025-07-18", title: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", source: "social_media", url: "https://www.youtube.com/shorts/DD8E1pE783E", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", company: "BlackRock"}, %{date: "2025-07-18", title: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", source: "social_media", url: "https://www.youtube.com/watch?v=vXeM-KZFDY4", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", company: "BlackRock"}, %{date: "2025-07-17", title: "Debating the dollar in New York City | On the Ground", source: "social_media", url: "https://www.youtube.com/shorts/fxTFPHa06jU", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Debating the dollar in New York City | On the Ground", company: "BlackRock"}, %{date: "2025-07-15", title: "Why now is a great time for alpha | Market take", source: "social_media", url: "https://www.youtube.com/watch?v=iJxnVem2KOc", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Why now is a great time for alpha | Market take", company: "BlackRock"}, %{date: "2025-07-14", title: "Why now is a great time for alpha", source: "social_media", url: "https://www.youtube.com/watch?v=TjB456WKdxc", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Why now is a great time for alpha", company: "BlackRock"}]}}, {"Blackstone", %{press_releases: [%{date: "April 17, 2025", title: "Blackstone Reports First-Quarter 2025 Earnings", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-reports-first-quarter-2025-earnings/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "April 15, 2025", title: "Wellington, Vanguard, and Blackstone to Collaborate on Investment Solutions Combining Public and Private Assets", source: "press_release", url: "https://www.blackstone.com/news/press/wellington-vanguard-and-blackstone-to-collaborate-on-investment-solutions-combining-public-and-private-assets/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "March 10, 2025", title: "Blackstone Announces SEC Effectiveness for Private Multi-Asset Credit and Income Fund (BMACX)", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-announces-sec-effectiveness-for-private-multi-asset-credit-and-income-fund-bmacx/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 15, 2025", title: "Blackstone to Invest More Than $25 Billion in Pennsylvania’s Digital and Energy Infrastructure, Plus Catalyze an Additional $60 Billion Investment", source: "press_release", url: "https://www.blackstone.com/news/press/press-release-template/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 14, 2025", title: "Blackstone Multi-Asset Investing (BXMA) Hires Monica Issar as Senior Managing Director", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-multi-asset-investing-bxma-hires-monica-issar-as-senior-managing-director/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 10, 2025", title: "L&G and Blackstone Announce Strategic Partnership to Accelerate Growth Ambitions", source: "press_release", url: "https://www.blackstone.com/news/press/lg-and-blackstone-announce-strategic-partnership-to-accelerate-growth-ambitions/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 07, 2025", title: "Blackstone Real Estate to Acquire Sunseeker Resort Charlotte Harbor from Allegiant Travel Company for $200 Million", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-real-estate-to-acquire-sunseeker-resort-charlotte-harbor-from-allegiant-travel-company-for-200-million/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "June 30, 2025", title: "Blackstone Welcomes Industry Veteran in Japan to Support the Firm’s Accelerated Growth in the Market", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-welcomes-industry-veteran-in-japan-to-support-the-firms-accelerated-growth-in-the-market/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "June 26, 2025", title: "Atlantic Union Bank Closes Sale of Approximately $2 Billion of Commercial Real Estate Loans to Blackstone", source: "press_release", url: "https://www.blackstone.com/news/press/atlantic-union-bank-closes-sale-of-approximately-2-billion-of-commercial-real-estate-loans-to-blackstone/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "June 26, 2025", title: "Blackstone Announces Second-Quarter 2025 Investor Call", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-announces-second-quarter-2025-investor-call/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}], social_media: [%{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:50:51], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:45:25], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:40:27], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:31:14], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:28:19], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:15:26], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 01:28:47], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 01:19:28], content: "Mock social media mention.", company: "Blackstone"}]}}, {"Fidelity Investments", %{press_releases: [%{date: "", title: "Fidelity Investments® Closes Fidelity® Credit Opportunities Fund II at $729 Million", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments-closes-fidelity-credit-opportunities-fund-ii-at-729-million/s/6f0da5ba-5d18-4d84-8bc9-6aef6d8c04fe", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Champions Financial Empowerment with Record-Breaking Spring Initiatives", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-champions-financial-empowerment-with-record-breaking-spring-initiatives/s/bf1e67d4-0ce8-4071-854c-1a486c490721", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity® Introduces Custom Model Portfolios With Alternatives That Provide Exposure To Private Markets For Wealth Management Firms", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-introduces-custom-model-portfolios-with-alternatives/s/dfd31638-6890-4e7d-ac1a-31b4783d97c3", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity® Launches Managed Futures ETF", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-launches-managed-futures-etf/s/a1a05318-2dfa-4e1a-9273-7a275ce79188", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity® Q1 2025 Retirement Analysis: Retirement Savings Rates Reach Record High While Average Account Balances Are Lower", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity--q1-2025-retirement-analysis--retirement-savings-rates-reach-record-high-while-average-acco/s/0021ad2c-636b-4077-a2e2-6b26d9d022d4", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Investments publishes First Quarter 2025 Business Update", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments-publishes-first-quarter-2025-business-update/s/6c141afc-8555-4cab-90f0-bf46b6293cce", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity's Q4 2024 Retirement Analysis: a year of growth for retirement savers", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity--q4-2024-retirement-analysis--retirement-savers-achieve-positive-momentum-through-2024/s/bbd405d1-c640-4be9-9c7b-67a8fd38e2bb", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity’s 16th Annual Resolutions Study: Americans gearing up for unexpected financial events in 2025", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-s-16th-annual-resolutions-study--americans-gearing-up-for-unexpected-financial-events-in-20/s/5613c543-fa52-4539-a690-a9d833773754", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Investments® Closes Fidelity® Credit Opportunities Fund II at $729 Million", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments-closes-fidelity-credit-opportunities-fund-ii-at-729-million/s/6f0da5ba-5d18-4d84-8bc9-6aef6d8c04fe", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Champions Financial Empowerment with Record-Breaking Spring Initiatives", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-champions-financial-empowerment-with-record-breaking-spring-initiatives/s/bf1e67d4-0ce8-4071-854c-1a486c490721", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Fidelity Investments"}], social_media: [%{date: "2025-07-18", title: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=m1ApOxX1Qyw", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", source: "social_media", url: "https://www.youtube.com/shorts/V7vZ5atdJYM", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=3GbfiI3ElRg", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-15", title: "Fidelity Viewpoints®: Market Sense", source: "social_media", url: "https://www.youtube.com/watch?v=XCIhvMHxp3w", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Fidelity Viewpoints®: Market Sense", company: "Fidelity Investments"}, %{date: "2025-07-14", title: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", source: "social_media", url: "https://www.youtube.com/shorts/CgvLe3Ws4uE", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", company: "Fidelity Investments"}, %{date: "2025-07-18", title: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=m1ApOxX1Qyw", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", source: "social_media", url: "https://www.youtube.com/shorts/V7vZ5atdJYM", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=3GbfiI3ElRg", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-15", title: "Fidelity Viewpoints®: Market Sense", source: "social_media", url: "https://www.youtube.com/watch?v=XCIhvMHxp3w", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Fidelity Viewpoints®: Market Sense", company: "Fidelity Investments"}, %{date: "2025-07-14", title: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", source: "social_media", url: "https://www.youtube.com/shorts/CgvLe3Ws4uE", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", company: "Fidelity Investments"}]}}, {"Goldman Sachs Private Wealth", %{press_releases: [%{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-20 16:54:27], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-20 16:54:27], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-20 14:13:56], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-20 14:13:56], content: "", company: "Goldman Sachs Private Wealth"}], social_media: [%{date: "2025-07-17", title: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", source: "social_media", url: "https://www.youtube.com/watch?v=V0jE1fKyGh0", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-17", title: "The Economic Impact of Trade Uncertainty", source: "social_media", url: "https://www.youtube.com/watch?v=M0_VhcuGrsI", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "The Economic Impact of Trade Uncertainty", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-16", title: "AI Exchanges: Where Will the Power Come From?", source: "social_media", url: "https://www.youtube.com/watch?v=xOyiTIku2nA", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "AI Exchanges: Where Will the Power Come From?", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-11", title: "The Three Top Equity Market Themes", source: "social_media", url: "https://www.youtube.com/watch?v=DQ2Oqn4_vks", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "The Three Top Equity Market Themes", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-08", title: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", source: "social_media", url: "https://www.youtube.com/shorts/Wi4wgOpSXZk", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-17", title: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", source: "social_media", url: "https://www.youtube.com/watch?v=V0jE1fKyGh0", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-17", title: "The Economic Impact of Trade Uncertainty", source: "social_media", url: "https://www.youtube.com/watch?v=M0_VhcuGrsI", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "The Economic Impact of Trade Uncertainty", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-16", title: "AI Exchanges: Where Will the Power Come From?", source: "social_media", url: "https://www.youtube.com/watch?v=xOyiTIku2nA", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "AI Exchanges: Where Will the Power Come From?", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-11", title: "The Three Top Equity Market Themes", source: "social_media", url: "https://www.youtube.com/watch?v=DQ2Oqn4_vks", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "The Three Top Equity Market Themes", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-08", title: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", source: "social_media", url: "https://www.youtube.com/shorts/Wi4wgOpSXZk", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", company: "Goldman Sachs Private Wealth"}]}}, {"J.P. Morgan Asset Management", %{press_releases: [%{date: "", title: "Media Resources", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/press-releases/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "JPMorganChase Unveils New Retirement Solution for Solo Entrepreneurs", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-chase-unveils-new-retirement-solution-for-solo-entrepreneurs/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Hits Market with Largest Active ETF Launch in History Anchored by $2 Billion Institutional Client Investment", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-hits-market-with-largest-active-etf-launch-in-history-anchored-by-2-billion-institutional-client-investment/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Survey Reveals Plan Sponsors' Commitment to Proactive Retirement Strategies and Financial Wellness Programs", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-survey-reveals-plan-sponsors-commitment-proactive-retirement-strategies-and-financial-wellness-programs/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Life Sciences Private Capital and King Abdullah International Medical Research Center Announce Finalists of the Second Annual Life Sciences Innovation Summit in Riyadh, Saudi Arabia", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-life-sciences-private-capital-and-king-abdullah-international-medical-research-center-announce-finalists-of-second-annual-life-sciences-innovation-summit-in-riyadh-saudi-arabia/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Real Estate Income Trust, Inc. Expands Industrial Portfolio with Strategic Acquisitions", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-real-estate-income-trust-expands-industrial-portfolio-strategic-acquistions/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Life Sciences Private Capital Welcomes Dashyant Dhanak, Ph.D. as Venture Partner", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-life-sciences-private-capital-welcomes-dashyant-dhanak-as-venture-partner/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Focuses on Generational Opportunities in Real Estate, Appointing Chad Tredway as Global Head", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-appoints-chad-tredway-global-head-real-estate/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Hires Geng Ngarmboonanant to Multi-Asset Solutions Business", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-hires-geng-ngarmboonanant-to-multi-asset-solutions-business/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P Morgan Asset Management’s Campbell Global Announces Close of $1.5 billion Forest & Climate Solutions Fund II", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-managements-campbell-global-announces-close-of-1-5-billion-forest--climate-solutions-fund-ii/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}], social_media: []}}], insights_by_company: [{"BlackRock", %{press_releases: [%{date: "Jul 15, 2025", title: "BlackRock Reports Second Quarter 2025 Diluted EPS of $10.19, or $12.05 as adjusted", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-reports-second-quarter-2025", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jul 07, 2025", title: "BlackRock to Acquire ElmTree Funds", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-acquires-elmtree-funds", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jul 01, 2025", title: "BlackRock Completes Acquisition of HPS Investment Partners", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-acquires-hps-investment-partners", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jun 26, 2025", title: "BlackRock’s Custom Glidepath to Power Great Gray Trust Company’s New Target Date Retirement Solution with Access to Private Markets", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/retirement-access-to-private-markets", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Jun 17, 2025", title: "BlackRock Study: Family Offices are in Risk-Management Mode, Focused on Increasing Diversification and Idiosyncratic Sources of Return", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-family-office-survey-2025", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Apr 28, 2025", title: "The BlackRock Foundation and Technical College System of Georgia Partner to Launch The BlackRock Foundation Empowerment Fund", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-foundation-empowerment-fund", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Apr 11, 2025", title: "BlackRock Reports First Quarter 2025 Diluted EPS of $9.64, or $11.30 as adjusted", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-reports-first-quarter-2025", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Apr 09, 2025", title: "The BlackRock Foundation Awards $3.75 Million Grant to NYC Kids RISE", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/community-based-financial-empowerment-infrastructure-initiative", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Mar 28, 2025", title: "The BlackRock Foundation Awards Grant to Atlas School, Expanding Services that Reduce Barriers to Enrollment and Drive Student Success", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/blackrock-foundation-grant-to-atlas-school", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}, %{date: "Mar 19, 2025", title: "BlackRock, Global Infrastructure Partners, Microsoft, and MGX welcome NVIDIA and xAI to the AI Infrastructure Partnership to drive investment in data ...", source: "press_release", url: "https://www.blackrock.com/corporate/newsroom/press-releases/article/corporate-one/press-releases/ai-infrastructure-partnership", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "BlackRock"}], social_media: [%{date: "2025-07-18", title: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", source: "social_media", url: "https://www.youtube.com/shorts/DD8E1pE783E", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", company: "BlackRock"}, %{date: "2025-07-18", title: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", source: "social_media", url: "https://www.youtube.com/watch?v=vXeM-KZFDY4", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", company: "BlackRock"}, %{date: "2025-07-17", title: "Debating the dollar in New York City | On the Ground", source: "social_media", url: "https://www.youtube.com/shorts/fxTFPHa06jU", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Debating the dollar in New York City | On the Ground", company: "BlackRock"}, %{date: "2025-07-15", title: "Why now is a great time for alpha | Market take", source: "social_media", url: "https://www.youtube.com/watch?v=iJxnVem2KOc", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Why now is a great time for alpha | Market take", company: "BlackRock"}, %{date: "2025-07-14", title: "Why now is a great time for alpha", source: "social_media", url: "https://www.youtube.com/watch?v=TjB456WKdxc", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Why now is a great time for alpha", company: "BlackRock"}, %{date: "2025-07-18", title: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", source: "social_media", url: "https://www.youtube.com/shorts/DD8E1pE783E", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "What are our favourite investing podcast episodes from this year | The Bid investing podcast", company: "BlackRock"}, %{date: "2025-07-18", title: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", source: "social_media", url: "https://www.youtube.com/watch?v=vXeM-KZFDY4", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "227: Best of: A Macro and Geopolitical Outlook – Live from Davos", company: "BlackRock"}, %{date: "2025-07-17", title: "Debating the dollar in New York City | On the Ground", source: "social_media", url: "https://www.youtube.com/shorts/fxTFPHa06jU", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Debating the dollar in New York City | On the Ground", company: "BlackRock"}, %{date: "2025-07-15", title: "Why now is a great time for alpha | Market take", source: "social_media", url: "https://www.youtube.com/watch?v=iJxnVem2KOc", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Why now is a great time for alpha | Market take", company: "BlackRock"}, %{date: "2025-07-14", title: "Why now is a great time for alpha", source: "social_media", url: "https://www.youtube.com/watch?v=TjB456WKdxc", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Why now is a great time for alpha", company: "BlackRock"}]}}, {"Blackstone", %{press_releases: [%{date: "April 17, 2025", title: "Blackstone Reports First-Quarter 2025 Earnings", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-reports-first-quarter-2025-earnings/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "April 15, 2025", title: "Wellington, Vanguard, and Blackstone to Collaborate on Investment Solutions Combining Public and Private Assets", source: "press_release", url: "https://www.blackstone.com/news/press/wellington-vanguard-and-blackstone-to-collaborate-on-investment-solutions-combining-public-and-private-assets/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "March 10, 2025", title: "Blackstone Announces SEC Effectiveness for Private Multi-Asset Credit and Income Fund (BMACX)", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-announces-sec-effectiveness-for-private-multi-asset-credit-and-income-fund-bmacx/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 15, 2025", title: "Blackstone to Invest More Than $25 Billion in Pennsylvania’s Digital and Energy Infrastructure, Plus Catalyze an Additional $60 Billion Investment", source: "press_release", url: "https://www.blackstone.com/news/press/press-release-template/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 14, 2025", title: "Blackstone Multi-Asset Investing (BXMA) Hires Monica Issar as Senior Managing Director", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-multi-asset-investing-bxma-hires-monica-issar-as-senior-managing-director/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 10, 2025", title: "L&G and Blackstone Announce Strategic Partnership to Accelerate Growth Ambitions", source: "press_release", url: "https://www.blackstone.com/news/press/lg-and-blackstone-announce-strategic-partnership-to-accelerate-growth-ambitions/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "July 07, 2025", title: "Blackstone Real Estate to Acquire Sunseeker Resort Charlotte Harbor from Allegiant Travel Company for $200 Million", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-real-estate-to-acquire-sunseeker-resort-charlotte-harbor-from-allegiant-travel-company-for-200-million/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "June 30, 2025", title: "Blackstone Welcomes Industry Veteran in Japan to Support the Firm’s Accelerated Growth in the Market", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-welcomes-industry-veteran-in-japan-to-support-the-firms-accelerated-growth-in-the-market/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "June 26, 2025", title: "Atlantic Union Bank Closes Sale of Approximately $2 Billion of Commercial Real Estate Loans to Blackstone", source: "press_release", url: "https://www.blackstone.com/news/press/atlantic-union-bank-closes-sale-of-approximately-2-billion-of-commercial-real-estate-loans-to-blackstone/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}, %{date: "June 26, 2025", title: "Blackstone Announces Second-Quarter 2025 Investor Call", source: "press_release", url: "https://www.blackstone.com/news/press/blackstone-announces-second-quarter-2025-investor-call/", summary: nil, inserted_at: ~N[2025-07-19 22:26:07], content: "", company: "Blackstone"}], social_media: [%{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:50:51], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:45:25], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:40:27], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:31:14], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:28:19], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 17:15:26], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 01:28:47], content: "Mock social media mention.", company: "Blackstone"}, %{date: "2024-05-02", title: "Social Post", source: "social_media", url: "https://social.example.com/blackstone/post/1", summary: nil, inserted_at: ~N[2025-07-19 01:19:28], content: "Mock social media mention.", company: "Blackstone"}]}}, {"Fidelity Investments", %{press_releases: [%{date: "", title: "Fidelity Investments® Closes Fidelity® Credit Opportunities Fund II at $729 Million", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments-closes-fidelity-credit-opportunities-fund-ii-at-729-million/s/6f0da5ba-5d18-4d84-8bc9-6aef6d8c04fe", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Champions Financial Empowerment with Record-Breaking Spring Initiatives", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-champions-financial-empowerment-with-record-breaking-spring-initiatives/s/bf1e67d4-0ce8-4071-854c-1a486c490721", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity® Introduces Custom Model Portfolios With Alternatives That Provide Exposure To Private Markets For Wealth Management Firms", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-introduces-custom-model-portfolios-with-alternatives/s/dfd31638-6890-4e7d-ac1a-31b4783d97c3", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity® Launches Managed Futures ETF", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-launches-managed-futures-etf/s/a1a05318-2dfa-4e1a-9273-7a275ce79188", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity® Q1 2025 Retirement Analysis: Retirement Savings Rates Reach Record High While Average Account Balances Are Lower", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity--q1-2025-retirement-analysis--retirement-savings-rates-reach-record-high-while-average-acco/s/0021ad2c-636b-4077-a2e2-6b26d9d022d4", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Investments publishes First Quarter 2025 Business Update", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments-publishes-first-quarter-2025-business-update/s/6c141afc-8555-4cab-90f0-bf46b6293cce", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity's Q4 2024 Retirement Analysis: a year of growth for retirement savers", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity--q4-2024-retirement-analysis--retirement-savers-achieve-positive-momentum-through-2024/s/bbd405d1-c640-4be9-9c7b-67a8fd38e2bb", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity’s 16th Annual Resolutions Study: Americans gearing up for unexpected financial events in 2025", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-s-16th-annual-resolutions-study--americans-gearing-up-for-unexpected-financial-events-in-20/s/5613c543-fa52-4539-a690-a9d833773754", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Investments® Closes Fidelity® Credit Opportunities Fund II at $729 Million", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-investments-closes-fidelity-credit-opportunities-fund-ii-at-729-million/s/6f0da5ba-5d18-4d84-8bc9-6aef6d8c04fe", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Fidelity Investments"}, %{date: "", title: "Fidelity Champions Financial Empowerment with Record-Breaking Spring Initiatives", source: "press_release", url: "https://newsroom.fidelity.com/pressreleases/fidelity-champions-financial-empowerment-with-record-breaking-spring-initiatives/s/bf1e67d4-0ce8-4071-854c-1a486c490721", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Fidelity Investments"}], social_media: [%{date: "2025-07-18", title: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=m1ApOxX1Qyw", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", source: "social_media", url: "https://www.youtube.com/shorts/V7vZ5atdJYM", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=3GbfiI3ElRg", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-15", title: "Fidelity Viewpoints®: Market Sense", source: "social_media", url: "https://www.youtube.com/watch?v=XCIhvMHxp3w", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Fidelity Viewpoints®: Market Sense", company: "Fidelity Investments"}, %{date: "2025-07-14", title: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", source: "social_media", url: "https://www.youtube.com/shorts/CgvLe3Ws4uE", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", company: "Fidelity Investments"}, %{date: "2025-07-18", title: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=m1ApOxX1Qyw", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Earnings Anticipation as Market Rally Wanes - 7/17/25 | In The Money | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", source: "social_media", url: "https://www.youtube.com/shorts/V7vZ5atdJYM", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "We want to help everyone feel 😍 🕺 🎉 🤑 about money. What’s your emoji rn?", company: "Fidelity Investments"}, %{date: "2025-07-17", title: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", source: "social_media", url: "https://www.youtube.com/watch?v=3GbfiI3ElRg", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Q3 Stock Market Outlook - 7/15/25 | Market Sense | Fidelity Investments", company: "Fidelity Investments"}, %{date: "2025-07-15", title: "Fidelity Viewpoints®: Market Sense", source: "social_media", url: "https://www.youtube.com/watch?v=XCIhvMHxp3w", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Fidelity Viewpoints®: Market Sense", company: "Fidelity Investments"}, %{date: "2025-07-14", title: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", source: "social_media", url: "https://www.youtube.com/shorts/CgvLe3Ws4uE", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "The Secular v. Cyclical Challenge: Say it 5x fast & pass this post on.", company: "Fidelity Investments"}]}}, {"Goldman Sachs Private Wealth", %{press_releases: [%{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-20 16:54:27], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-20 16:54:27], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "View Press Releasearrow_right_alt", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/2025/2025-07-16-q2-results", summary: nil, inserted_at: ~N[2025-07-20 14:13:56], content: "", company: "Goldman Sachs Private Wealth"}, %{date: "", title: "2025 Second Quarter Earnings Resultsdownload", source: "press_release", url: "https://www.goldmansachs.com/pressroom/press-releases/current/pdfs/2025-q2-results.pdf", summary: nil, inserted_at: ~N[2025-07-20 14:13:56], content: "", company: "Goldman Sachs Private Wealth"}], social_media: [%{date: "2025-07-17", title: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", source: "social_media", url: "https://www.youtube.com/watch?v=V0jE1fKyGh0", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-17", title: "The Economic Impact of Trade Uncertainty", source: "social_media", url: "https://www.youtube.com/watch?v=M0_VhcuGrsI", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "The Economic Impact of Trade Uncertainty", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-16", title: "AI Exchanges: Where Will the Power Come From?", source: "social_media", url: "https://www.youtube.com/watch?v=xOyiTIku2nA", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "AI Exchanges: Where Will the Power Come From?", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-11", title: "The Three Top Equity Market Themes", source: "social_media", url: "https://www.youtube.com/watch?v=DQ2Oqn4_vks", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "The Three Top Equity Market Themes", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-08", title: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", source: "social_media", url: "https://www.youtube.com/shorts/Wi4wgOpSXZk", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-17", title: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", source: "social_media", url: "https://www.youtube.com/watch?v=V0jE1fKyGh0", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Chairman and CEO David Solomon Joins CNBC to Discuss M&A Outlook, Opportunities for Europe, and AI", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-17", title: "The Economic Impact of Trade Uncertainty", source: "social_media", url: "https://www.youtube.com/watch?v=M0_VhcuGrsI", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "The Economic Impact of Trade Uncertainty", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-16", title: "AI Exchanges: Where Will the Power Come From?", source: "social_media", url: "https://www.youtube.com/watch?v=xOyiTIku2nA", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "AI Exchanges: Where Will the Power Come From?", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-11", title: "The Three Top Equity Market Themes", source: "social_media", url: "https://www.youtube.com/watch?v=DQ2Oqn4_vks", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "The Three Top Equity Market Themes", company: "Goldman Sachs Private Wealth"}, %{date: "2025-07-08", title: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", source: "social_media", url: "https://www.youtube.com/shorts/Wi4wgOpSXZk", summary: nil, inserted_at: ~N[2025-07-20 17:07:29], content: "Goldman Sachs' Kevin Daly explains the implications of global aging on the economy", company: "Goldman Sachs Private Wealth"}]}}, {"J.P. Morgan Asset Management", %{press_releases: [%{date: "", title: "Media Resources", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/press-releases/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "JPMorganChase Unveils New Retirement Solution for Solo Entrepreneurs", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-chase-unveils-new-retirement-solution-for-solo-entrepreneurs/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Hits Market with Largest Active ETF Launch in History Anchored by $2 Billion Institutional Client Investment", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-hits-market-with-largest-active-etf-launch-in-history-anchored-by-2-billion-institutional-client-investment/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Survey Reveals Plan Sponsors' Commitment to Proactive Retirement Strategies and Financial Wellness Programs", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-survey-reveals-plan-sponsors-commitment-proactive-retirement-strategies-and-financial-wellness-programs/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Life Sciences Private Capital and King Abdullah International Medical Research Center Announce Finalists of the Second Annual Life Sciences Innovation Summit in Riyadh, Saudi Arabia", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-life-sciences-private-capital-and-king-abdullah-international-medical-research-center-announce-finalists-of-second-annual-life-sciences-innovation-summit-in-riyadh-saudi-arabia/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Real Estate Income Trust, Inc. Expands Industrial Portfolio with Strategic Acquisitions", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-real-estate-income-trust-expands-industrial-portfolio-strategic-acquistions/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Life Sciences Private Capital Welcomes Dashyant Dhanak, Ph.D. as Venture Partner", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-life-sciences-private-capital-welcomes-dashyant-dhanak-as-venture-partner/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Focuses on Generational Opportunities in Real Estate, Appointing Chad Tredway as Global Head", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-appoints-chad-tredway-global-head-real-estate/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P. Morgan Asset Management Hires Geng Ngarmboonanant to Multi-Asset Solutions Business", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-management-hires-geng-ngarmboonanant-to-multi-asset-solutions-business/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}, %{date: "", title: "J.P Morgan Asset Management’s Campbell Global Announces Close of $1.5 billion Forest & Climate Solutions Fund II", source: "press_release", url: "https://am.jpmorgan.com/us/en/asset-management/adv/about-us/media/press-releases/jp-morgan-asset-managements-campbell-global-announces-close-of-1-5-billion-forest--climate-solutions-fund-ii/", summary: nil, inserted_at: ~N[2025-07-21 00:11:25], content: "", company: "J.P. Morgan Asset Management"}], social_media: []}}], show_filters: false, summaries: %{"BlackRock" => "The most common themes/topics in the BlackRock press releases are new fund launches, acquisitions, financial reports, grants awarded by The BlackRock Foundation, partnerships, and investment opportunities in artificial intelligence infrastructure. Additionally, the press releases also highlight insights from BlackRock studies and discussions on macroeconomic and geopolitical outlooks in investing podcasts.", "Blackstone" => "Overall, the most common themes in Blackstone's press releases include new fund launches, strategic partnerships, investments in infrastructure, real estate acquisitions, executive hires, and collaboration agreements in various industries. The firm also provides updates on earnings and investor calls.", "Fidelity Investments" => "The most common topics or themes found in the recent press releases from Fidelity Investments are:\n\n1. Fund closures and launches, such as the Fidelity Credit Opportunities Fund II and the Managed Futures ETF.\n2. Financial empowerment and initiatives to help individuals with their finances.\n3. Retirement analysis and studies on retirement savings rates and average account balances.\n4. Updates on business performance and market outlooks.\n5. Resolutions studies on how Americans are preparing for unexpected financial events.\n6. Emphasis on market sense and earnings anticipation in the changing market environment.", "Goldman Sachs Private Wealth" => "The most common topics or themes focused on in the press releases from Goldman Sachs Private Wealth include:\n1. Quarterly earnings results\n2. Chairman and CEO discussions on M&A outlook, opportunities for Europe, and AI\n3. The economic impact of trade uncertainty\n4. AI exchanges and where the power will come from\n5. Top equity market themes\n6. Implications of global aging on the economy", "J.P. Morgan Asset Management" => "The most common topics or themes J.P. Morgan Asset Management focuses on in their recent press releases include financial results reporting (quarterly earnings announcements), new product or service launches (such as private markets data solutions and biometric payment offerings), partnerships and expansions (with Oracle, PopID, and Cartes Bancaires CB), and industry rankings or accolades (such as the J.D. Power Digital Experience Study). They also highlight initiatives related to retirement solutions, real estate investments, and life sciences innovation. Additionally, the firm emphasizes their commitment to ESG topics and provides updates on their annual reports and events like the summer reading list and new office openings."}, loading_summaries: MapSet.new([]), companies: ["BlackRock", "Blackstone", "Fidelity Investments", "Goldman Sachs Private Wealth", "J.P. Morgan Asset Management"]}, transport_pid: #PID<0.631.0>, ...>, params: %{}, uri: "http://localhost:4000/insights", telemetry_span_context: #Reference<0.2335726714.1986527233.218074>}
+
+Metric measurement: #Function<4.84333281/1 in Telemetry.Metrics.maybe_convert_measurement/2> (summary)
+With value: 64.145625 millisecond
+Tag values: %{}
+
+16:39:38.414 [debug] QUERY OK source="conversations" db=1.5ms queue=0.7ms idle=1350.8ms
+SELECT c0."id", c0."title", c0."description", c0."last_activity_at", c0."message_count", c0."is_archived", c0."metadata", c0."user_id", c0."inserted_at", c0."updated_at" FROM "conversations" AS c0 WHERE (c0."user_id" = $1) AND (c0."is_archived" = FALSE) ORDER BY c0."last_activity_at" DESC LIMIT $2 [6, 10]
+[90m↳ DashboardGenWeb.SidebarComponent.get_recent_conversations/1, at: lib/dashboard_gen_web/components/sidebar_component.ex:151[0m
+16:39:38.416 [debug] QUERY OK source="conversations" db=1.6ms idle=74.9ms
+SELECT c0."id", c0."title", c0."description", c0."last_activity_at", c0."message_count", c0."is_archived", c0."metadata", c0."user_id", c0."inserted_at", c0."updated_at" FROM "conversations" AS c0 WHERE (c0."user_id" = $1) AND (c0."is_archived" = FALSE) ORDER BY c0."last_activity_at" DESC LIMIT $2 [6, 10]
+[90m↳ DashboardGenWeb.SidebarComponent.get_recent_conversations/1, at: lib/dashboard_gen_web/components/sidebar_component.ex:151[0m
