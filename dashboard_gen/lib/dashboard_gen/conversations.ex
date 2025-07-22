@@ -328,6 +328,18 @@ defmodule DashboardGen.Conversations do
     }
   end
 
+  @doc """
+  Counts the number of recent conversations for a user within the specified number of days.
+  """
+  def count_recent_user_conversations(user_id, days_back) do
+    cutoff_date = DateTime.utc_now() |> DateTime.add(-days_back, :day)
+    
+    from(c in Conversation,
+      where: c.user_id == ^user_id and c.is_archived == false and c.last_activity_at >= ^cutoff_date
+    )
+    |> Repo.aggregate(:count)
+  end
+
   # Import Ecto.Multi for transaction support
   alias Ecto.Multi
 end

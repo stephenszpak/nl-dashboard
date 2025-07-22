@@ -1,0 +1,14 @@
+{
+  "name": "dashboard-gen-assets",
+  "version": "0.1.0",
+  "description": "Assets for Dashboard Gen Phoenix App",
+  "scripts": {
+    "deploy": "tailwindcss --input=css/app.css --output=../priv/static/assets/app.css --minify"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
+  }
+}

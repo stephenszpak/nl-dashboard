@@ -29,6 +29,12 @@ defmodule DashboardGenWeb.SidebarComponent do
           <Phoenix.Component.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
             <i class="fa-solid fa-chart-bar"></i> <span :if={!@collapsed}>Dashboard</span>
           </Phoenix.Component.link>
+          <Phoenix.Component.link navigate={~p"/chat"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-comments"></i> <span :if={!@collapsed}>AI Chat</span>
+          </Phoenix.Component.link>
+          <Phoenix.Component.link navigate={~p"/sentiment"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-heart-pulse"></i> <span :if={!@collapsed}>Sentiment</span>
+          </Phoenix.Component.link>
           <Phoenix.Component.link navigate={~p"/insights"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
             <i class="fa-solid fa-lightbulb"></i> <span :if={!@collapsed}>Insights</span>
           </Phoenix.Component.link>
@@ -73,7 +79,7 @@ defmodule DashboardGenWeb.SidebarComponent do
                 <%= for conversation <- conversations do %>
                   <div class="flex items-center group hover:bg-gray-100 rounded-md">
                     <Phoenix.Component.link 
-                      navigate={~p"/conversation/#{conversation.id}"}
+                      navigate={~p"/chat/conversation/#{conversation.id}"}
                       class="flex-1 min-w-0 px-3 py-2 text-xs text-gray-700 transition-colors"
                     >
                       <div class="font-medium truncate pr-2" title={conversation.title}>
