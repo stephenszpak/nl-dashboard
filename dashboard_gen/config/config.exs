@@ -39,4 +39,38 @@ config :dashboard_gen, DashboardGen.Scheduler,
     {"@daily", {DashboardGen.Scrapers, :scrape_all, []}}
   ]
 
+# Data Collectors Configuration
+config :dashboard_gen, :data_collectors,
+  companies: ["BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs"],
+  social_sources: [:twitter, :reddit],
+  news_sources: [:newsapi, :google_news, :yahoo_finance],
+  collection_intervals: %{
+    social_media: :timer.minutes(15),
+    news: :timer.hours(1)
+  },
+  api_limits: %{
+    twitter: %{requests_per_15min: 300, requests_per_day: 10000},
+    reddit: %{requests_per_minute: 60, requests_per_day: 1000},
+    newsapi: %{requests_per_day: 1000}
+  },
+  quality_filters: %{
+    min_content_length: 10,
+    max_content_length: 5000,
+    spam_detection: true,
+    duplicate_window_hours: 24
+  }
+
+# API Configuration (use environment variables in production)
+config :dashboard_gen, :twitter,
+  bearer_token: System.get_env("TWITTER_BEARER_TOKEN")
+
+config :dashboard_gen, :reddit,
+  client_id: System.get_env("REDDIT_CLIENT_ID"),
+  client_secret: System.get_env("REDDIT_CLIENT_SECRET"),
+  username: System.get_env("REDDIT_USERNAME"),
+  password: System.get_env("REDDIT_PASSWORD")
+
+config :dashboard_gen, :newsapi,
+  api_key: System.get_env("NEWSAPI_KEY")
+
 import_config "#{config_env()}.exs"

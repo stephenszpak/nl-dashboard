@@ -48,7 +48,9 @@ defmodule DashboardGen.MixProject do
       {:req, "~> 0.4"},
       {:bcrypt_elixir, "~> 3.0"},
       {:quantum, "~> 3.5"},
-      {:httpoison, "~> 2.0"}
+      {:httpoison, "~> 2.0"},
+      {:sweet_xml, "~> 0.7"},
+      {:timex, "~> 3.7"}
     ]
   end
 
