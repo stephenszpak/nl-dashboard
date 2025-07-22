@@ -42,6 +42,10 @@ defmodule DashboardGenWeb.DashboardLive do
     {:noreply, push_navigate(socket, to: "/sentiment")}
   end
 
+  def handle_event("view_data_collection", _params, socket) do
+    {:noreply, push_navigate(socket, to: "/data-collection")}
+  end
+
   defp assign_dashboard_state(socket) do
     user_id = socket.assigns.current_user.id
     

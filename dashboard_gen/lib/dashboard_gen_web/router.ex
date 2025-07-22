@@ -52,6 +52,7 @@ defmodule DashboardGenWeb.Router do
     live("/chat/conversation/:conversation_id", ChatLive)
     live("/conversation/:conversation_id", DashboardLive)
     live("/sentiment", SentimentLive)
+    live("/data-collection", DataCollectionLive)
     live("/onboarding", OnboardingLive)
     live("/insights", CompetitorInsightsLive)
     live("/agent", AgentLive)

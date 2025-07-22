@@ -10,7 +10,10 @@ defmodule DashboardGen.Application do
       {Phoenix.PubSub, name: DashboardGen.PubSub},
       {DynamicSupervisor, strategy: :one_for_one, name: DashboardGen.DynamicSupervisor},
       DashboardGenWeb.Endpoint,
-      DashboardGen.Scheduler
+      DashboardGen.Scheduler,
+      # Data Collection System
+      DashboardGen.DataCollectors.Configuration,
+      DashboardGen.DataCollectors.DataCollectorSupervisor
     ]
 
     opts = [strategy: :one_for_one, name: DashboardGen.Supervisor]
