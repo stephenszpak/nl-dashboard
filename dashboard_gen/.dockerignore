@@ -1,0 +1,47 @@
+# Documentation
+README.md
+DEPLOYMENT.md
+
+# Version control
+.git/
+.gitignore
+
+# Development files
+.env
+.env.dev
+.env.local
+
+# Build artifacts
+_build/
+deps/
+.elixir_ls/
+
+# Node modules
+node_modules/
+assets/node_modules/
+
+# Test files
+test/
+coverage/
+
+# Logs
+*.log
+erl_crash.dump
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# Temporary files
+tmp/
