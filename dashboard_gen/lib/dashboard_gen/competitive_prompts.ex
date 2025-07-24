@@ -320,7 +320,7 @@ defmodule DashboardGen.CompetitivePrompts do
         |> Enum.map(&{company, &1})
       end)
     
-    if length(new_youtube_content) > 0 do
+    suggestions = if length(new_youtube_content) > 0 do
       {company, _post} = List.first(new_youtube_content)
       suggestions ++ [%{
         type: "new_content",

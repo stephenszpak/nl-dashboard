@@ -7,7 +7,7 @@ defmodule DashboardGen.AgentRouter do
   data connectors, and analysis pipelines to activate for each user request.
   """
   
-  alias DashboardGen.{CodexClient, Analytics, Insights, AgentTagging}
+  alias DashboardGen.{Analytics, Insights}
   require Logger
   
   @doc """
@@ -256,7 +256,7 @@ defmodule DashboardGen.AgentRouter do
     end
   end
   
-  defp execute_step({:analyze_trends, _params}, results, _plan) do
+  defp execute_step({:analyze_trends, _params}, _results, _plan) do
     # Analyze trends from collected data
     {:ok, "Trend analysis completed"}
   end
@@ -272,13 +272,13 @@ defmodule DashboardGen.AgentRouter do
   end
   
   defp execute_step(step, _results, _plan) do
-    Logger.warn("Unhandled step: #{inspect(step)}")
+    Logger.warning("Unhandled step: #{inspect(step)}")
     {:ok, "Step completed"}
   end
   
   defp compile_response(results, errors, plan, original_query) do
     if length(errors) > 0 do
-      Logger.warn("Execution completed with errors: #{inspect(errors)}")
+      Logger.warning("Execution completed with errors: #{inspect(errors)}")
     end
     
     # Return comprehensive response

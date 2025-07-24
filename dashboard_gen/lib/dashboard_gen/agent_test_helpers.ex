@@ -7,7 +7,7 @@ defmodule DashboardGen.AgentTestHelpers do
   
   alias DashboardGen.{
     AgentRouter, AgentTagging, TimeComparison, 
-    AgentTriggers, PlanningAgents, AgentMonitor,
+    PlanningAgents, AgentMonitor,
     AlertStore, Notifications
   }
   

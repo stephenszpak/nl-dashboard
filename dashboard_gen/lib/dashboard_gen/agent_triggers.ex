@@ -7,7 +7,7 @@ defmodule DashboardGen.AgentTriggers do
   """
   
   use GenServer
-  alias DashboardGen.{Analytics, Insights, CodexClient}
+  alias DashboardGen.{Analytics, Insights}
   alias DashboardGen.Notifications
   require Logger
   
@@ -46,9 +46,6 @@ defmodule DashboardGen.AgentTriggers do
     new_state
   end
   
-  @doc """
-  Check for analytics data spikes (traffic, conversions, etc.)
-  """
   defp check_analytics_spikes(state) do
     current_metrics = get_current_analytics_metrics()
     baseline_metrics = Map.get(state.baselines, :analytics, current_metrics)
@@ -84,9 +81,6 @@ defmodule DashboardGen.AgentTriggers do
     put_in(state.baselines[:analytics], new_baseline)
   end
   
-  @doc """
-  Check for unusual competitor activity
-  """
   defp check_competitor_activity(state) do
     recent_activity = Insights.get_recent_activity_summary(hours: 6)
     baseline_activity = Map.get(state.baselines, :competitor_activity, recent_activity)
@@ -124,9 +118,6 @@ defmodule DashboardGen.AgentTriggers do
     put_in(state.baselines[:competitor_activity], new_baseline)
   end
   
-  @doc """
-  Check for significant market/trend changes
-  """
   defp check_market_changes(state) do
     # Check for keyword trend changes
     trend_changes = detect_trending_topics()

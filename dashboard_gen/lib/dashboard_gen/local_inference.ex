@@ -71,7 +71,7 @@ defmodule DashboardGen.LocalInference do
         try_openrouter_fallback(prompt, task_type, complexity, options)
         
       {:error, reason} ->
-        Logger.warn("Local inference failed: #{reason}, trying cloud fallback")
+        Logger.warning("Local inference failed: #{reason}, trying cloud fallback")
         case try_openrouter_fallback(prompt, task_type, complexity, options) do
           {:ok, response} -> {:ok, response}
           {:error, _} -> DashboardGen.OpenAIClient.ask(prompt) # Final fallback to OpenAI

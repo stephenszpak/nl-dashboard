@@ -13,13 +13,11 @@ defmodule DashboardGen.AutonomousAgent do
   use GenServer
   require Logger
   
-  alias DashboardGen.{Scrapers, Insights, GPTClient, CodexClient}
+  alias DashboardGen.{Scrapers, Insights, CodexClient}
   alias DashboardGen.AutonomousAgent.{DecisionEngine, Memory}
   
   # Agent states
   @idle :idle
-  @analyzing :analyzing
-  @scraping :scraping
   @planning :planning
   
   defstruct [

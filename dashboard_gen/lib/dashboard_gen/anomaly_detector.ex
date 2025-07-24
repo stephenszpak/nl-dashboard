@@ -3,7 +3,6 @@ defmodule DashboardGen.AnomalyDetector do
   Simple detection of day-over-day spikes or drops in marketing metrics.
   """
 
-  alias DashboardGen.CodexClient
 
   @metrics ["cost_per_click", "clicks", "conversions", "cpc"]
 
