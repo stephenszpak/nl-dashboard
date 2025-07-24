@@ -7,12 +7,10 @@ defmodule DashboardGen.AgentMonitor do
   """
   
   use GenServer
-  alias DashboardGen.{CodexClient, AlertStore}
+  alias DashboardGen.AlertStore
   require Logger
   
   @monitor_interval :timer.minutes(5) # Check every 5 minutes
-  @health_check_timeout 30_000 # 30 seconds
-  @performance_window_hours 24
   
   defstruct [
     :start_time,
@@ -173,7 +171,7 @@ defmodule DashboardGen.AgentMonitor do
         check_fn.()
       rescue
         error ->
-          Logger.warn("Health check failed for #{component}: #{inspect(error)}")
+          Logger.warning("Health check failed for #{component}: #{inspect(error)}")
           %{status: :error, error: inspect(error), checked_at: DateTime.utc_now()}
       end
       
@@ -205,7 +203,7 @@ defmodule DashboardGen.AgentMonitor do
       Map.put(acc, dep, status)
     end)
     
-    current_system = Map.get(state.system_metrics, :dependencies, %{})
+    _current_system = Map.get(state.system_metrics, :dependencies, %{})
     updated_system = Map.put(state.system_metrics, :dependencies, dependency_status)
     
     %{state | system_metrics: updated_system}
@@ -235,18 +233,18 @@ defmodule DashboardGen.AgentMonitor do
     # Check success rate
     success_rate = calculate_success_rate(state)
     if success_rate < 0.8 and state.total_requests > 10 do
-      issues = [%{type: :low_success_rate, value: success_rate, threshold: 0.8} | issues]
+      [%{type: :low_success_rate, value: success_rate, threshold: 0.8} | issues]
     end
     
     # Check memory usage
     memory_usage = Map.get(state.system_metrics, :memory_usage, 0)
     if memory_usage > 0.9 do
-      issues = [%{type: :high_memory_usage, value: memory_usage, threshold: 0.9} | issues]
+      [%{type: :high_memory_usage, value: memory_usage, threshold: 0.9} | issues]
     end
     
     # Check response time
     if state.average_response_time > 10000 do # 10 seconds
-      issues = [%{type: :slow_response_time, value: state.average_response_time, threshold: 10000} | issues]
+      [%{type: :slow_response_time, value: state.average_response_time, threshold: 10000} | issues]
     end
     
     # Alert on critical issues
@@ -287,8 +285,7 @@ defmodule DashboardGen.AgentMonitor do
   defp check_insights_connector do
     # Test insights query
     case DashboardGen.Insights.list_recent_insights_by_company(1) do
-      [] -> %{status: :healthy, checked_at: DateTime.utc_now()}
-      _list -> %{status: :healthy, checked_at: DateTime.utc_now()}
+      list when is_list(list) -> %{status: :healthy, checked_at: DateTime.utc_now()}
       _ -> %{status: :error, error: "Insights query failed", checked_at: DateTime.utc_now()}
     end
   end

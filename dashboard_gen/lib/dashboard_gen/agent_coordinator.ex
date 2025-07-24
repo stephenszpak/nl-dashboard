@@ -10,7 +10,6 @@ defmodule DashboardGen.AgentCoordinator do
   require Logger
   alias DashboardGen.{
     AgentRouter, AgentTagging, TimeComparison, 
-    AgentTriggers, PlanningAgents, AgentMonitor,
     Analytics, Insights, CodexClient
   }
   
@@ -223,7 +222,7 @@ defmodule DashboardGen.AgentCoordinator do
     end
   end
   
-  defp execute_tagging_step(step, params) do
+  defp execute_tagging_step(_step, params) do
     content = Map.get(params, :content) || 
               Map.get(params, :previous_results) |> Map.get(:content, [])
     
@@ -238,7 +237,7 @@ defmodule DashboardGen.AgentCoordinator do
     end
   end
   
-  defp execute_analytics_step(step, params) do
+  defp execute_analytics_step(_step, params) do
     days_back = Map.get(params, :days_back, 7)
     
     case Analytics.get_analytics_summary(days_back) do
@@ -247,7 +246,7 @@ defmodule DashboardGen.AgentCoordinator do
     end
   end
   
-  defp execute_insights_step(step, params) do
+  defp execute_insights_step(_step, params) do
     limit = Map.get(params, :limit, 10)
     
     case Insights.list_recent_insights_by_company(limit) do
@@ -256,7 +255,7 @@ defmodule DashboardGen.AgentCoordinator do
     end
   end
   
-  defp execute_time_comparison_step(step, params) do
+  defp execute_time_comparison_step(_step, params) do
     year = Map.get(params, :year, Date.utc_today().year)
     quarter = Map.get(params, :quarter, 1)
     
@@ -361,7 +360,7 @@ defmodule DashboardGen.AgentCoordinator do
   
   # Helper Functions
   
-  defp build_synthesis_prompt(step, previous_results, params) do
+  defp build_synthesis_prompt(step, previous_results, _params) do
     template = step.params[:template]
     sections = step.params[:sections] || []
     
@@ -436,7 +435,7 @@ defmodule DashboardGen.AgentCoordinator do
     |> Enum.join("\n")
   end
   
-  defp validate_criterion(criterion, results) do
+  defp validate_criterion(criterion, _results) do
     case criterion do
       :trend_significance ->
         # Check if trends meet significance thresholds

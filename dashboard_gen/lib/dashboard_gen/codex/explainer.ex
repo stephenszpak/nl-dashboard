@@ -3,7 +3,6 @@ defmodule DashboardGen.Codex.Explainer do
   Generate explanations for query results using GPT via `DashboardGen.CodexClient`.
   """
 
-  alias DashboardGen.CodexClient
 
   @doc """
   Explain the provided query results.

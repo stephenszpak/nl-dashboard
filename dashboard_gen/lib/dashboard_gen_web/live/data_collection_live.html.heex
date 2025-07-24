@@ -1,0 +1,278 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Data Collection Status</h1>
+          <p class="text-gray-600">Monitor and manage real-time data collection processes</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class={"px-3 py-1 rounded-full text-sm font-medium #{status_color(@collector_status.overall_health)}"}>
+            <%= String.upcase(to_string(@collector_status.overall_health || :unknown)) %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Overall Status Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+              <span class="text-blue-600 font-bold">📊</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Active Collectors</p>
+            <p class="text-2xl font-bold text-gray-900">
+              <%= Enum.count(@collector_status.collectors || %{}, fn {_, status} -> 
+                Map.get(status, :status) == :running 
+              end) %> / <%= map_size(@collector_status.collectors || %{}) %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+              <span class="text-green-600 font-bold">✅</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Last Collection</p>
+            <p class="text-lg font-semibold text-gray-900">
+              <%= format_timestamp(@collector_status.last_check) %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-orange-100 rounded-md flex items-center justify-center">
+              <span class="text-orange-600 font-bold">⚠️</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Active Alerts</p>
+            <p class="text-2xl font-bold text-gray-900"><%= @collector_status.alerts_count || 0 %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="w-8 h-8 bg-purple-100 rounded-md flex items-center justify-center">
+              <span class="text-purple-600 font-bold">🏢</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Monitored Companies</p>
+            <p class="text-2xl font-bold text-gray-900"><%= length(@config.companies || []) %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts Section -->
+    <%= if @detailed_status.alerts && length(@detailed_status.alerts) > 0 do %>
+      <div class="bg-white rounded-lg shadow mb-8">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-900">Active Alerts</h2>
+            <.button phx-click="clear_alerts" class="text-sm px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200">
+              Clear All
+            </.button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="space-y-3">
+            <%= for alert <- Enum.take(@detailed_status.alerts, 10) do %>
+              <div class={"flex items-center p-3 rounded-lg #{alert_severity_color(alert.severity)}"}>
+                <div class="flex-shrink-0">
+                  <%= case alert.severity do %>
+                    <% :critical -> %>❌
+                    <% :high -> %>🔴
+                    <% :medium -> %>🟡
+                    <% _ -> %>ℹ️
+                  <% end %>
+                </div>
+                <div class="ml-3 flex-1">
+                  <p class="font-medium"><%= alert.message %></p>
+                  <p class="text-sm opacity-75">
+                    <%= alert.collector %> • <%= format_timestamp(alert.timestamp) %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Collectors Status -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <%= for {collector_type, status} <- @collector_status.collectors || %{} do %>
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-gray-900 capitalize">
+                <%= String.replace(to_string(collector_type), "_", " ") %>
+              </h3>
+              <span class={"px-2 py-1 rounded text-sm font-medium #{status_color(status.status)}"}>
+                <%= String.upcase(to_string(status.status)) %>
+              </span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600">Last Collection:</span>
+                <span class="font-medium"><%= format_timestamp(status.last_collection) %></span>
+              </div>
+              <%= if Map.has_key?(status, :queue_size) do %>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Queue Size:</span>
+                  <span class="font-medium"><%= status.queue_size || 0 %></span>
+                </div>
+              <% end %>
+              <%= if status.stats do %>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Total Collected:</span>
+                  <span class="font-medium"><%= Map.get(status.stats, :total, 0) %></span>
+                </div>
+                <%= if Map.get(status.stats, :errors, 0) > 0 do %>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Errors:</span>
+                    <span class="font-medium text-red-600"><%= status.stats.errors %></span>
+                  </div>
+                <% end %>
+              <% end %>
+              <%= if status.error do %>
+                <div class="text-red-600 text-xs">
+                  <strong>Error:</strong> <%= status.error %>
+                </div>
+              <% end %>
+            </div>
+            
+            <div class="flex space-x-2 mt-4">
+              <.button 
+                phx-click="force_collection" 
+                phx-value-collector={collector_type}
+                class="text-xs px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200"
+              >
+                Force Run
+              </.button>
+              <.button 
+                phx-click="restart_collector" 
+                phx-value-collector={collector_type}
+                class="text-xs px-3 py-1 bg-orange-100 text-orange-700 hover:bg-orange-200"
+              >
+                Restart
+              </.button>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Configuration Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Companies Configuration -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Monitored Companies</h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-2 mb-4">
+            <%= for company <- @config.companies || [] do %>
+              <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                <span class="font-medium"><%= company %></span>
+                <.button 
+                  phx-click="remove_company" 
+                  phx-value-company={company}
+                  class="text-xs px-2 py-1 bg-red-100 text-red-700 hover:bg-red-200"
+                >
+                  Remove
+                </.button>
+              </div>
+            <% end %>
+          </div>
+          
+          <form phx-submit="add_company" class="flex space-x-2">
+            <input 
+              type="text" 
+              name="company" 
+              placeholder="Company name" 
+              class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+              required
+            />
+            <.button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
+              Add
+            </.button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Data Sources Configuration -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900">Data Sources</h3>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-medium text-gray-900 mb-2">Social Media</h4>
+              <div class="space-y-2">
+                <%= for source <- [:twitter, :reddit, :linkedin] do %>
+                  <% enabled = source in (@config.social_sources || []) %>
+                  <div class="flex items-center justify-between">
+                    <span class="capitalize"><%= source %></span>
+                    <.button 
+                      phx-click="toggle_source" 
+                      phx-value-source={source} 
+                      phx-value-action={if enabled, do: "disable", else: "enable"}
+                      class={"text-xs px-3 py-1 #{if enabled, do: "bg-green-100 text-green-700", else: "bg-gray-100 text-gray-700"}"}
+                    >
+                      <%= if enabled, do: "Enabled", else: "Disabled" %>
+                    </.button>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+            
+            <div>
+              <h4 class="font-medium text-gray-900 mb-2">News Sources</h4>
+              <div class="space-y-2">
+                <%= for source <- [:newsapi, :google_news, :yahoo_finance] do %>
+                  <% enabled = source in (@config.news_sources || []) %>
+                  <div class="flex items-center justify-between">
+                    <span class="capitalize"><%= String.replace(to_string(source), "_", " ") %></span>
+                    <.button 
+                      phx-click="toggle_source" 
+                      phx-value-source={source} 
+                      phx-value-action={if enabled, do: "disable", else: "enable"}
+                      class={"text-xs px-3 py-1 #{if enabled, do: "bg-green-100 text-green-700", else: "bg-gray-100 text-gray-700"}"}
+                    >
+                      <%= if enabled, do: "Enabled", else: "Disabled" %>
+                    </.button>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
