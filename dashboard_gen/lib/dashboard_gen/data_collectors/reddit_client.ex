@@ -207,7 +207,7 @@ defmodule DashboardGen.DataCollectors.RedditClient do
     end
   end
   
-  defp authenticate(client_id, client_secret, username, password) do
+  defp authenticate(client_id, client_secret, _username, _password) do
     auth_string = Base.encode64("#{client_id}:#{client_secret}")
     
     headers = [
@@ -216,7 +216,8 @@ defmodule DashboardGen.DataCollectors.RedditClient do
       {"Content-Type", "application/x-www-form-urlencoded"}
     ]
     
-    body = "grant_type=password&username=#{username}&password=#{password}"
+    # Use client_credentials grant type instead of deprecated password grant
+    body = "grant_type=client_credentials"
     
     case HTTPoison.post(@auth_url, body, headers) do
       {:ok, %{status_code: 200, body: response_body}} ->
@@ -233,22 +234,46 @@ defmodule DashboardGen.DataCollectors.RedditClient do
   end
   
   defp get_client_id do
-    Application.get_env(:dashboard_gen, :reddit)[:client_id] ||
-    System.get_env("REDDIT_CLIENT_ID")
+    id = Application.get_env(:dashboard_gen, :reddit)[:client_id] ||
+         System.get_env("REDDIT_CLIENT_ID")
+    
+    case id do
+      nil -> nil
+      "" -> nil
+      i when is_binary(i) -> String.trim(i)
+    end
   end
   
   defp get_client_secret do
-    Application.get_env(:dashboard_gen, :reddit)[:client_secret] ||
-    System.get_env("REDDIT_CLIENT_SECRET")
+    secret = Application.get_env(:dashboard_gen, :reddit)[:client_secret] ||
+             System.get_env("REDDIT_CLIENT_SECRET")
+    
+    case secret do
+      nil -> nil
+      "" -> nil
+      s when is_binary(s) -> String.trim(s)
+    end
   end
   
   defp get_username do
-    Application.get_env(:dashboard_gen, :reddit)[:username] ||
-    System.get_env("REDDIT_USERNAME")
+    username = Application.get_env(:dashboard_gen, :reddit)[:username] ||
+               System.get_env("REDDIT_USERNAME")
+    
+    case username do
+      nil -> nil
+      "" -> nil
+      u when is_binary(u) -> String.trim(u)
+    end
   end
   
   defp get_password do
-    Application.get_env(:dashboard_gen, :reddit)[:password] ||
-    System.get_env("REDDIT_PASSWORD")
+    password = Application.get_env(:dashboard_gen, :reddit)[:password] ||
+               System.get_env("REDDIT_PASSWORD")
+    
+    case password do
+      nil -> nil
+      "" -> nil
+      p when is_binary(p) -> String.trim(p)
+    end
   end
 end

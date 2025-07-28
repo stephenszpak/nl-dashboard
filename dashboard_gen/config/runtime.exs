@@ -1,8 +1,15 @@
 import Config
 
 # Load environment variables from .env file if present
-if File.exists?(Path.expand("../.env", __DIR__)) do
-  Dotenvy.source!(Path.expand("../.env", __DIR__))
+env_file_path = Path.expand("../.env", __DIR__)
+if File.exists?(env_file_path) do
+  env_vars = Dotenvy.source!(env_file_path)
+  # Manually set environment variables since Dotenvy.source! doesn't set them automatically
+  Enum.each(env_vars, fn {key, value} ->
+    if value != "" do  # Skip empty values
+      System.put_env(key, value)
+    end
+  end)
 end
 
 if config_env() == :prod do
@@ -52,7 +59,25 @@ if config_env() == :prod do
   # Configure logger
   config :logger, level: String.to_existing_atom(System.get_env("LOG_LEVEL") || "info")
 else
+  # Development and test environment configuration
   if api_key = System.get_env("OPENAI_API_KEY") do
     config :openai, api_key: api_key
+  end
+  
+  # Ensure API configurations are available in dev/test environments too
+  if twitter_token = System.get_env("TWITTER_BEARER_TOKEN") do
+    config :dashboard_gen, :twitter, bearer_token: twitter_token
+  end
+  
+  if newsapi_key = System.get_env("NEWSAPI_KEY") do
+    config :dashboard_gen, :newsapi, api_key: newsapi_key
+  end
+  
+  if reddit_client_id = System.get_env("REDDIT_CLIENT_ID") do
+    config :dashboard_gen, :reddit,
+      client_id: reddit_client_id,
+      client_secret: System.get_env("REDDIT_CLIENT_SECRET"),
+      username: System.get_env("REDDIT_USERNAME"),
+      password: System.get_env("REDDIT_PASSWORD")
   end
 end

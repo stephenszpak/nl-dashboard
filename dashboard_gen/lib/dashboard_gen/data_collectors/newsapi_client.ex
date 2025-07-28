@@ -22,16 +22,23 @@ defmodule DashboardGen.DataCollectors.NewsAPIClient do
   
   defp collect_with_api_key(companies, api_key) do
     results = Enum.map(companies, fn company ->
-      case collect_company_news(company, api_key) do
-        {:ok, count} -> 
+      result = case collect_company_news(company, api_key) do
+        {:ok, count} when is_integer(count) -> 
           Logger.info("Collected #{count} news articles for #{company}")
           count
+        {:ok, other} ->
+          Logger.warning("collect_company_news returned {:ok, #{inspect(other)}} instead of integer for #{company}")
+          0
         {:error, reason} -> 
           Logger.error("Failed to collect news for #{company}: #{reason}")
+          0
+        other ->
+          Logger.error("collect_company_news returned unexpected value: #{inspect(other)} for #{company}")
           0
       end
       # Rate limiting - NewsAPI free tier has limits
       Process.sleep(1000)
+      result
     end)
     
     total = Enum.sum(results)
@@ -108,13 +115,19 @@ defmodule DashboardGen.DataCollectors.NewsAPIClient do
     "#{query} AND (investment OR stock OR fund OR finance OR trading OR portfolio)"
   end
   
-  defp process_and_store_articles(articles, company) do
-    Enum.reduce(articles, 0, fn article, acc ->
+  defp process_and_store_articles(articles, company) when is_list(articles) do
+    count = Enum.reduce(articles, 0, fn article, acc ->
       case process_article(article, company) do
         {:ok, _sentiment_data} -> acc + 1
         {:error, _reason} -> acc
       end
     end)
+    count
+  end
+  
+  defp process_and_store_articles(_, _company) do
+    # Handle case where articles is not a list
+    0
   end
   
   defp process_article(article, company) do
@@ -193,7 +206,13 @@ defmodule DashboardGen.DataCollectors.NewsAPIClient do
   end
   
   defp get_api_key do
-    Application.get_env(:dashboard_gen, :newsapi)[:api_key] ||
-    System.get_env("NEWSAPI_KEY")
+    key = Application.get_env(:dashboard_gen, :newsapi)[:api_key] ||
+          System.get_env("NEWSAPI_KEY")
+    
+    case key do
+      nil -> nil
+      "" -> nil
+      k when is_binary(k) -> String.trim(k)
+    end
   end
 end

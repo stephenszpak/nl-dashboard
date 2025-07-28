@@ -42,8 +42,8 @@ config :dashboard_gen, DashboardGen.Scheduler,
 # Data Collectors Configuration
 config :dashboard_gen, :data_collectors,
   companies: ["BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs"],
-  social_sources: [:twitter, :reddit],
-  news_sources: [:newsapi, :google_news, :yahoo_finance],
+  social_sources: [],
+  news_sources: [:newsapi],
   collection_intervals: %{
     social_media: :timer.minutes(15),
     news: :timer.hours(1)

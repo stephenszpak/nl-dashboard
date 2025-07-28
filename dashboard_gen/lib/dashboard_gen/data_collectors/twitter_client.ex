@@ -6,7 +6,7 @@ defmodule DashboardGen.DataCollectors.TwitterClient do
   
   require Logger
   alias DashboardGen.Sentiment
-  alias DashboardGen.DataCollectors.DataProcessor
+  alias DashboardGen.DataCollectors.{DataProcessor, RateLimiter}
   
   @base_url "https://api.twitter.com/2"
   @rate_limit_window 900_000 # 15 minutes in milliseconds
@@ -43,14 +43,21 @@ defmodule DashboardGen.DataCollectors.TwitterClient do
   end
   
   defp collect_company_mentions(company, token) do
-    query = build_search_query(company)
-    
-    case search_tweets(query, token) do
-      {:ok, tweets} ->
-        processed_count = process_and_store_tweets(tweets, company)
-        {:ok, processed_count}
+    # Check rate limit before making request
+    case RateLimiter.wait_for_rate_limit(:twitter) do
+      :ok ->
+        query = build_search_query(company)
+        
+        case search_tweets(query, token) do
+          {:ok, tweets} ->
+            processed_count = process_and_store_tweets(tweets, company)
+            {:ok, processed_count}
+          {:error, reason} ->
+            {:error, reason}
+        end
       {:error, reason} ->
-        {:error, reason}
+        Logger.warning("Twitter rate limit check failed: #{inspect(reason)}")
+        {:error, "Rate limit check failed"}
     end
   end
   
@@ -102,13 +109,13 @@ defmodule DashboardGen.DataCollectors.TwitterClient do
     # Build a comprehensive search query for the company
     base_terms = [company]
     
-    # Add common variations and stock tickers
+    # Add common variations and stock tickers (removed cashtag operators)
     additional_terms = case String.downcase(company) do
-      "blackrock" -> ["BLK", "$BLK", "@BlackRock"]
-      "vanguard" -> ["VTI", "$VTI", "@Vanguard_Group"]
-      "state street" -> ["STT", "$STT", "@StateStreet"]
+      "blackrock" -> ["BLK", "@BlackRock"]
+      "vanguard" -> ["VTI", "@Vanguard_Group"]
+      "state street" -> ["STT", "@StateStreet"]
       "fidelity" -> ["@Fidelity", "FidelityInvest"]
-      "goldman sachs" -> ["GS", "$GS", "@GoldmanSachs", "Goldman"]
+      "goldman sachs" -> ["GS", "@GoldmanSachs", "Goldman"]
       _ -> []
     end
     
@@ -215,7 +222,13 @@ defmodule DashboardGen.DataCollectors.TwitterClient do
   end
   
   defp get_bearer_token do
-    Application.get_env(:dashboard_gen, :twitter)[:bearer_token] ||
-    System.get_env("TWITTER_BEARER_TOKEN")
+    token = Application.get_env(:dashboard_gen, :twitter)[:bearer_token] ||
+            System.get_env("TWITTER_BEARER_TOKEN")
+    
+    case token do
+      nil -> nil
+      "" -> nil
+      t when is_binary(t) -> String.trim(t)
+    end
   end
 end
