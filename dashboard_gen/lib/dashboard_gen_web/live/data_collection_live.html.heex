@@ -157,9 +157,9 @@
                   </div>
                 <% end %>
               <% end %>
-              <%= if status.error do %>
+              <%= if Map.get(status, :error) do %>
                 <div class="text-red-600 text-xs">
-                  <strong>Error:</strong> <%= status.error %>
+                  <strong>Error:</strong> <%= Map.get(status, :error) %>
                 </div>
               <% end %>
             </div>
