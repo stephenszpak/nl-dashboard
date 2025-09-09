@@ -23,4 +23,39 @@ dashboard_gen-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Phoenix compiled static assets and manifest
+/priv/static/assets/
+/priv/static/cache_manifest.json
+
+# ElixirLS / editor settings
+/.elixir_ls/
+/.vscode/
+/.idea/
+
+# Node.js dependencies for assets
+/assets/node_modules/
+/assets/.parcel-cache/
+
+# Python virtual env and caches
+/venv/
+__pycache__/
+*.py[cod]
+
+# Environment files (keep examples tracked)
 .env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs and pids
+*.log
+*.pid
+/server.log
+/server_test.log
+
+# Tooling/AI artifacts
+/.claude/
+
+# Project-specific generated data
+/scrape_output.json
