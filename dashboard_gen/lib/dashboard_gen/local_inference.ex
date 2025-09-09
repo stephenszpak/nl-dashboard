@@ -7,47 +7,15 @@ defmodule DashboardGen.LocalInference do
   """
   
   require Logger
-  alias DashboardGen.CodexClient
+  # alias DashboardGen.CodexClient
   
   @ollama_base_url "http://localhost:11434"
   @openrouter_base_url "https://openrouter.ai/api/v1"
   
   # Model configurations
-  @local_models %{
-    "llama3.2:3b" => %{
-      size: :small,
-      use_cases: [:classification, :simple_analysis],
-      max_tokens: 4096,
-      speed: :fast
-    },
-    "llama3.2:8b" => %{
-      size: :medium, 
-      use_cases: [:content_tagging, :trend_analysis],
-      max_tokens: 8192,
-      speed: :medium
-    },
-    "llama3.1:70b" => %{
-      size: :large,
-      use_cases: [:complex_analysis, :strategic_planning],
-      max_tokens: 32768,
-      speed: :slow
-    }
-  }
+  # Model configuration maps removed to reduce warnings
   
-  @openrouter_models %{
-    "meta-llama/llama-3.2-3b-instruct:free" => %{
-      cost: :free,
-      use_cases: [:classification, :simple_analysis]
-    },
-    "meta-llama/llama-3.1-8b-instruct:free" => %{
-      cost: :free,
-      use_cases: [:content_tagging, :trend_analysis]
-    },
-    "anthropic/claude-3.5-sonnet" => %{
-      cost: :paid,
-      use_cases: [:complex_analysis, :strategic_planning]
-    }
-  }
+  # @openrouter_models removed (selection uses static names below)
   
   @doc """
   Intelligent inference with automatic model selection and fallback

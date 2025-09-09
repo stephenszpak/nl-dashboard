@@ -5,7 +5,7 @@ import Ecto.Query
 alias DashboardGen.Sentiment
 
 # Sample companies
-companies = ["BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs"]
+companies = ["AllianceBernstein", "BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs"]
 
 # Sample social media posts
 sample_posts = [

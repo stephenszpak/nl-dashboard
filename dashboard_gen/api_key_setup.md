@@ -21,6 +21,11 @@ export REDDIT_PASSWORD="your_reddit_password"
 # NewsAPI.org API Key
 # Get from: https://newsapi.org/register
 export NEWSAPI_KEY="your_newsapi_key_here"
+
+# LinkedIn API Access Token
+# Set up a LinkedIn Developer App and grant it the proper permissions
+# (e.g. r_organization_social, r_organization_traction) to read posts, likes, and comments.
+export LINKEDIN_ACCESS_TOKEN="your_linkedin_access_token_here"
 ```
 
 ## API Setup Instructions

@@ -9,8 +9,7 @@ defmodule DashboardGen.TimeComparison do
   - Seasonal trend detection
   """
   
-  alias DashboardGen.{Analytics, Insights, CodexClient}
-  import Ecto.Query
+  alias DashboardGen.{Analytics, Insights}
   require Logger
   
   @doc """

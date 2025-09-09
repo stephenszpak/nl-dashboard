@@ -29,6 +29,10 @@ WORKDIR /app
 RUN mix local.hex --force && \
     mix local.rebar --force
 
+# Tweak Hex HTTP settings to be more resilient in some build networks
+RUN mix hex.config http_concurrency 1 && \
+    mix hex.config http_timeout 120
+
 # set build ENV
 ENV MIX_ENV="prod"
 
@@ -42,6 +46,10 @@ RUN mkdir config
 # to be re-compiled.
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
+
+# Pre-install asset builders (download Tailwind and esbuild binaries)
+RUN mix tailwind.install --if-missing \
+    && mix esbuild.install --if-missing
 
 COPY priv priv
 

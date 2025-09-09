@@ -19,3 +19,10 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/dashboard_gen>.
 
+## Port Configuration
+
+Copy `.env.example` to `.env` and adjust the following values as needed:
+
+- `DB_HOST_PORT`: host port for PostgreSQL (default: 5434)
+- `APP_HOST_PORT`: host port for web application (default: 4000)
+- `PORT`: internal port for the web application inside the container (default: 4000)

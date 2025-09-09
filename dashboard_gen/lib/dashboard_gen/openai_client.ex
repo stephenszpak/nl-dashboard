@@ -47,6 +47,24 @@ defmodule DashboardGen.OpenAIClient do
   end
 
   @doc """
+  Send a full chat message list (with roles) for better context.
+
+  Example:
+    messages = [
+      %{role: "system", content: "You are helpful."},
+      %{role: "user", content: "Hello"}
+    ]
+    OpenAIClient.chat(messages)
+  """
+  @spec chat([message()], completion_options()) :: {:ok, String.t()} | {:error, String.t()}
+  def chat(messages, opts \\ %{}) when is_list(messages) do
+    case complete_chat(messages, opts) do
+      {:ok, response} -> {:ok, String.trim(response)}
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  @doc """
   Generate chart specifications from a prompt.
   Returns structured JSON for chart configuration.
   

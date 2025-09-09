@@ -133,35 +133,100 @@ defmodule DashboardGenWeb.ChatLive do
     # Always ensure we have the raw prompt first, then contextualize it
     cleaned_prompt = String.trim(prompt)
     contextualized_prompt = CompetitivePrompts.contextualize_prompt(cleaned_prompt)
-    
+
     # Log prompt usage for monitoring
     require Logger
     Logger.debug("Using prompt template: #{String.slice(prompt, 0, 50)}...")
-    
-    {:noreply, 
+
+    {:noreply,
      socket
      |> assign(
-       prompt: contextualized_prompt,
+       current_message: contextualized_prompt,
        show_prompt_categories: false
      )
      |> put_flash(:info, "✅ Prompt template added to input")
-     |> push_event("focus_input", %{})}
+     |> push_event("focus", %{to: "#message-input"})}
+  end
+
+  # Fallback: if prompt string didn't come through, try resolving by category/index
+  def handle_event("use_prompt", %{"category" => cat, "idx" => idx_str}, socket) do
+    with {idx, _} <- Integer.parse(to_string(idx_str)),
+         {^cat, category} <- Enum.find(socket.assigns.prompt_categories, fn {k, _} -> to_string(k) == to_string(cat) end),
+         prompt when is_binary(prompt) <- Enum.at(category.prompts, idx) do
+      handle_event("use_prompt", %{"prompt" => prompt}, socket)
+    else
+      _ ->
+        {:noreply, put_flash(socket, :error, "Unable to use selected prompt")}
+    end
   end
 
   def handle_event("use_suggestion", %{"prompt" => prompt}, socket) do
-    {:noreply, assign(socket, 
-      prompt: prompt,
-      mode: "competitive_intelligence"
-    )}
+    {:noreply,
+     socket
+     |> assign(
+       current_message: String.trim(prompt),
+       mode: "competitive_intelligence"
+     )
+     |> push_event("focus", %{to: "#message-input"})}
+  end
+
+  def handle_event("run_prompt_now", %{"prompt" => prompt}, socket) do
+    user = socket.assigns.current_user
+    cleaned = String.trim(prompt)
+    content = CompetitivePrompts.contextualize_prompt(cleaned)
+
+    {conversation, messages} =
+      case socket.assigns.current_conversation do
+        nil ->
+          case Conversations.create_conversation_with_message(user.id, content) do
+            {:ok, conversation} -> {conversation, conversation.messages}
+            {:error, _} -> {nil, []}
+          end
+
+        conv ->
+          case Conversations.add_message(conv.id, content, "user") do
+            {:ok, msg} ->
+              existing = socket.assigns.messages || []
+              {conv, existing ++ [msg]}
+            {:error, _} -> {conv, socket.assigns.messages || []}
+          end
+      end
+
+    if conversation do
+      send(self(), {:process_ai_response, content, conversation.id})
+
+      {:noreply,
+       assign(socket,
+         current_conversation: conversation,
+         messages: messages,
+         current_message: "",
+         loading: true,
+         show_prompt_categories: false
+       )}
+    else
+      {:noreply, put_flash(socket, :error, "Failed to start conversation with prompt")}
+    end
+  end
+
+  def handle_event("run_prompt_now", %{"category" => cat, "idx" => idx_str}, socket) do
+    with {idx, _} <- Integer.parse(to_string(idx_str)),
+         {^cat, category} <- Enum.find(socket.assigns.prompt_categories, fn {k, _} -> to_string(k) == to_string(cat) end),
+         prompt when is_binary(prompt) <- Enum.at(category.prompts, idx) do
+      handle_event("run_prompt_now", %{"prompt" => prompt}, socket)
+    else
+      _ -> {:noreply, put_flash(socket, :error, "Unable to run selected prompt")}
+    end
   end
 
   def handle_event("refresh_suggestions", _params, socket) do
     {:noreply, assign(socket, smart_suggestions: CompetitivePrompts.get_smart_suggestions())}
   end
 
-  def handle_event("run_scrapers", _params, socket) do
-    Task.start(fn -> DashboardGen.Scrapers.scrape_all() end)
-    {:noreply, put_flash(socket, :info, "Scrapers started")}
+  # Removed run_scrapers: legacy Python scrapers are no longer used
+
+  def handle_event("run_ai_insights", _params, socket) do
+    Task.start(fn -> DashboardGen.Insights.AIScout.fetch_and_store() end)
+    {:noreply, put_flash(socket, :info, "AI insights collection started")}
   end
 
   def handle_event("show_agent_health", _params, socket) do
@@ -401,7 +466,7 @@ defmodule DashboardGenWeb.ChatLive do
 
   @impl true
   def handle_info({:process_ai_response, user_content, conversation_id}, socket) do
-    case analyze_competitive_intelligence(user_content) do
+    case analyze_competitive_intelligence(user_content, conversation_id) do
       {:ok, ai_response} ->
         # Standard text response
         case Conversations.add_message(conversation_id, ai_response, "assistant") do
@@ -606,42 +671,20 @@ defmodule DashboardGenWeb.ChatLive do
     end)
   end
 
-  defp analyze_competitive_intelligence(prompt) do
+  defp analyze_competitive_intelligence(prompt, conversation_id) do
     # Determine if this is an analytics question or competitive intelligence question
     if is_analytics_question?(prompt) do
       Analytics.analyze_question(prompt)
     else
-      analyze_competitor_intelligence(prompt)
+      analyze_competitor_intelligence_with_context(prompt, conversation_id)
     end
   end
   
-  defp analyze_competitor_intelligence(prompt) do
-    # Get recent competitor insights
-    recent_insights = Insights.list_recent_insights_by_company(10)
-    
-    # Prepare context for analysis
-    context = build_competitive_context(recent_insights)
-    
-    # Create enhanced prompt with context
-    enhanced_prompt = """
-    You are a competitive intelligence analyst. Analyze the following prompt using the provided competitor data.
+  defp analyze_competitor_intelligence_with_context(prompt, conversation_id) do
+    # Build chat messages with system guidance, relevant context, and conversation history
+    messages = build_competitor_messages(prompt, conversation_id)
 
-    User Query: #{prompt}
-
-    Recent Competitor Activity:
-    #{context}
-
-    Provide a detailed analysis including:
-    1. Key findings and insights
-    2. Strategic implications 
-    3. Recommended actions
-    4. Risk assessment
-    5. Opportunities identified
-
-    Format your response in clear sections with actionable insights.
-    """
-
-    case DashboardGen.OpenAIClient.ask(enhanced_prompt) do
+    case DashboardGen.OpenAIClient.chat(messages) do
       {:ok, analysis} -> {:ok, analysis}
       {:error, reason} -> {:error, reason}
     end
@@ -661,18 +704,74 @@ defmodule DashboardGenWeb.ChatLive do
   defp build_competitive_context(recent_insights) do
     recent_insights
     |> Enum.map(fn {company, data} ->
-      press_count = length(data.press_releases)
-      social_count = length(data.social_media)
-      
-      recent_titles = 
-        (data.press_releases ++ data.social_media)
-        |> Enum.take(3)
-        |> Enum.map(& &1.title)
-        |> Enum.join("; ")
-      
-      "#{company}: #{press_count} press releases, #{social_count} social posts. Recent: #{recent_titles}"
+      items = (data.press_releases ++ data.social_media) |> Enum.take(3)
+      bullets =
+        items
+        |> Enum.map(fn i ->
+          date = i[:date] || i["date"] || ""
+          title = i[:title] || i["title"] || ""
+          src = i[:source] || i["source"] || ""
+          "- [#{date}] (#{src}) #{title}"
+        end)
+        |> Enum.join("\n")
+
+      "#{company}:\n#{bullets}"
     end)
-    |> Enum.join("\n")
+    |> Enum.join("\n\n")
+  end
+
+  defp build_competitor_messages(prompt, conversation_id) do
+    # System instruction to tailor responses and avoid generic output
+    system_instruction = %{
+      role: "system",
+      content:
+        "You are a competitive intelligence analyst. " \
+        <> "Answer the user's most recent question directly, using only the provided context and conversation. " \
+        <> "Cite specific items (company, date, source) when drawing conclusions. " \
+        <> "If context is insufficient, ask a brief clarifying question instead of guessing. " \
+        <> "Keep responses focused and avoid repeating generic boilerplate."
+    }
+
+    # Build relevant competitor context based on companies mentioned or most recent
+    context_text = build_relevant_competitor_context(prompt)
+
+    context_message = %{
+      role: "system",
+      content: "Context (recent competitor activity):\n\n" <> context_text
+    }
+
+    # Include short conversation history for coherence
+    history =
+      Conversations.list_conversation_messages(conversation_id)
+      |> Enum.sort_by(& &1.inserted_at)
+      |> Enum.take(-10)
+      |> Enum.map(fn m -> %{role: m.role, content: m.content} end)
+
+    [system_instruction, context_message] ++ history
+  end
+
+  defp build_relevant_competitor_context(prompt) do
+    all = Insights.list_recent_insights_by_company(10)
+    companies_in_prompt = extract_companies_from_prompt(prompt)
+
+    selected =
+      case companies_in_prompt do
+        [] -> all |> Enum.take(3)
+        names -> Enum.filter(all, fn {company, _} -> company in names end)
+      end
+
+    if selected == [] do
+      build_competitive_context(all |> Enum.take(3))
+    else
+      build_competitive_context(selected)
+    end
+  end
+
+  defp extract_companies_from_prompt(prompt) do
+    companies = Application.get_env(:dashboard_gen, :data_collectors)[:companies] || []
+    p = String.downcase(prompt || "")
+    companies
+    |> Enum.filter(fn name -> String.contains?(p, String.downcase(name)) end)
   end
 
   @doc """

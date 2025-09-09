@@ -96,6 +96,58 @@ Hooks.EnableSubmitOnFileSelect = {
   }
 };
 
+Hooks.CopyOnClick = {
+  mounted() {
+    this.onCopy = (e) => {
+      e.preventDefault();
+      const text = this.el.dataset.text || "";
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => this.toast(), () => this.toast());
+      } else {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try { document.execCommand('copy'); } catch (_) {}
+        document.body.removeChild(textarea);
+        this.toast();
+      }
+    };
+
+    this.el.addEventListener('click', this.onCopy);
+    this.el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        this.onCopy(e);
+      }
+    });
+  },
+  destroyed() {
+    this.el.removeEventListener('click', this.onCopy);
+  },
+  toast() {
+    const t = document.createElement('div');
+    t.textContent = 'Copied prompt';
+    t.style.position = 'fixed';
+    t.style.bottom = '20px';
+    t.style.right = '20px';
+    t.style.padding = '8px 12px';
+    t.style.background = 'rgba(17,24,39,0.9)'; // gray-900 with opacity
+    t.style.color = 'white';
+    t.style.borderRadius = '6px';
+    t.style.fontSize = '12px';
+    t.style.zIndex = '9999';
+    t.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+    document.body.appendChild(t);
+    setTimeout(() => {
+      t.style.transition = 'opacity 300ms';
+      t.style.opacity = '0';
+      setTimeout(() => t.remove(), 300);
+    }, 1000);
+  }
+};
+
 // Initialize LiveView socket with CSRF token from meta tag
 const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {

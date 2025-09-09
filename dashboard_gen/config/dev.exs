@@ -13,7 +13,7 @@ config :dashboard_gen, DashboardGen.Repo,
 # For development, we disable any cache and enable
 # debugging and code reloading.
 config :dashboard_gen, DashboardGenWeb.Endpoint,
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {127, 0, 0, 1}, port: String.to_integer(System.get_env("PORT") || "4000")],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,

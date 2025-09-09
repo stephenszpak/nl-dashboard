@@ -1,0 +1,200 @@
+<div class="p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-xl font-semibold text-gray-900">AI Insights</h1>
+    <.button phx-click="toggle_sidebar" class="text-xs">Toggle Sidebar</.button>
+  </div>
+
+  <div class="flex items-center gap-3 mb-6">
+    <div>
+      <label class="block text-xs text-gray-600 mb-1">Company</label>
+      <select phx-change="change_company" name="company" class="border rounded px-2 py-1 text-sm">
+        <%= for c <- @companies do %>
+          <option value={c} selected={c == @selected_company}><%= c %></option>
+        <% end %>
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs text-gray-600 mb-1">Timeframe</label>
+      <select phx-change="change_timeframe" name="timeframe" class="border rounded px-2 py-1 text-sm">
+        <option value="7d" selected={@timeframe == "7d"}>Last 7d</option>
+        <option value="30d" selected={@timeframe == "30d"}>Last 30d</option>
+        <option value="90d" selected={@timeframe == "90d"}>Last 90d</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-4 flex items-center gap-2">
+    <button phx-click="switch_tab" phx-value-tab="snapshot" class={[
+      "text-xs px-3 py-1 rounded",
+      if(@tab == "snapshot", do: "bg-blue-600 text-white", else: "bg-gray-100 text-gray-700")
+    ]}>Snapshot</button>
+    <button phx-click="switch_tab" phx-value-tab="events" class={[
+      "text-xs px-3 py-1 rounded",
+      if(@tab == "events", do: "bg-blue-600 text-white", else: "bg-gray-100 text-gray-700")
+    ]}>Events</button>
+    <button phx-click="switch_tab" phx-value-tab="themes" class={[
+      "text-xs px-3 py-1 rounded",
+      if(@tab == "themes", do: "bg-blue-600 text-white", else: "bg-gray-100 text-gray-700")
+    ]}>Themes</button>
+    <button phx-click="switch_tab" phx-value-tab="recs" class={[
+      "text-xs px-3 py-1 rounded",
+      if(@tab == "recs", do: "bg-blue-600 text-white", else: "bg-gray-100 text-gray-700")
+    ]}>Recommendations</button>
+  </div>
+
+  <div :if={@tab == "snapshot"} class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1 bg-white rounded border p-4">
+      <h2 class="text-sm font-semibold text-gray-900 mb-2">Latest Snapshot</h2>
+      <%= if @snapshot do %>
+        <div class="space-y-2 text-sm">
+          <div class="text-gray-600">Period: <%= @snapshot.period || "" %></div>
+          <div class="text-gray-600">Range: <%= @snapshot.period_start || "" %> - <%= @snapshot.period_end || "" %></div>
+          <div class="mt-2">
+            <div class="text-gray-900 font-medium mb-1">Summary</div>
+            <div class="text-gray-700 whitespace-pre-line"><%= @snapshot.summary || "No summary" %></div>
+          </div>
+          <%= if map_size(@snapshot.key_metrics || %{}) > 0 do %>
+            <div class="mt-2">
+              <div class="text-gray-900 font-medium mb-1">Key Metrics</div>
+              <ul class="text-gray-700 list-disc pl-5">
+                <%= for {k, v} <- @snapshot.key_metrics do %>
+                  <li><%= k %>: <%= inspect(v) %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-sm text-gray-500">No snapshot yet.</div>
+      <% end %>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded border p-4">
+      <h2 class="text-sm font-semibold text-gray-900 mb-2">Recent Events</h2>
+      <%= if @events == [] do %>
+        <div class="text-sm text-gray-500">No events in selected range.</div>
+      <% else %>
+        <ul class="divide-y">
+          <%= for ev <- @events do %>
+            <li class="py-3">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-gray-900 font-medium"><%= ev.title %></div>
+                  <div class="text-xs text-gray-500">Type: <%= ev.event_type || "n/a" %> • Date: <%= ev.occurred_on || "n/a" %></div>
+                  <div class="text-sm text-gray-700 mt-1 whitespace-pre-line"><%= ev.description || "" %></div>
+                  <%= if (ev.tags || []) != [] do %>
+                    <div class="mt-1 text-xs text-gray-600">Tags: <%= Enum.join(ev.tags, ", ") %></div>
+                  <% end %>
+                </div>
+                <div class="text-right text-xs text-gray-500">
+                  <%= if ev.impact_score do %>
+                    <div>Impact: <%= :erlang.float_to_binary(ev.impact_score || 0.0, [:compact, decimals: 2]) %></div>
+                  <% end %>
+                  <%= if ev.sentiment_score do %>
+                    <div>Sentiment: <%= :erlang.float_to_binary(ev.sentiment_score || 0.0, [:compact, decimals: 2]) %></div>
+                  <% end %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+
+  <div :if={@tab == "events"} class="bg-white rounded border p-4">
+    <h2 class="text-sm font-semibold text-gray-900 mb-2">Events</h2>
+    <%= if @events == [] do %>
+      <div class="text-sm text-gray-500">No events in selected range.</div>
+    <% else %>
+      <ul class="divide-y">
+        <%= for ev <- @events do %>
+          <li class="py-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="text-gray-900 font-medium"><%= ev.title %></div>
+                <div class="text-xs text-gray-500">Type: <%= ev.event_type || "n/a" %> • Date: <%= ev.occurred_on || "n/a" %></div>
+                <div class="text-sm text-gray-700 mt-1 whitespace-pre-line"><%= ev.description || "" %></div>
+              </div>
+              <div class="text-right text-xs text-gray-500">
+                <%= if ev.impact_score do %>
+                  <div>Impact: <%= :erlang.float_to_binary(ev.impact_score || 0.0, [:compact, decimals: 2]) %></div>
+                <% end %>
+                <%= if ev.sentiment_score do %>
+                  <div>Sentiment: <%= :erlang.float_to_binary(ev.sentiment_score || 0.0, [:compact, decimals: 2]) %></div>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+
+  <div :if={@tab == "themes"} class="bg-white rounded border p-4">
+    <h2 class="text-sm font-semibold text-gray-900 mb-2">Themes</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <div class="text-xs text-gray-600 mb-1">Model Topics</div>
+        <ul class="text-sm list-disc pl-5">
+          <%= for t <- DashboardGen.AI.list_topics(limit: 20) do %>
+            <li><%= t.name %></li>
+          <% end %>
+        </ul>
+      </div>
+      <div>
+        <div class="text-xs text-gray-600 mb-1">Event Tags (top)</div>
+        <%
+          tag_counts = @events
+          |> Enum.flat_map(&(&1.tags || []))
+          |> Enum.frequencies()
+          |> Enum.sort_by(fn {_k,v} -> -v end)
+          |> Enum.take(10)
+        %>
+        <%= if tag_counts == [] do %>
+          <div class="text-sm text-gray-500">No tags found in current range.</div>
+        <% else %>
+          <ul class="text-sm list-disc pl-5">
+            <%= for {tag, count} <- tag_counts do %>
+              <li><%= tag %> • <span class="text-xs text-gray-500"><%= count %></span></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div :if={@tab == "recs"} class="bg-white rounded border p-4">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="text-sm font-semibold text-gray-900">Recommendations</h2>
+      <.button phx-click="generate_recos" class="text-xs">Generate</.button>
+    </div>
+    <%
+      recs = DashboardGen.AI.list_insights(@selected_company, "recommendation", limit: 20)
+    %>
+    <%= if recs == [] do %>
+      <div class="text-sm text-gray-500">No recommendations yet.</div>
+    <% else %>
+      <ul class="divide-y">
+        <%= for r <- recs do %>
+          <li class="py-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="text-gray-900 font-medium"><%= r.title %></div>
+                <div class="text-sm text-gray-700 mt-1 whitespace-pre-line"><%= r.summary || r.detail || "" %></div>
+                <%= if (r.tags || []) != [] do %>
+                  <div class="mt-1 text-xs text-gray-600">Tags: <%= Enum.join(r.tags, ", ") %></div>
+                <% end %>
+              </div>
+              <div class="text-right text-xs text-gray-500">
+                <%= if r.impact_score do %>
+                  <div>Impact: <%= :erlang.float_to_binary(r.impact_score || 0.0, [:compact, decimals: 2]) %></div>
+                <% end %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+</div>

@@ -115,7 +115,7 @@ defmodule DashboardGenWeb.SentimentLive do
     end
   end
 
-  def handle_info({:sentiment_data_loaded, company, data}, socket) do
+  def handle_info({:sentiment_data_loaded, _company, data}, socket) do
     {:noreply,
      assign(socket,
        loading: false,
@@ -182,7 +182,7 @@ defmodule DashboardGenWeb.SentimentLive do
 
   defp get_available_companies do
     # This would normally come from your data
-    ["BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs", "JPMorgan Chase", "Morgan Stanley"]
+    ["AllianceBernstein", "BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs", "JPMorgan Chase", "Morgan Stanley"]
   end
 
   ## Helper Functions

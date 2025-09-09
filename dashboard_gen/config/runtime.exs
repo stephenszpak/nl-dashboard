@@ -1,15 +1,18 @@
 import Config
 
-# Load environment variables from .env file if present
-env_file_path = Path.expand("../.env", __DIR__)
-if File.exists?(env_file_path) do
-  env_vars = Dotenvy.source!(env_file_path)
-  # Manually set environment variables since Dotenvy.source! doesn't set them automatically
-  Enum.each(env_vars, fn {key, value} ->
-    if value != "" do  # Skip empty values
-      System.put_env(key, value)
-    end
-  end)
+# Load environment variables from .env-style files if present
+# Priority order: .env.prod, .env (later files override earlier ones)
+for file <- ["../.env.prod", "../.env"] do
+  env_file_path = Path.expand(file, __DIR__)
+  if File.exists?(env_file_path) do
+    env_vars = Dotenvy.source!(env_file_path)
+    # Manually set environment variables since Dotenvy.source! doesn't set them automatically
+    Enum.each(env_vars, fn {key, value} ->
+      if value != "" do # Skip empty or blank values
+        System.put_env(key, value)
+      end
+    end)
+  end
 end
 
 if config_env() == :prod do

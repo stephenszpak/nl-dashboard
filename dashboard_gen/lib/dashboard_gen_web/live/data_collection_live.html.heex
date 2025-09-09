@@ -11,6 +11,41 @@
           <span class={"px-3 py-1 rounded-full text-sm font-medium #{status_color(@collector_status.overall_health)}"}>
             <%= String.upcase(to_string(@collector_status.overall_health || :unknown)) %>
           </span>
+          <div class="flex items-center space-x-2 ml-3">
+            <.button phx-click="run_ai_insights" disabled={@ai_insights[:running]}>
+              <%= if @ai_insights[:running], do: "⏳ Running AI Insights...", else: "🤖 Run AI Insights" %>
+            </.button>
+            <.button phx-click="backfill_ai_insights" disabled={@ai_insights[:running]} class="bg-purple-600 hover:bg-purple-700">
+              🔁 Backfill (90d)
+            </.button>
+            <%= if @ai_insights[:running] do %>
+              <span class="text-sm text-gray-600">
+                <%= case @ai_insights[:status] do %>
+                  <% :started -> %>Starting
+                  <% :started_v2 -> %>Starting (v2)
+                  <% :requesting -> %>Requesting from OpenAI
+                  <% :received -> %>Received <%= @ai_insights[:items] || 0 %> items
+                  <% :inserting -> %>Saving <%= @ai_insights[:items] || 0 %> items
+                  <% :completed_company -> %>Completed <%= @ai_insights[:company] || "company" %>
+                  <% :completed_v2 -> %>Completed
+                  <% _ -> %>Working
+                <% end %>
+              </span>
+            <% else %>
+              <%= if @ai_insights[:status] in [:completed, :error] do %>
+                <span class={[
+                  "text-sm",
+                  if(@ai_insights[:status] == :completed, do: "text-green-600", else: "text-red-600")
+                ]}>
+                  <%= if @ai_insights[:status] == :completed do %>
+                    ✅ Imported <%= @ai_insights[:items] || 0 %> items
+                  <% else %>
+                    ❌ Error: <%= @ai_insights[:error] || "unknown" %>
+                  <% end %>
+                </span>
+              <% end %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

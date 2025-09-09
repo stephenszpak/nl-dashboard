@@ -21,6 +21,7 @@ defmodule DashboardGenWeb.DataCollectionLive do
         # Subscribe to status updates
         Phoenix.PubSub.subscribe(DashboardGen.PubSub, "data_collector_status")
         Phoenix.PubSub.subscribe(DashboardGen.PubSub, "data_collector_config")
+        Phoenix.PubSub.subscribe(DashboardGen.PubSub, "ai_insights_status")
         
         {:ok, assign_initial_state(socket)}
     end
@@ -35,6 +36,17 @@ defmodule DashboardGenWeb.DataCollectionLive do
     # Reload configuration when it changes
     config = Configuration.get_config()
     {:noreply, assign(socket, config: config)}
+  end
+
+  def handle_info({:ai_insights_status, payload}, socket) do
+    ai = Map.get(socket.assigns, :ai_insights, %{})
+    ai =
+      ai
+      |> Map.put(:last_update, DateTime.utc_now())
+      |> Map.merge(payload)
+      |> Map.update(:running, true, fn _ -> payload[:status] not in [:completed, :error] end)
+
+    {:noreply, assign(socket, ai_insights: ai)}
   end
   
   @impl true
@@ -123,6 +135,29 @@ defmodule DashboardGenWeb.DataCollectionLive do
     {:noreply, put_flash(socket, :info, "Cleared all alerts")}
   end
   
+  def handle_event("run_ai_insights", _params, socket) do
+    Task.start(fn -> DashboardGen.Insights.AIScout.fetch_and_store_v2() end)
+    {:noreply,
+     socket
+     |> assign(ai_insights: %{running: true, status: :started})
+     |> put_flash(:info, "AI insights collection started")}
+  end
+
+  def handle_event("backfill_ai_insights", _params, socket) do
+    companies = (Application.get_env(:dashboard_gen, :data_collectors)[:companies] || [])
+    Task.start(fn ->
+      DashboardGen.Insights.AIScout.fetch_and_store_v2(
+        companies: companies,
+        days_back: 90,
+        items_per_company: 12
+      )
+    end)
+    {:noreply,
+     socket
+     |> assign(ai_insights: %{running: true, status: :started_v2})
+     |> put_flash(:info, "AI insights backfill (90d) started")}
+  end
+  
   defp assign_initial_state(socket) do
     config = Configuration.get_config()
     status = StatusMonitor.get_status()
@@ -133,7 +168,8 @@ defmodule DashboardGenWeb.DataCollectionLive do
       config: config,
       collector_status: status,
       detailed_status: detailed_status,
-      collapsed: false
+      collapsed: false,
+      ai_insights: %{running: false, status: :idle}
     )
   end
   

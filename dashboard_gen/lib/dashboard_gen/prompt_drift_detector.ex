@@ -8,7 +8,7 @@ defmodule DashboardGen.PromptDriftDetector do
   
   use GenServer
   require Logger
-  alias DashboardGen.{CodexClient, AlertStore}
+  alias DashboardGen.{AlertStore}
   
   @check_interval :timer.minutes(30) # Check every 30 minutes
   @sample_size 20 # Number of recent responses to analyze
@@ -435,16 +435,17 @@ defmodule DashboardGen.PromptDriftDetector do
       
       # Add general suggestions based on trends
       if latest_analysis.drift_score > 0.2 do
-        suggestions = [
+        updated_suggestions = [
           %{
             issue_type: :general,
             suggestion: "Consider establishing new baseline metrics - current patterns may reflect system evolution",
             priority: 0.5
           } | suggestions
         ]
+        updated_suggestions
+      else
+        suggestions
       end
-      
-      suggestions
     else
       []
     end

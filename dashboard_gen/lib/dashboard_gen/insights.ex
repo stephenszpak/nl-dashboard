@@ -16,6 +16,11 @@ defmodule DashboardGen.Insights do
     name = String.trim(name)
     
     cond do
+      String.contains?(String.downcase(name), "alliancebernstein") or
+      String.contains?(String.downcase(name), "alliance bernstein") or
+      String.contains?(String.downcase(name), "alliancebernstein.com") ->
+        "AllianceBernstein"
+      
       String.contains?(String.downcase(name), "blackrock") ->
         "BlackRock"
       

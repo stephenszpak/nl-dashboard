@@ -13,7 +13,8 @@ defmodule DashboardGen.AutonomousAgent do
   use GenServer
   require Logger
   
-  alias DashboardGen.{Scrapers, Insights, CodexClient}
+  alias DashboardGen.{Insights, CodexClient}
+  alias DashboardGen.Insights.AIScout
   alias DashboardGen.AutonomousAgent.{DecisionEngine, Memory}
   
   # Agent states
@@ -230,9 +231,9 @@ defmodule DashboardGen.AutonomousAgent do
   end
   
   defp schedule_scraping(_company, priority) do
-    # Schedule immediate scraping for high priority
+    # Trigger AI insights collection for high priority
     if priority == :high do
-      Task.async(fn -> Scrapers.scrape_all() end)
+      Task.async(fn -> AIScout.fetch_and_store() end)
     end
   end
   

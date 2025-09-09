@@ -6,11 +6,10 @@ defmodule DashboardGen.DataCollectors.TwitterClient do
   
   require Logger
   alias DashboardGen.Sentiment
-  alias DashboardGen.DataCollectors.{DataProcessor, RateLimiter}
+  alias DashboardGen.DataCollectors.RateLimiter
   
   @base_url "https://api.twitter.com/2"
-  @rate_limit_window 900_000 # 15 minutes in milliseconds
-  @max_requests_per_window 300
+  # Rate limiting handled via RateLimiter; no local window constants needed
   
   def collect_mentions(companies) when is_list(companies) do
     case get_bearer_token() do
@@ -23,8 +22,6 @@ defmodule DashboardGen.DataCollectors.TwitterClient do
   end
   
   defp collect_with_token(companies, token) do
-    total_collected = 0
-    
     results = Enum.map(companies, fn company ->
       case collect_company_mentions(company, token) do
         {:ok, count} -> 

@@ -25,8 +25,18 @@ defmodule DashboardGenWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :simple do
+    plug(:accepts, ["html"])
+  end
+
   pipeline :require_auth do
     plug(DashboardGenWeb.Plugs.Auth, :require_authenticated)
+  end
+
+  scope "/", DashboardGenWeb do
+    pipe_through(:simple)
+    
+    get("/test", PageController, :home)
   end
 
   scope "/", DashboardGenWeb do
@@ -55,6 +65,7 @@ defmodule DashboardGenWeb.Router do
     live("/data-collection", DataCollectionLive)
     live("/onboarding", OnboardingLive)
     live("/insights", CompetitorInsightsLive)
+    live("/ai-insights", AIInsightsLive)
     live("/agent", AgentLive)
     live("/uploads", UploadsLive)
   end

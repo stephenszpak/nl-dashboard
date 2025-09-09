@@ -7,7 +7,7 @@ defmodule DashboardGen.PlanningAgents do
   """
   
   use GenServer
-  alias DashboardGen.{CodexClient, Insights, Analytics, AgentTagging}
+  alias DashboardGen.{Insights, Analytics, AgentTagging}
   require Logger
   
   @check_interval :timer.minutes(30) # Check every 30 minutes for scheduled tasks

@@ -36,12 +36,12 @@ config :phoenix, :json_library, Jason
 
 config :dashboard_gen, DashboardGen.Scheduler,
   jobs: [
-    {"@daily", {DashboardGen.Scrapers, :scrape_all, []}}
+    {"@daily", {DashboardGen.Insights.AIScout, :fetch_and_store_v2, []}}
   ]
 
 # Data Collectors Configuration
 config :dashboard_gen, :data_collectors,
-  companies: ["BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs"],
+  companies: ["AllianceBernstein", "BlackRock", "Vanguard", "State Street", "Fidelity", "Goldman Sachs"],
   social_sources: [],
   news_sources: [:newsapi],
   collection_intervals: %{

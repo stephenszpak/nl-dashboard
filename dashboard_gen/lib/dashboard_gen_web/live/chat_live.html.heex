@@ -169,20 +169,23 @@
           
           <%= if @show_prompt_categories do %>
             <div class="absolute bottom-full left-0 right-0 mb-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-y-auto z-10">
-              <%= for {_category_key, category} <- @prompt_categories do %>
+              <%= for {category_key, category} <- @prompt_categories do %>
                 <div class="p-4 border-b last:border-b-0">
                   <h4 class="text-sm font-semibold mb-2 text-gray-900"><%= category.name %></h4>
                   <p class="text-xs text-gray-600 mb-3"><%= category.description %></p>
                   <div class="space-y-2">
-                    <%= for prompt <- Enum.take(category.prompts, 3) do %>
-                      <button 
-                        phx-click="use_prompt" 
-                        phx-value-prompt={prompt}
-                        class="block w-full text-left px-3 py-2 text-xs text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 rounded border border-gray-200 transition-colors"
-                        title="Click to use this prompt"
+                    <%= for {prompt, idx} <- Enum.take(category.prompts, 3) |> Enum.with_index() do %>
+                      <div 
+                        phx-hook="CopyOnClick"
+                        data-text={prompt}
+                        id={"copy-template-#{category_key}-#{idx}"}
+                        class="border border-gray-200 rounded px-3 py-2 text-xs text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 transition-colors cursor-pointer"
+                        title="Click to copy prompt"
+                        role="button"
+                        tabindex="0"
                       >
                         <span class="font-medium">💡</span> <%= prompt %>
-                      </button>
+                      </div>
                     <% end %>
                     <%= if length(category.prompts) > 3 do %>
                       <div class="text-xs text-gray-500 px-3 py-1">+ <%= length(category.prompts) - 3 %> more prompts...</div>
