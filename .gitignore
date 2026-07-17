@@ -1,4 +1,6 @@
 /_build
+dashboard_gen/.env.prod
+dashboard_gen/.env
 /cover
 /deps
 /doc
@@ -12,3 +14,4 @@ erl_crash.dump
 dashboard_gen/priv/.DS_Store
 ./../.DS_Store
 dashboard_gen.zip
+/dashboard_gen/.env.prod

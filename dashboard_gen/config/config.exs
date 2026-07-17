@@ -34,6 +34,9 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
+# App environment marker for runtime checks (e.g., analytics scripts)
+config :dashboard_gen, :env, config_env()
+
 config :dashboard_gen, DashboardGen.Scheduler,
   jobs: [
     {"@daily", {DashboardGen.Insights.AIScout, :fetch_and_store_v2, []}}

@@ -9,6 +9,7 @@ defmodule DashboardGenWeb.Router do
     plug(:fetch_live_flash)
     plug(DashboardGenWeb.Plugs.Auth, :fetch_current_user)
     plug(:put_root_layout, {DashboardGenWeb.Layouts, :root})
+    plug(:put_layout, false)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
   end
@@ -18,6 +19,7 @@ defmodule DashboardGenWeb.Router do
     plug(:fetch_session)
     plug(:fetch_live_flash)
     plug(:put_root_layout, {DashboardGenWeb.Layouts, :root})
+    plug(:put_layout, false)
     plug(:put_secure_browser_headers)
   end
 
@@ -41,6 +43,10 @@ defmodule DashboardGenWeb.Router do
 
   scope "/", DashboardGenWeb do
     pipe_through(:browser)
+
+    # Public SEO landing page and sitemap
+    get("/seo", SeoController, :index)
+    get("/sitemap.xml", SeoController, :sitemap)
 
     live("/register", RegisterLive)
     live("/login", LoginLive)

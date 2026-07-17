@@ -1,0 +1,38 @@
+<section class="w-full bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-16">
+    <h1 class="text-3xl md:text-4xl font-semibold text-gray-900">
+      AI Analytics for Wealth & Asset Management
+    </h1>
+    <p class="mt-4 text-gray-600 max-w-3xl">
+      DashboardGen turns noisy data into actionable insight. Track sentiment trends, monitor competitors,
+      and summarize conversations with AI to uncover opportunities faster.
+    </p>
+
+    <div class="mt-8 flex gap-3">
+      <a href={~p"/register"} class="inline-flex items-center px-5 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Get Started</a>
+      <a href={~p"/login"} class="inline-flex items-center px-5 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">Sign in</a>
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="rounded-lg border p-5 bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">Sentiment & Trends</h2>
+        <p class="mt-2 text-gray-600">Understand how the market feels about key topics over time.</p>
+      </div>
+      <div class="rounded-lg border p-5 bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">Competitor Intelligence</h2>
+        <p class="mt-2 text-gray-600">Track announcements and positioning to stay ahead of peers.</p>
+      </div>
+      <div class="rounded-lg border p-5 bg-gray-50">
+        <h2 class="text-lg font-medium text-gray-900">AI Summaries</h2>
+        <p class="mt-2 text-gray-600">Summarize conversations and sources into clear, shareable insights.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%= if assigns[:ld_json] do %>
+  <script type="application/ld+json">
+    <%= raw(@ld_json) %>
+  </script>
+<% end %>
+

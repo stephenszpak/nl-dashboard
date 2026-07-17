@@ -29,6 +29,9 @@ defmodule DashboardGenWeb.SidebarComponent do
           <Phoenix.Component.link navigate={~p"/"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
             <i class="fa-solid fa-chart-bar"></i> <span :if={!@collapsed}>Dashboard</span>
           </Phoenix.Component.link>
+          <Phoenix.Component.link navigate={~p"/seo"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
+            <i class="fa-solid fa-globe"></i> <span :if={!@collapsed}>SEO Page</span>
+          </Phoenix.Component.link>
           <Phoenix.Component.link navigate={~p"/chat"} class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 border-l-2 border-transparent hover:text-brandBlue hover:border-brandBlue rounded-md">
             <i class="fa-solid fa-comments"></i> <span :if={!@collapsed}>AI Chat</span>
           </Phoenix.Component.link>

@@ -5,12 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%= csrf_meta_tag() %>
     <.live_title><%= assigns[:page_title] || "DashboardGen" %></.live_title>
+    <%= if assigns[:meta_description] do %>
+      <meta name="description" content={@meta_description} />
+    <% end %>
+    <%= if assigns[:canonical_url] do %>
+      <link rel="canonical" href={@canonical_url} />
+      <meta property="og:url" content={@canonical_url} />
+    <% end %>
+    <meta property="og:type" content="website" />
+    <%= if assigns[:og_title] do %>
+      <meta property="og:title" content={@og_title} />
+    <% end %>
+    <%= if assigns[:og_description] do %>
+      <meta property="og:description" content={@og_description} />
+    <% end %>
+    <%= if assigns[:og_image] do %>
+      <meta property="og:image" content={@og_image} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={@og_image} />
+    <% else %>
+      <meta name="twitter:card" content="summary" />
+    <% end %>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js" defer></script>
   </head>
   <body class="bg-gray-50 text-gray-800 font-sans text-sm">
     <%= @inner_content %>
+    <%= if Application.get_env(:dashboard_gen, :env) == :prod do %>
+      <%= case System.get_env("PLAUSIBLE_DOMAIN") do
+        nil -> ""
+        domain -> Phoenix.HTML.raw(~s(<script defer data-domain="#{domain}" src="https://plausible.io/js/script.js"></script>))
+      end %>
+    <% end %>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>
   </body>
 </html>
